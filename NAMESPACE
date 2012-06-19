@@ -1,0 +1,7 @@
+useDynLib(grpreg,.registration=TRUE)
+export(grpreg,select)
+importFrom(graphics,plot)
+importFrom(stats,logLik)
+S3method(select,grpreg)
+S3method(plot,grpreg)
+S3method(logLik,grpreg)

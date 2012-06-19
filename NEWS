@@ -1,0 +1,24 @@
+*   Minor change
+**  Substantial change
+*** Major change
+
+2.0-0
+	** Added group exponential penalties
+	*  Internal refactoring of code
+	*  Added dfmax option
+	*  Added group.multiplier option
+	*  Allow specification of unpenalized groups
+
+1.2-0
+	*  DESCRIPTION: Fixed contact info
+	*  CITATION: Updated citation
+	*  grpreg: Removed 'monitor' option
+	*  grpreg: Changed 'n.lambda' to 'nlambda'
+	*  grpreg: Changed 'a' to 'gamma' for MCP tuning parameter
+	*  grpreg: Changed 'lambda2' to 'alpha'
+	*  grpreg: Added 'loss' to value returned
+	** grpreg.c: Fixed bug in calculation of df for gLasso
+	*  logLik: Added logLik method
+	** select: Syntax modified (no longer requires X, y to be passed)
+        *  criteria: Obsolete, removed
+	** plot.grpreg: Made plotting function more flexible

@@ -1,0 +1,12 @@
+citHeader("To cite ncvreg in publications use:")
+
+citEntry(entry="Article",
+	 author = personList(as.person("Patrick Breheny"),
+	 	  	     as.person("Jian Huang")),
+         title = "Penalized methods for bi-level variable selection.",
+         journal = "Statistics and its interface",
+         year = "2009",
+         volume = "2",
+         pages = "369--380",
+         textVersion = "Breheny, P. and Huang, J. (2009) Penalized methods for
+  bi-level variable selection.  Statistics and its interface, 2: 369-380.")
