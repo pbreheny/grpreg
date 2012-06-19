@@ -43,7 +43,7 @@ cv.grpreg <- function(X, y, group, penalty=c("gMCP","gLasso","gBridge"), family=
     
     if (family=="gaussian")
       {
-        cv.ind <- ceiling((1:n)/n*nfolds)
+        cv.ind <- ceiling(sample(1:n)/n*nfolds)
       }
     else if (family=="binomial")
       {
