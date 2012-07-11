@@ -9,6 +9,13 @@
 	*  Added group.multiplier option
 	*  Allow specification of unpenalized groups
 
+2.0-0
+	** Added cv.ncvreg to facilitate cross-validation
+	*  Extensive internal refactoring of code
+	*  Added dfmax option
+	*  Added group.multiplier option
+	*  Allows specification of unpenalized groups
+
 1.2-0
 	*  DESCRIPTION: Fixed contact info
 	*  CITATION: Updated citation
