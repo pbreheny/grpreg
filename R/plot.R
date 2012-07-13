@@ -1,32 +1,30 @@
 plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, ...)
-  {
-    zeros <- which(apply(abs(x$beta),1,sum)==0)
-    ind <- -c(which(x$group==0),zeros)
-    beta <- x$beta[ind,,drop=FALSE]
-    g <- as.numeric(as.factor(x$group[ind]))
-    p <- nrow(beta)
-    l <- x$lambda
-    n.g <- max(g)
-
-    if (log.l)
-      {
-        l <- log(l)
-        xlab <- expression(log(lambda))
-      }
-    else xlab <- expression(lambda)
-
-    plot.args <- list(x=l, y=1:length(l), ylim=range(beta), xlab=xlab, ylab=expression(hat(beta)), type="n", xlim=rev(range(l)))
-    new.args <- list(...)
-    if (length(new.args))
-      {
-        new.plot.args <- new.args[names(new.args) %in% c(names(par()),names(formals(plot.default)))]
-        plot.args[names(new.plot.args)] <- new.plot.args
-      }
-    do.call("plot", plot.args)
-
+{
+  penalized <- which(x$group!=0)+1
+  nonzero <- which(apply(abs(coef(x)),1,sum)!=0)
+  ind <- intersect(penalized, nonzero)
+  beta <- coef(x)[ind,,drop=FALSE]
+  g <- as.numeric(as.factor(x$group[ind-1]))
+  p <- nrow(beta)
+  l <- x$lambda
+  n.g <- max(g)
+  
+  if (log.l) {
+    l <- log(l)
+    xlab <- expression(log(lambda))
+  } else xlab <- expression(lambda)
+  
+  plot.args <- list(x=l, y=1:length(l), ylim=range(beta), xlab=xlab, ylab=expression(hat(beta)), type="n", xlim=rev(range(l)))
+  new.args <- list(...)
+  if (length(new.args)) {
+    new.plot.args <- new.args[names(new.args) %in% c(names(par()),names(formals(plot.default)))]
+    plot.args[names(new.plot.args)] <- new.plot.args
+  }
+  do.call("plot", plot.args)
+  
     abline(h=0,lwd=0.5,col="gray")
     
-    line.args <- list(col=hcl(h=seq(0,360,len=(n.g+1)),l=70,c=100,alpha=alpha)[1:n.g],lwd=1+1.2^(-p/20),lty=1,pch="")
+    line.args <- list(col=hcl(h=seq(15,375,len=(n.g+1)),l=70,c=100,alpha=alpha)[1:n.g], lwd=1+2*exp(-p/20), lty=1, pch="")
     if (length(new.args)) line.args[names(new.args)] <- new.args
     line.args$x <- l
     line.args$y <- t(beta)
