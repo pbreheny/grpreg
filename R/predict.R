@@ -1,14 +1,25 @@
-predict.grpreg <- function(object,X,which=1:length(object$lambda),type=c("link","response","class","coefficients"),...)
-  {
-    type <- match.arg(type)
-    if (type=="coefficients") return(object$beta[,which])
-    eta <- t(object$beta[1,which] + t(X%*%object$beta[-1,which]))
-    if (object$family=="gaussian" | type=="link") return(eta)
-    pihat <- exp(eta)/(1+exp(eta))
-    if (type=="response") return(pihat)
-    if (type=="class") return(eta>0)
+predict.grpreg <- function(object, X, lambda, which=1:length(object$lambda), type=c("link","response","class","coefficients"),...)
+{
+  type <- match.arg(type)
+  beta <- coef.grpreg(object, lambda=lambda, which=which)
+  if (type=="coefficients") return(object$beta[,which])
+  if (missing(X)) stop("Must supply X")
+  eta <- sweep(X %*% beta[-1,,drop=FALSE], 2, beta[1,], "+")
+  if (object$family=="gaussian" | type=="link") return(eta)
+  pihat <- exp(eta)/(1+exp(eta))
+  if (type=="response") return(pihat)
+  if (type=="class") return(eta>0)
+}
+coef.grpreg <- function(object, lambda, which=1:length(object$lambda), ...)
+{
+  if (!missing(lambda)) {
+    ind <- approx(object$lambda, seq(object$lambda), lambda)$y
+    l <- floor(ind)
+    r <- ceiling(ind)
+    w <- ind %% 1
+    beta <- (1-w)*object$beta[,l] + w*object$beta[,r]
+    if (length(lambda) > 1) colnames(beta) <- round(lambda,4)
   }
-coef.grpreg <- function(object,which=1:length(object$lambda),...)
-  {
-    return(object$beta[,which])
-  }
+  else beta <- object$beta[,which]
+  return(beta)
+}

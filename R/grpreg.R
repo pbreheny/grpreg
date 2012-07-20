@@ -1,11 +1,10 @@
-##grpreg <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial"), penalty=c("geMCP","geLasso","gMCP","gBridge","gLasso"), nlambda=100, lambda, lambda.min=ifelse(n>p,.001,.05), lambda.max, alpha=1, tau=1/3, eps=.005, max.iter=1000, dfmax=p, delta=1e-8, gamma, group.multiplier=rep(1,J), verbose=FALSE, warn.conv=TRUE)
-grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD", "gMCP", "gBridge", "gLasso"), family=c("gaussian","binomial"), nlambda=100, lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05}, alpha=1, eps=.005, max.iter=1000, dfmax=p, gamma=3, group.multiplier=rep(1,J), warn=TRUE, ...)
+grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD", "gMCP", "gBridge", "gLasso"), family=c("gaussian","binomial"), nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05}, alpha=1, eps=.005, max.iter=1000, dfmax=p, gamma = 3, group.multiplier=rep(1,J), warn=TRUE, ...)
 {
   ## Check for errors
   family <- match.arg(family)
-  pen <- match.arg(penalty)
+  penalty <- match.arg(penalty)
   if (penalty=="gLasso") penalty <- "grLasso"
-  if (penalty=="gBridge") gBridge(...)
+  if (penalty=="gBridge") stop("gBridge has been divorced from the grpreg function; use the gBridge() function instead")  
   if (alpha > 1 | alpha <= 0) stop("alpha must be in (0,1]")
   if (length(group)!=ncol(X)) stop("group does not match X")
   J <- max(group)
@@ -17,27 +16,33 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   XX <- standardize(X)
   center <- attr(XX, "center")
   scale <- attr(XX, "scale")
-  if (strtrim("penalty",2)=="gr") XX <- orthogonalize(XX)
+  if (strtrim(penalty,2)=="gr") XX <- orthogonalize(XX, group)
   yy <- if (family=="gaussian") y - mean(y) else y
-  lambda <- setupLambda(XX, yy, group, family, penalty, alpha, lambda.min, nlambda, gamma, group.multiplier)
+  if (missing(lambda)) {
+    lambda <- setupLambda(XX, yy, group, family, penalty, alpha, lambda.min, nlambda, gamma, group.multiplier)
+    user.lambda <- FALSE
+  } else {
+    nlambda <- length(lambda)
+    user.lambda <- TRUE
+  }
 
   ## Fit
   n <- length(yy)
   p <- ncol(XX)
   tau <- 1/3
   if (family=="gaussian") {
-    fit <- .C("gpPathFit_gaussian", double(p*nlambda), integer(nlambda), double(nlambda), as.double(XX), as.double(yy), as.integer(group), as.integer(n), as.integer(p), penalty, as.integer(J), as.integer(K), as.double(lambda*alpha), as.double(lambda*(1-alpha)), as.integer(nlambda), as.double(eps), as.integer(max.iter), as.double(gamma), as.double(tau), as.integer(dfmax), as.integer(group.multiplier))
+    fit <- .C("gpPathFit_gaussian", double(p*nlambda), integer(nlambda), double(nlambda), double(nlambda), as.double(XX), as.double(yy), as.integer(group), as.integer(n), as.integer(p), penalty, as.integer(J), as.integer(K), as.double(lambda*alpha), as.double(lambda*(1-alpha)), as.integer(nlambda), as.double(eps), as.double(0), as.integer(max.iter), as.double(gamma), as.double(tau), as.integer(dfmax), as.integer(group.multiplier), as.integer(user.lambda))
     b <- rbind(mean(y), matrix(fit[[1]], nrow=p))
-    ## loss <- fit[[2]]
     iter <- fit[[2]]
-    df <- fit[[3]]
+    df <- fit[[3]] + 1 ## Intercept
+    loss <- fit[[4]]
   }
   if (family=="binomial") {
-    fit <- .C("gpPathFit_binomial", double(nlambda), double(p*nlambda), integer(nlambda), double(nlambda), as.double(XX), as.double(yy), as.integer(group), as.integer(n), as.integer(p), penalty, as.integer(J), as.integer(K), as.double(lambda*alpha), as.double(lambda*(1-alpha)), as.integer(nlambda), as.double(eps), as.integer(max.iter), as.double(gamma), as.double(tau), as.double(group.multiplier), as.integer(dfmax), as.integer(warn))
+    fit <- .C("gpPathFit_binomial", double(nlambda), double(p*nlambda), integer(nlambda), double(nlambda), double(nlambda), as.double(XX), as.double(yy), as.integer(group), as.integer(n), as.integer(p), penalty, as.integer(J), as.integer(K), as.double(lambda*alpha), as.double(lambda*(1-alpha)), as.integer(nlambda), as.double(eps), as.double(0), as.integer(max.iter), as.double(gamma), as.double(tau), as.double(group.multiplier), as.integer(dfmax), as.integer(warn), as.integer(user.lambda))
     b <- rbind(fit[[1]], matrix(fit[[2]], nrow=p))
-    ## loss <- fit[[3]]
     iter <- fit[[3]]
     df <- fit[[4]]
+    loss <- fit[[5]]
   }
   
   ## Eliminate saturated lambda values, if any
@@ -46,13 +51,11 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   iter <- iter[ind]
   lambda <- lambda[ind]
   df <- df[ind]
-  
+  if (warn & any(iter==max.iter)) warning("Algorithm failed to converge for all values of lambda")
+
   ## Unstandardize
-  if (strtrim("penalty",2)=="gr") beta <- unorthogonalize(b, XX, group)
+  if (strtrim(penalty,2)=="gr") b <- unorthogonalize(b, XX, group)
   beta <- unstandardize(b, center, scale)
-  
-  ## print(mean(y) + XX %*% b[-1,])
-  ## print(cbind(1,X) %*% beta)
   
   ## Names
   if (is.null(colnames(X))) varnames <- paste("V",1:ncol(X),sep="")
@@ -65,7 +68,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
                  group=group,
                  lambda=lambda,
                  alpha=alpha,
-                 loss = calcL(cbind(1,X),y,beta,family),
+                 loss = loss,
                  n = length(y),
                  penalty=penalty,
                  df=df,

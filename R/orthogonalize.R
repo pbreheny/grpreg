@@ -3,7 +3,7 @@ orthogonalize <- function(X, group)
   n <- nrow(X)
   J <- max(group)
   Uinv <- vector("list", J)
-  XX <- matrix(NA, nrow=n, ncol=ncol(X))  
+  XX <- matrix(NA, nrow=n, ncol=ncol(X))
   for (j in 1:J) {
     ind <- which(group==j)
     U <- chol(crossprod(X[,ind])/n)

@@ -6,184 +6,9 @@
 #include <R_ext/Applic.h>
 
 static double *vector(int n);
-static void free_vector(double *v);
-static double **matrix(int nr, int nc);
-static void free_matrix(double **M, int nr);
-static double **as_matrix(double *v, int nr, int nc);
-static void as_vector(double *v, double **M, int nr, int nc);
-
-static double *vector(int n) {
-  double *v;
-  v = Calloc(n, double);
-  return v;
-}
-
-static void free_vector(double *v) {
-  Free(v);
-}
-
-static double **matrix(int nr, int nc) {
-  int   i;
-  double **M;
-  M = Calloc(nr, double *);
-  for (i = 0; i < nr; i++) M[i] = Calloc(nc, double);
-  return M;
-}
-
-static void free_matrix(double **M, int nr) {
-  int   i;
-  for (i = 0; i < nr; i++) Free(M[i]);
-  Free(M);
-}
-
-static double **as_matrix(double *v, int nr, int nc) {
-  int i,j;
-  double **M;
-
-  M = Calloc(nr, double *);
-
-  for (i = 0; i < nr; i++) M[i] = Calloc(nc, double);
-  for (j = 0; j < nc; j++) {
-    for (i = 0; i < nr; i++) M[i][j] = v[j*nr+i];
-  }
-  return M;
-}
-
-static double **t_as_matrix(double *v, int nr, int nc)
-{
-  int i,j;
-  double **M;
-
-  M = Calloc(nr, double *);
-
-  for (i = 0; i < nr; i++) M[i] = Calloc(nc, double);
-  for (i = 0; i < nr; i++) {
-    for (j = 0; j < nc; j++) M[i][j] = v[j*nr+i];
-  }
-  return M;
-}
-
-static void as_vector(double *v,double **M, int nr, int nc) {
-  int i,j;
-
-  for (j = 0; j < nc; j++) {
-    for (i = 0; i < nr; i++) v[j*nr+i] = M[i][j];
-  }
-}
-
-static int checkConvergence(double *beta_new, double *beta_old, double eps, int p) {
-  int j;
-  int converged = 1;
-  for (j=0; j < p; j++) {
-    if (beta_new[j]!=0 & beta_old[j]!=0) {
-      if (fabs((beta_new[j]-beta_old[j])/beta_old[j]) > eps) {
-	converged = 0;
-	break;
-      } 
-    } else if (beta_new[j]==0 & beta_old[j]!=0) {
-      converged = 0;
-      break;
-    } else if (beta_new[j]!=0 & beta_old[j]==0) {
-      converged = 0;
-      break;
-    }
-  }
-  return(converged);
-}
-
-static double S(double x,double y)
-{
-  if (fabs(x) <= y) return(0); else {
-    if (x > 0) return(x-y);
-    else return(x+y);
-  }
-}
-
-static void gLasso(double *beta, double *x, double *w, double *r, int K0, int Kj, int n, double lambda, double delta, double lambda2, double *df)
-{
-  int i, j, k, j1, j2, k1, k2, K;
-  K = Kj - K0;
-  double sxr, sxx, oldbeta, gradient_norm, sbb, ljk, s;
-  double *u;
-  u = vector(K);
-
-  for (j=K0; j<Kj; j++) sbb = sbb + pow(beta[j],2);
-  if (sbb==0)
-    {
-      gradient_norm = 0;
-      for (j1=K0; j1<Kj; j1++)
-	{
-	  u[j1-K0] = 0;
-	  for (i=0; i<n; i++) u[j1-K0] = u[j1-K0] + x[n*j1+i]*w[i]*r[i];
-	  gradient_norm = gradient_norm + pow(u[j1-K0],2);
-	}
-      gradient_norm = sqrt(gradient_norm);
-    }
-  else
-    {
-      gradient_norm = 0;
-      for (j1=K0; j1<Kj; j1++)
-	{
-	  u[j1-K0] = 0;
-	  for (i=0; i<n; i++)
-	    {
-	      u[j1-K0] = u[j1-K0] + x[n*j1+i]*w[i]*r[i];
-	      for (j2=K0; j2<Kj; j2++)
-		{
-		  u[j1-K0] = u[j1-K0] + x[n*j1+i]*w[i]*x[n*j2+i]*beta[j2];
-		}
-	    }
-	  gradient_norm = gradient_norm + pow(u[j1-K0],2);
-	}
-      gradient_norm = sqrt(gradient_norm);
-    }
-  /*if (gradient_norm/n > sqrt(K)*lambda)*/
-  if (gradient_norm/n > lambda)
-    {
-      sbb = sbb + delta;
-      for (j=K0; j<Kj; j++)
-	{
-	  oldbeta = beta[j];
-	  sxr=0;
-	  for (i=0; i<n; i++) sxr = sxr + w[i]*x[n*j+i]*r[i];
-	  if (w[0]==1) sxx=n;
-	  else
-	    {
-	      sxx=0;
-	      for (i=0; i<n; i++) sxx = sxx + w[i]*pow(x[n*j+i],2);
-	    }
-	  ljk = lambda/sqrt(sbb);
-	  beta[j] = (sxr+sxx*oldbeta)/(sxx+n*(ljk + lambda2));
-	  for (i=0; i<n; i++) r[i] = r[i] - (beta[j]-oldbeta)*x[n*j+i];
-	  sbb = sbb + pow(beta[j],2) - pow(oldbeta,2);
-	  df[0] = df[0] + fabs(beta[j]) / fabs(sxr/sxx+beta[j]);
-	}
-    }
-  else if (beta[K0]!=0)
-    {
-      for (j=K0; j<Kj; j++)
-	{
-	  oldbeta = beta[j];
-	  beta[j] = 0;
-	  for (i=0; i<n; i++) r[i] = r[i] + oldbeta*x[n*j+i];
-	}
-    }
-  free_vector(u);
-}
-
-static double MCP(double theta, double l, double a)
-{
-  theta = fabs(theta);
-  if (theta <= a*l) return(l*theta - pow(theta,2)/(2*a));
-  else return(a*pow(l,2)/2);
-}
-
-static double dMCP(double theta, double l, double a)
-{
-  theta = fabs(theta);
-  if (theta < a*l) return(l-theta/a);
-  else return(0);
-}
+static int checkConvergence(double *beta, double *beta_old, double eps, int l, int J);
+static double gLoss(double *r, int n);
+static double S(double z, double l);
 
 static void gLCD(double *beta, char *penalty, double *x, double *w, double *r, int K0, int Kj, int n, double lambda, double lambda2, double gamma, double tau, double *df)
 {
@@ -417,6 +242,70 @@ static void gpPathFit(double *beta, int *counter, double *df, double *x, double 
   free_vector(beta_old);
   free_vector(w);
   free_vector(r);
+}
+
+static void gBridgeFit_gaussian(double *beta, int *iter, double *df, double *loss, double *x, double *y, int *group, int *n_, int *p_, int *J_, int *K, double *lam1, double *lam2, int *L_, double *eps_, double *delta_, int *max_iter_, double *gamma_, int *dfmax_, int *group_multiplier)
+{
+  // Initialization of variables
+  int n=n_[0]; int p=p_[0]; int J=J_[0]; int L=L_[0]; int max_iter=max_iter_[0]; double eps=eps_[0]; double delta=delta[0]; double gamma=gamma_[0]; int dfmax=dfmax_[0]; 
+  double *r, *beta_old;
+  r = vector(n);
+  for (int i=0; i<n; i++) r[i] = y[i];
+  beta_old = vector(p);
+
+  // Path
+  for (int l=0; l<L; l++) {
+    //Rprintf("lambda: %f %f\n",lam1[l], lam2[l]);
+    if (l != 0) for (int j=0; j<p; j++) beta_old[j] = beta[(l-1)*p+j];
+    while (iter[l] < max_iter) {
+      int converged = 0;
+      iter[l] = iter[l] + 1;
+
+      // Check dfmax
+      int active = 0;
+      for (int j=0; j<p; j++) if (beta[l*p+j]!=0) active++;
+      if (active > dfmax) {
+	for (int ll=l; ll<L; ll++) {
+	  for (int j=0; j<p; j++) beta[ll*p+j] = R_NaReal;
+	}
+	Free(beta_old);
+	Free(r);
+	return;
+      }
+      df[l] = 0;
+
+      // Update unpenalized covariates
+      //Rprintf("b: %f  r1:%f  r2:%f\n", beta[l*p+0],  r[0],  r[1]);
+      int j;
+      for (j=0;; j++) {
+	if (group[j]!=0) break;
+	double z=0;
+	for (int i=0; i<n; i++) z = z + x[j*n+i]*r[i];
+	beta[l*p+j] = z/n + beta_old[j];
+        for (int i=0; i<n; i++) r[i] = r[i] - (beta[l*p+j] - beta_old[j]) * x[j*n+i];
+	df[l] = df[l] + 1;
+      }
+
+      // Update penalized groups
+      for (int g=0; g<J; g++) {
+	int K0 = j;
+	int Kj = j + K[g];
+	if (strncmp(penalty, "gr", 2)==0) gd_gaussian(beta, x, r, K0, Kj, n, l, p, penalty, lam1[l]*group_multiplier[g], lam2[l], gamma, &df[l], beta_old);
+	else gLCD_gaussian(beta, penalty, x, r, K0, Kj, n, l, p, lam1[l]*group_multiplier[g], lam2[l], gamma, tau, &df[l], beta_old);
+	j = Kj;
+      }
+
+      // Check for convergence      
+      if (checkConvergence(beta, beta_old, eps, l, p)) {
+	converged  = 1;
+	loss[l] = gLoss(r,n);
+	break;
+       }
+      for (j=0; j<p; j++) beta_old[j] = beta[l*p+j];
+    }
+  }
+  Free(beta_old);
+  Free(r);
 }
 
 static const R_CMethodDef cMethods[] = {
