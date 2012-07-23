@@ -12,30 +12,44 @@ during 1986.  This data frame is a reparameterization of the
 data(birthwt.grpreg)
 }
 \format{
-This data frame contains the following columns:
-\describe{
-\item{low}{indicator of birth weight less than 2.5kg}
-\item{bwt}{birth weight in kilograms}
-\item{age1,age2,age3}{Orthogonal polynomials of
-  first, second, and third degree representing mother's age in years}
-\item{lwt1,lwt2,lwt3}{Orthogonal polynomials of
-  first, second, and third degree representing mother's weight in pounds
-  at last menstrual period}
-\item{white,black}{Indicator functions for mother's race;
-  "other" is reference group}
-\item{smoke}{smoking status during pregnancy}
-\item{ptl1,ptl2m}{Indicator functions for one or for two or
-  more previous premature labors, respectively.  No previous premature
-  labors is the reference category.}
-\item{ht}{history of hypertension}
-\item{ui}{presence of uterine irritability}
-\item{ftv1,ftv2,ftv3m}{Indicator functions for
-  one, for two, or for three or more physician visits during the first
-  trimester, respectively.  No visits is the reference category.}}}
+  This data frame contains the following columns:
+  \itemize{
+    \item{\code{low}} Indicator of birth weight less than 2.5kg
+    \item{\code{bwt}} Birth weight in kilograms
+    \item{\code{age1,age2,age3}} Orthogonal polynomials of
+      first, second, and third degree representing mother's age in years
+    \item{\code{lwt1,lwt2,lwt3}} Orthogonal polynomials of
+      first, second, and third degree representing mother's weight in pounds
+      at last menstrual period
+    \item{\code{white,black}} Indicator functions for mother's race;
+      "other" is reference group
+    \item{\code{smoke}} smoking status during pregnancy
+    \item{\code{ptl1,ptl2m}} Indicator functions for one or for two or
+      more previous premature labors, respectively.  No previous premature
+      labors is the reference category.
+    \item{\code{ht}} History of hypertension
+    \item{\code{ui}} Presence of uterine irritability
+    \item{\code{ftv1,ftv2,ftv3m}} Indicator functions for
+      one, for two, or for three or more physician visits during the first
+      trimester, respectively.  No visits is the reference category.
+    }
+  }
+  
 \source{\code{MASS}.  \code{R} package.  Available at \code{http://cran.r-project.org}.}
 \references{
-  Venables, W. N. and Ripley, B. D. (2002) \emph{Modern Applied
-    Statistics with S.} Fourth edition. Springer. \cr
-  Hosmer, D.W. and Lemeshow, S. (1989) \emph{Applied Logistic
-    Regression.} New York: Wiley}
+  \itemize{
+    \item Venables, W. N. and Ripley, B. D. (2002) \emph{Modern Applied
+      Statistics with S.} Fourth edition. Springer.
+    \item Hosmer, D.W. and Lemeshow, S. (1989) \emph{Applied Logistic
+      Regression.} New York: Wiley}
+}
+\examples{
+data(birthwt.grpreg)
+hist(birthwt.grpreg$bwt, xlab="Child's birth weight", main="")
+table(birthwt.grpreg$low)
+## See examples in ?birthwt (MASS package)
+##   for more about the data set
+## See examples in grpreg for use of this data set
+##   with group penalized regression models
+}
 \keyword{datasets}

@@ -1,13 +1,14 @@
 Package: grpreg
 Title: Regularization paths for regression models with grouped
         covariates
-Version: 2.0-0
-Date: 2011-07-26
+Version: 2.0-1
+Date: 2012-07-22
 Author: Patrick Breheny
 Maintainer: Patrick Breheny <patrick.breheny@uky.edu>
-Depends: 
-Description: Efficient algorithms for fitting the regularization path
-        of linear or logistic regression models with grouped penalties.
-        The algorithm is based on the idea of a locally approximated
-        coordinate descent.
+Depends: R (>= 2.13.0)
+Description: Efficient algorithms for fitting the regularization path of
+ linear or logistic regression models with grouped penalties,
+ such as group lasso, group MCP, and group SCAD.  The algorithms
+ are based on the idea of either locally approximated coordinate
+ descent or group descent, depending on the penalty.
 License: GPL-2

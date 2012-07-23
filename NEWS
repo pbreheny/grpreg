@@ -1,20 +1,17 @@
 *   Minor change
 **  Substantial change
-*** Major change
 
 2.0-0
-	** Added group exponential penalties
-	*  Internal refactoring of code
-	*  Added dfmax option
-	*  Added group.multiplier option
-	*  Allow specification of unpenalized groups
-
-2.0-0
+	** New algorithm for group lasso
+	** (L2) Group MCP, group SCAD methods added
 	** Added cv.ncvreg to facilitate cross-validation
 	*  Extensive internal refactoring of code
 	*  Added dfmax option
 	*  Added group.multiplier option
 	*  Allows specification of unpenalized groups
+	*  standardize and orthogonalize functions added
+	*  gBridge now divorced from grpreg and given separate function
+	*  Much more extensive and reproducible code testing
 
 1.2-0
 	*  DESCRIPTION: Fixed contact info

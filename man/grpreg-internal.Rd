@@ -6,16 +6,18 @@
 \alias{unstandardize}
 \description{Internal grpreg functions}
 \usage{
-calcL(X,y,beta,family)
-setupLambda(X,y,group,family,penalty,lambda.max,lambda.min,nlambda,gamma,group.multiplier)
-unstandardize(beta,meanx,normx)
+setupLambda(X, y, group, family, penalty, alpha, lambda.min, nlambda, group.multiplier)
+setupLambda.gBridge(X, y, group, family, alpha, lambda.min, lambda.max, nlambda, gamma, group.multiplier)
+standardize(X)
+unstandardize(b, center, scale)
+orthogonalize(X, group)
+unorthogonalize(b, XX, group)
 }
 \author{Patrick Breheny <patrick.breheny@uky.edu>}
-\details{These are not intended for use by users. \code{calcL}
-  calculates the loss function of a model given a formatted Data object
-  and a vector of coefficients beta.  \code{setupLambda} creates an
-  appropriate vector of regularization parameter values.
-  \code{unstandardize} returns standardized coefficients to
-  their original scale.
+\details{These are not intended for use by users. \code{setupLambda} and
+  \code{setupLambda.gBridge} create appropriate vectors of
+  regularization parameter values. The functions of \code{standardize},
+  \code{unstandardize}, \code{orthogonalize}, and \code{unorthogonalize}
+  are self-explanatory.
   }
 \keyword{internal}

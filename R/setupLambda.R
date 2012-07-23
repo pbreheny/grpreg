@@ -1,4 +1,4 @@
-setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, nlambda, gamma, group.multiplier)
+setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, nlambda, group.multiplier)
 {
   ## Fit to unpenalized covariates
   n <- length(y)
@@ -50,7 +50,7 @@ setupLambda.gBridge <- function(X, y, group, family, alpha, lambda.min, lambda.m
     lambda.max <- max(maxGradient/group.multiplier) / alpha
   }
   if (lambda.min==0) {
-    lambda <- c(exp(seq(log(lambda.max),log(.001*lambda.max),len=nlambda-1)),0)                  
+    lambda <- c(exp(seq(log(lambda.max), log(.001*lambda.max), len=nlambda-1)),0)                  
   } else {
     lambda <- exp(seq(log(lambda.max),log(lambda.min*lambda.max),len=nlambda))
   }

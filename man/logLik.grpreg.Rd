@@ -5,7 +5,8 @@
 \description{Calculates the log likelihood and degrees of freedom for a
   fitted grpreg object.}
 \usage{
-\method{logLik}{grpreg}(object, df.method=c("default","active"), ...)
+\method{logLik}{grpreg}(object, df.method=c("default","active"),
+REML=FALSE, ...)
 }
 \arguments{
   \item{object}{A fitted grpreg object.}
@@ -13,6 +14,8 @@
     One of: \code{"active"}, which counts the number of nonzero
     coefficients; or \code{"default"}, which uses the calculated
     \code{df} returned by \code{grpreg}.  Default is \code{"default"}.}
+  \item{REML}{Use restricted MLE for estimation of the scale parameter
+    in a gaussian model?  Default is FALSE.}
   \item{\dots}{For S3 method compatibility.}}
 \details{
   Exists mainly for use with \code{'AIC'} and \code{'BIC'}.
@@ -27,9 +30,6 @@
   display correctly.  However, it works with 'AIC' and 'BIC' without any
   glitches and returns the expected vectorized output.
   }
-\references{Breheny, P. and Huang, J. (2009) Penalized methods for
-  bi-level variable selection.  Statistics and its interface, 2:
-  369-380.}
 \author{Patrick Breheny <patrick.breheny@uky.edu>}
 \seealso{\code{grpreg}}
 \examples{
@@ -38,9 +38,7 @@ X <- as.matrix(birthwt.grpreg[,-1:-2])
 y <- birthwt.grpreg$bwt
 group <- c(1,1,1,2,2,2,3,3,4,5,5,6,7,8,8,8)
 fit <- grpreg(X,y,group,penalty="gMCP")
-logLik(fit) ## Display is glitchy
-AIC(fit) ## Works fine
-\dontrun{BIC(fit) ## Works on R > 2.13-0, or if certain packages are loaded}
+logLik(fit) ## Display is glitchy for vectors
+AIC(fit)
+BIC(fit)
 }
-\keyword{models}
-\keyword{regression}

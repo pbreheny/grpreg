@@ -19,7 +19,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   if (strtrim(penalty,2)=="gr") XX <- orthogonalize(XX, group)
   yy <- if (family=="gaussian") y - mean(y) else y
   if (missing(lambda)) {
-    lambda <- setupLambda(XX, yy, group, family, penalty, alpha, lambda.min, nlambda, gamma, group.multiplier)
+    lambda <- setupLambda(XX, yy, group, family, penalty, alpha, lambda.min, nlambda, group.multiplier)
     user.lambda <- FALSE
   } else {
     nlambda <- length(lambda)
@@ -47,7 +47,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   
   ## Eliminate saturated lambda values, if any
   ind <- !is.na(b[p,])
-  b <- b[,ind,drop=FALSE]
+  b <- b[, ind, drop=FALSE]
   iter <- iter[ind]
   lambda <- lambda[ind]
   df <- df[ind]

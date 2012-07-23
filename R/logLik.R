@@ -1,4 +1,4 @@
-logLik.grpreg <- function(object, df.method=c("default","active"), REML=FALSE)
+logLik.grpreg <- function(object, df.method=c("default","active"), REML=FALSE, ...)
 {
   df.method <- match.arg(df.method)
   n <- as.numeric(object$n)

@@ -1,7 +1,7 @@
 \name{plot.grpreg}
 \alias{plot.grpreg}
-\title{plot coefficients from a "grpreg" object}
-\description{Produces a plot of the coefficient paths for a fitted \code{"grpreg"} object.}
+\title{Plot coefficients from a "grpreg" object}
+\description{Produces a plot of the coefficient paths for a fitted \code{grpreg} object.}
 \usage{
 \method{plot}{grpreg}(x, alpha=1, legend.loc, log.l = FALSE, ...)
 }
@@ -15,9 +15,6 @@
   \item{\dots}{Other graphical parameters to \code{plot},
     \code{matlines}, or \code{legend}}
 }
-\references{Breheny, P. and Huang, J. (2009) Penalized methods for
-  bi-level variable selection.  Statistics and its interface, 2:
-  369-380.}
 \author{Patrick Breheny <patrick.breheny@uky.edu>}
 \seealso{\code{grpreg}}
 \examples{
@@ -25,10 +22,13 @@ data(birthwt.grpreg)
 X <- as.matrix(birthwt.grpreg[,-1:-2])
 y <- birthwt.grpreg$bwt
 group <- c(1,1,1,2,2,2,3,3,4,5,5,6,7,8,8,8)
-fit <- grpreg(X,y,group,penalty="gMCP",lambda.min=.5)
+fit <- grpreg(X, y, group, penalty="grLasso")
 plot(fit)
-plot(fit,legend.loc="topleft",lwd=6,alpha=0.5)
-plot(fit,legend.loc="topleft",col=c("black","red","green","blue","yellow","purple","orange","brown"),legend=c("A","B","C","D","E","F","G","H"))
+myColors <- c("black", "red", "green", "blue", "yellow", "purple",
+"orange", "brown")
+plot(fit, legend.loc="topleft", col=myColors)
+labs <- c("Mother's Age", "Mother's weight", "Race", "Smoking",
+"# Premature", "Hypertension", "Uterine irritability", "# Phys. visits")
+plot(fit, legend.loc="topleft", lwd=6, alpha=0.5, legend=labs)
 }
-\keyword{models}
-\keyword{regression}
+\keyword{graphics}

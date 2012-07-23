@@ -29,7 +29,7 @@ plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, ...)
   if (length(new.args)) line.args[names(new.args)] <- new.args
   line.args$x <- l
   line.args$y <- t(beta)
-  line.args$col <- rep(cols,table(g))
+  line.args$col <- rep(line.args$col, table(g))
   do.call("matlines",line.args)
   
   if(!missing(legend.loc)) {
