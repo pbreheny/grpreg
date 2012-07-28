@@ -24,7 +24,8 @@ plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, ...)
   
   abline(h=0,lwd=0.5,col="gray")
 
-  cols <- hcl(h=seq(15,375,len=(n.g+1)),l=60,c=150,alpha=alpha)[1:n.g]
+  cols <- hcl(h=seq(15,375,len=max(4,n.g+1)),l=60,c=150,alpha=alpha)
+  cols <- if (n.g==2) cols[c(1,3)] else cols[1:n.g]
   line.args <- list(col=cols, lwd=1+2*exp(-p/20), lty=1, pch="")
   if (length(new.args)) line.args[names(new.args)] <- new.args
   line.args$x <- l

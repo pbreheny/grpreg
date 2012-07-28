@@ -5,13 +5,6 @@
 #include <R.h>
 #include <R_ext/Applic.h>
 
-// Allocates memory for a vector of size n
-static double *vector(int n) {
-  double *v;
-  v = Calloc(n, double);
-  return v;
-}
-
 // Check for convergence of beta[l]
 static int checkConvergence(double *beta, double *beta_old, double eps, int l, int J)
 {
@@ -32,6 +25,23 @@ static int checkConvergence(double *beta, double *beta_old, double eps, int l, i
     }
   }
   return(converged);
+}
+
+// Cross product of the jth column of x with y
+static double crossprod(double *x, double *y, int n, int j)
+{
+  double val = 0;
+  int nn = n*j;
+  for (int i=0; i<n; i++) val += x[nn+i] * y[i];
+  return(val);
+}
+
+// Mean of x
+static double mean(double *x, int n)
+{
+  double val = 0;
+  for (int i=0; i<n; i++) val += x[i];
+  return(val/n);
 }
 
 // Gaussian loss (squared error loss)
@@ -100,51 +110,41 @@ static double dMCP(double theta, double l, double a)
 }
 
 // Group descent update
-static void gd_gaussian(double *beta, double *x, double *r, int K0, int Kj, int n, int l, int p, char *penalty, double lam1, double lam2, double gamma, double *df, double *beta_old)
+static void gd_gaussian(double *beta, double *x, double *r, int g, int *K1, int *active, int n, int l, int p, char *penalty, double lam1, double lam2, double gamma, double *df, double *beta_old)
 {
   // Calculate z
-  int K = Kj - K0;
-  double *z;
-  z = vector(K);
-  for (int j=K0; j<Kj; j++) {
-    for (int i=0; i<n; i++) z[j-K0] = z[j-K0] + x[n*j+i]*r[i];
-    z[j-K0] = z[j-K0]/n + beta_old[j];
-  }
-  double z_norm = 0;
-  for (int j=0; j<K; j++) z_norm = z_norm + pow(z[j],2);
-  z_norm = sqrt(z_norm);
+  int K = K1[g+1] - K1[g];
+  double *z = Calloc(K, double);
+  for (int j=K1[g]; j<K1[g+1]; j++) z[j-K1[g]] = crossprod(x, r, n, j)/n + beta_old[j];
+  double z_norm = norm(z,K);
 
   // Update b
   double len;
   if (strcmp(penalty, "grLasso")==0) len = S(z_norm, lam1) / (1+lam2);
   if (strcmp(penalty, "grMCP")==0) len = F(z_norm, lam1, lam2, gamma);
   if (strcmp(penalty, "grSCAD")==0) len = Fs(z_norm, lam1, lam2, gamma);
-  for (int j=K0; j<Kj; j++) beta[l*p+j] = len * z[j-K0] / z_norm;
-  //Rprintf("znorm: %f   len: %f\n", z_norm, len);
-
-  // Update r
-  for (int j=K0; j<Kj; j++) {
-    if (beta[l*p+j] != beta_old[j]) {
-      for (int i=0; i<n; i++) r[i] = r[i] - (beta[l*p+j] - beta_old[j]) * x[n*j+i];
+  if (len != 0 | active[g]) {
+    // If necessary, update beta and r
+    for (int j=K1[g]; j<K1[g+1]; j++) {
+      beta[l*p+j] = len * z[j-K1[g]] / z_norm;
+      double shift = beta[l*p+j]-beta_old[j];
+      for (int i=0; i<n; i++) r[i] -= x[n*j+i] * shift;
     }
+    if (len > 0) active[g] = 1; else active[g] = 0;
   }
 
   // Update df
-  df[0] = df[0] + K * len / z_norm;
+  if (len > 0) *df = *df + K * len / z_norm;
   Free(z);
 }
 
 // Group descent update -- binomial
-static void gd_binomial(double *beta, double *x, double *r, int K0, int Kj, int n, int l, int p, char *penalty, double lam1, double lam2, double gamma, double *df, double *beta_old)
+static void gd_binomial(double *beta, double *x, double *r, int g, int *K1, int *active, int n, int l, int p, char *penalty, double lam1, double lam2, double gamma, double *df, double *beta_old)
 {
   // Calculate z
-  int K = Kj - K0;
-  double *z;
-  z = vector(K);
-  for (int j=K0; j<Kj; j++) {
-    for (int i=0; i<n; i++) z[j-K0] = z[j-K0] + x[n*j+i] * r[i];
-    z[j-K0] = z[j-K0]/n + beta_old[j];
-  }
+  int K = K1[g+1] - K1[g];
+  double *z = Calloc(K, double);
+  for (int j=K1[g]; j<K1[g+1]; j++) z[j-K1[g]] = crossprod(x, r, n, j)/n + beta_old[j];
   double z_norm = norm(z,K);
   double v = 0.25;
 
@@ -153,14 +153,14 @@ static void gd_binomial(double *beta, double *x, double *r, int K0, int Kj, int 
   if (strcmp(penalty, "grLasso")==0) len = S(v * z_norm, lam1) / (v * (1 + lam2));
   if (strcmp(penalty, "grMCP")==0) len = F(v * z_norm, lam1, lam2, gamma) / v;
   if (strcmp(penalty, "grSCAD")==0) len = Fs(v * z_norm, lam1, lam2, gamma) / v;
-  for (int j=K0; j<Kj; j++) beta[l*p+j] = len * z[j-K0] / z_norm;
-  //for (int j=K0; j<Kj; j++) beta[l*p+j] = 4 * (len * u[j-K0]) / (u_norm * (1+lam2));
-
-  // Update r
-  for (int j=K0; j<Kj; j++) {
-    if (beta[l*p+j] != beta_old[j]) {
-      for (int i=0; i<n; i++) r[i] = r[i] - (beta[l*p+j] - beta_old[j]) * x[n*j+i];
+  if (len != 0 | active[g]) {
+    // If necessary, update beta and r
+    for (int j=K1[g]; j<K1[g+1]; j++) {
+      beta[l*p+j] = len * z[j-K1[g]] / z_norm;
+      double shift = beta[l*p+j]-beta_old[j];
+      for (int i=0; i<n; i++) r[i] -= x[n*j+i] * shift;
     }
+    if (len > 0) active[g] = 1; else active[g] = 0;
   }
 
   // Update df
@@ -169,19 +169,19 @@ static void gd_binomial(double *beta, double *x, double *r, int K0, int Kj, int 
 }
 
 // Groupwise local coordinate descent updates
-static void gLCD_gaussian(double *beta, char *penalty, double *x, double *r, int K0, int Kj, int n, int l, int p, double lam1, double lam2, double gamma, double tau, double *df, double *beta_old, double delta)
+static void gLCD_gaussian(double *beta, char *penalty, double *x, double *r, int g, int *K1, int n, int l, int p, double lam1, double lam2, double gamma, double tau, double *df, double *beta_old, double delta)
 {
   // Make initial local approximation
-  int K = Kj - K0;
+  int K = K1[g+1] - K1[g];
   double sG = 0; // Sum of inner penalties for group
-  if (strcmp(penalty, "geLasso")==0) for (int j=K0; j<Kj; j++) sG = sG + fabs(beta_old[j]);
-  if (strcmp(penalty, "geMCP")==0) for (int j=K0; j<Kj; j++) sG = sG + MCP(beta_old[j], lam1, gamma);
-  if (strcmp(penalty, "gMCP")==0) for (int j=K0; j<Kj; j++) sG = sG + MCP(beta_old[j], lam1, gamma);
+  if (strcmp(penalty, "geLasso")==0) for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + fabs(beta_old[j]);
+  if (strcmp(penalty, "geMCP")==0) for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + MCP(beta_old[j], lam1, gamma);
+  if (strcmp(penalty, "gMCP")==0) for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + MCP(beta_old[j], lam1, gamma);
   if (strcmp(penalty, "gBridge")==0) {
-      for (int j=K0; j<Kj; j++) sG = sG + fabs(beta_old[j]);
+      for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + fabs(beta_old[j]);
       if (sG==0) return;
       if (sG < delta) {
-	for (int j=K0; j<Kj; j++) {
+	for (int j=K1[g]; j<K1[g+1]; j++) {
 	  beta[l*p+j] = 0;
 	  for (int i=0; i<n; i++) r[i] = r[i] - (beta[l*p+j] - beta_old[j]) * x[n*j+i];
 	}
@@ -190,7 +190,7 @@ static void gLCD_gaussian(double *beta, char *penalty, double *x, double *r, int
   }
 
   // Coordinate descent
-  for (int j=K0; j<Kj; j++) {
+  for (int j=K1[g]; j<K1[g+1]; j++) {
 
     // Calculate LS sol'n
     double z=0;
@@ -208,7 +208,6 @@ static void gLCD_gaussian(double *beta, char *penalty, double *x, double *r, int
 
     // Update beta
     beta[l*p+j] = S(z, ljk) / (1+lam2);
-    //Rprintf("z: %f  ljk:%f  b:%f  oldbeta: %f\n", z, ljk, beta[l*p+j], beta_old[j]);
 
     // Update r
     if (beta[l*p+j] != beta_old[j]) {
@@ -225,27 +224,26 @@ static void gLCD_gaussian(double *beta, char *penalty, double *x, double *r, int
 }
 
 // Groupwise local coordinate descent updates -- binomial
-static void gLCD_binomial(double *beta, char *penalty, double *x, double *r, int K0, int Kj, int n, int l, int p, double lam1, double lam2, double gamma, double tau, double *df, double *beta_old, double *w, double delta)
+static void gLCD_binomial(double *beta, char *penalty, double *x, double *r, int g, int *K1, int n, int l, int p, double lam1, double lam2, double gamma, double tau, double *df, double *beta_old, double *w, double delta)
 {
   // Calculate v
-  int K = Kj - K0;
-  double *v;
-  v = vector(K);
-  for (int j=K0; j<Kj; j++) {
-    for (int i=0; i<n; i++) v[j-K0] = v[j-K0] + x[j*n+i] * w[i] * x[j*n+i];
-    v[j-K0] = v[j-K0]/n;
+  int K = K1[g+1] - K1[g];
+  double *v = Calloc(K, double);
+  for (int j=K1[g]; j<K1[g+1]; j++) {
+    for (int i=0; i<n; i++) v[j-K1[g]] += x[j*n+i] * w[i] * x[j*n+i];
+    v[j-K1[g]] = v[j-K1[g]]/n;
   }
 
   // Make initial local approximation
   double sG = 0; // Sum of inner penalties for group
-  if (strcmp(penalty, "geLasso")==0) for (int j=K0; j<Kj; j++) sG = sG + fabs(v[j-K0] * beta_old[j]) / v[j-K0];
-  if (strcmp(penalty, "geMCP")==0) for (int j=K0; j<Kj; j++) sG = sG + MCP(v[j-K0] * beta_old[j], lam1, gamma) / v[j-K0];
-  if (strcmp(penalty, "gMCP")==0) for (int j=K0; j<Kj; j++) sG = sG + MCP(v[j-K0] * beta_old[j], lam1, gamma) / v[j-K0];
+  if (strcmp(penalty, "geLasso")==0) for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + fabs(beta_old[j]);
+  if (strcmp(penalty, "geMCP")==0) for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + MCP(beta_old[j], lam1, gamma);
+  if (strcmp(penalty, "gMCP")==0) for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + MCP(beta_old[j], lam1, gamma);
   if (strcmp(penalty, "gBridge")==0) {
-      for (int j=K0; j<Kj; j++) sG = sG + fabs(beta_old[j]);
+      for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + fabs(beta_old[j]);
       if (sG==0) return;
       if (sG < delta) {
-	for (int j=K0; j<Kj; j++) {
+	for (int j=K1[g]; j<K1[g+1]; j++) {
 	  beta[l*p+j] = 0;
 	  for (int i=0; i<n; i++) r[i] = r[i] - (beta[l*p+j] - beta_old[j]) * x[n*j+i];
 	}
@@ -254,12 +252,12 @@ static void gLCD_binomial(double *beta, char *penalty, double *x, double *r, int
   }
 
   // Coordinate descent
-  for (int j=K0; j<Kj; j++) {
+  for (int j=K1[g]; j<K1[g+1]; j++) {
 
     // Calculate u
     double u = 0;
     for (int i=0; i<n; i++) u = u + x[j*n+i] * w[i] * r[i];
-    u = u/n + v[j-K0]*beta_old[j];
+    u = u/n + v[j-K1[g]]*beta_old[j];
 
     // Calculate ljk
     double ljk=0;
@@ -271,45 +269,96 @@ static void gLCD_binomial(double *beta, char *penalty, double *x, double *r, int
     }
 
     // Update beta
-    beta[l*p+j] = S(u, ljk) / (v[j-K0]*(1+lam2));
-    //Rprintf("z: %f  ljk:%f  b:%f  oldbeta: %f\n", z, ljk, beta[l*p+j], beta_old[j]);
+    beta[l*p+j] = S(u, ljk) / (v[j-K1[g]]*(1+lam2));
+    //Rprintf("u: %f  ljk:%f  b:%f  oldbeta: %f\n", u, ljk, beta[l*p+j], beta_old[j]);
 
     // Update r
     if (beta[l*p+j] != beta_old[j]) {
       for (int i=0; i<n; i++) r[i] = r[i] - (beta[l*p+j] - beta_old[j]) * x[n*j+i];
-      if (strcmp(penalty, "gBridge")==0) sG = sG + (fabs(v[j-K0]*beta[l*p+j]) - fabs(v[j-K0]*beta_old[j])) / v[j-K0];
-      if (strcmp(penalty, "geLasso")==0) sG = sG + (fabs(v[j-K0]*beta[l*p+j]) - fabs(v[j-K0]*beta_old[j])) / v[j-K0];
-      if (strcmp(penalty, "geMCP")==0) sG = sG + (MCP(v[j-K0]*beta[l*p+j], lam1, gamma) - MCP(v[j-K0]*beta_old[j], lam1, gamma)) / v[j-K0];
-      if (strcmp(penalty, "gMCP")==0) sG = sG + (MCP(v[j-K0]*beta[l*p+j], lam1, gamma) - MCP(v[j-K0]*beta_old[j], lam1, gamma)) / v[j-K0];
+      if (strcmp(penalty, "gBridge")==0) sG = sG + fabs(beta[l*p+j]) - fabs(beta_old[j]);
+      if (strcmp(penalty, "geLasso")==0) sG = sG + fabs(beta[l*p+j]) - fabs(beta_old[j]);
+      if (strcmp(penalty, "geMCP")==0) sG = sG + MCP(beta[l*p+j], lam1, gamma) - MCP(beta_old[j], lam1, gamma);
+      if (strcmp(penalty, "gMCP")==0) sG = sG + MCP(beta[l*p+j], lam1, gamma) - MCP(beta_old[j], lam1, gamma);
     }
 
     // Update df
-    df[0] = df[0] + fabs(beta[l*p+j]) / fabs(u/v[j-K0]);
+    df[0] = df[0] + fabs(beta[l*p+j]) / fabs(u/v[j-K1[g]]);
     }
   Free(v);
 }
 
-static void gpPathFit_binomial(double *beta0, double *beta, int *iter, double *df, double *Dev, double *x, double *y, int *group, int *n_, int *p_, char **penalty_, int *J_, int *K, double *lam1, double *lam2, int *L_, double *eps_, double *delta_, int *max_iter_, double *gamma_, double *tau_, double *group_multiplier, int *dfmax_, int *warn_, int *user_)
+static void gpPathFit_gaussian(double *beta, int *iter, double *df, double *loss, double *x, double *y, int *n_, int *p_, char **penalty_, int *J_, int *K1, int *K0_, double *lam1, double *lam2, int *L_, double *eps_, double *delta_, int *max_iter_, double *gamma_, double *tau_, int *dfmax_, double *group_multiplier, int *user_)
 {
-  int n=n_[0]; int p=p_[0]; char *penalty=penalty_[0]; int J=J_[0]; int L=L_[0]; int max_iter=max_iter_[0]; double eps=eps_[0]; double delta=delta_[0]; double gamma=gamma_[0]; double tau=tau_[0]; int dfmax=dfmax_[0]; int warn = warn_[0]; int user = user_[0];
+  // Initialization of variables
+  int n=n_[0]; int p=p_[0]; char *penalty=penalty_[0]; int J=J_[0]; int K0=K0_[0]; int L=L_[0]; int max_iter=max_iter_[0]; double eps=eps_[0]; double delta=delta_[0]; double gamma=gamma_[0]; double tau=tau_[0]; int dfmax=dfmax_[0]; int user=user_[0];
+  double *r = Calloc(n, double);
+  double *beta_old = Calloc(p, double);
+  for (int i=0; i<n; i++) r[i] = y[i];
+  if (strcmp(penalty, "gBridge")==0) {
+    for (int j=0; j<p; j++) {
+      beta_old[j] = crossprod(x, r, n, j)/n;
+      for (int i=0; i<n; i++) r[i] = r[i] - beta_old[j] * x[j*n+i];
+    }
+  }
+
+  // Path
+  for (int l=0; l<L; l++) {
+    if (l != 0) for (int j=0; j<p; j++) beta_old[j] = beta[(l-1)*p+j];
+    while (iter[l] < max_iter) {
+      int converged = 0;
+      iter[l]++;
+
+      // Check dfmax
+      int a = 0;
+      for (int j=0; j<p; j++) if (beta[l*p+j]!=0) a++;
+      if (a > dfmax) {
+	for (int ll=l; ll<L; ll++) {
+	  for (int j=0; j<p; j++) beta[ll*p+j] = R_NaReal;
+	}
+	Free(beta_old);
+	Free(r);
+	return;
+      }
+      df[l] = 0;
+
+      // Update unpenalized covariates
+      for (int j=0; j<K0; j++) {
+	double shift = crossprod(x, r, n, j)/n;
+	beta[l*p+j] = shift + beta_old[j];
+	for (int i=0; i<n; i++) r[i] -= shift * x[n*j+i];
+	df[l] = df[l] + 1;
+      }
+
+      // Update penalized groups
+      for (int g=0; g<J; g++) {
+	if (user | l!=0) gLCD_gaussian(beta, penalty, x, r, g, K1, n, l, p, lam1[l]*group_multiplier[g], lam2[l], gamma, tau, &df[l], beta_old, delta);
+      }
+
+      // Check for convergence      
+      if (checkConvergence(beta, beta_old, eps, l, p)) {
+	converged  = 1;
+	loss[l] = gLoss(r,n);
+	break;
+       }
+      for (int j=0; j<p; j++) beta_old[j] = beta[l*p+j];
+    }
+  }
+  Free(beta_old);
+  Free(r);
+}
+
+static void gpPathFit_binomial(double *beta0, double *beta, int *iter, double *df, double *Dev, double *x, double *y, int *n_, int *p_, char **penalty_, int *J_, int *K1, int *K0_, double *lam1, double *lam2, int *L_, double *eps_, double *delta_, int *max_iter_, double *gamma_, double *tau_, double *group_multiplier, int *dfmax_, int *warn_, int *user_)
+{
+  int n=n_[0]; int p=p_[0]; char *penalty=penalty_[0]; int J=J_[0]; int K0=K0_[0]; int L=L_[0]; int max_iter=max_iter_[0]; double eps=eps_[0]; double delta=delta_[0]; double gamma=gamma_[0]; double tau=tau_[0]; int dfmax=dfmax_[0]; int warn = warn_[0]; int user = user_[0];
   double beta0_old;
-  double *r, *beta_old, *w;
-  r = vector(n);
-  w = vector(n);
-  beta_old = vector(p);
+  double *r = Calloc(n, double);
+  double *w = Calloc(n, double);
+  double *beta_old = Calloc(p, double);
 
   // Initialization
-  double ybar=0;
-  for (int i=0; i<n; i++) ybar = ybar + y[i];
-  ybar = ybar/n;
+  double ybar = mean(y,n);
   double nullDev = 0;
-  for (int i=0;i<n;i++) nullDev = nullDev - y[i]*log(ybar) - (1-y[i])*log(1-ybar);
-  Dev[0] = nullDev;
-  int lstart = 0;
-  if (!user) {
-    lstart = 1;
-    Dev[0] = nullDev;
-  }
+  for (int i=0;i<n;i++) nullDev += - y[i]*log(ybar) - (1-y[i])*log(1-ybar);
   if (strcmp(penalty, "gBridge")==0) {
     for (int j=0; j<p; j++) {
       double z=0;
@@ -321,7 +370,7 @@ static void gpPathFit_binomial(double *beta0, double *beta, int *iter, double *d
 
   // Path
   double eta, pi;
-  for (int l=lstart; l<L; l++) {
+  for (int l=0; l<L; l++) {
     if (l != 0) {
       beta0_old = beta0[l-1];
       for (int j=0; j<p; j++) beta_old[j] = beta[(l-1)*p+j];
@@ -331,9 +380,9 @@ static void gpPathFit_binomial(double *beta0, double *beta, int *iter, double *d
       iter[l] = iter[l] + 1;
 
       // Check dfmax
-      int active = 0;
-      for (int j=0; j<p; j++) if (beta[l*p+j]!=0) active++;
-      if (active > dfmax) {
+      int a = 0;
+      for (int j=0; j<p; j++) if (beta[l*p+j]!=0) a++;
+      if (a > dfmax) {
 	for (int ll=l; ll<L; ll++) {
 	  for (int j=0; j<p; j++) beta[ll*p+j] = R_NaReal;
 	}
@@ -346,18 +395,19 @@ static void gpPathFit_binomial(double *beta0, double *beta, int *iter, double *d
       Dev[l] = 0;
       for (int i=0; i<n; i++) {
 	eta = beta0_old;
-	for (int j=0; j<p; j++) eta = eta + x[j*n+i] * beta_old[j];
+	for (int j=0; j<p; j++) if (beta_old[j] != 0) eta = eta + x[j*n+i] * beta_old[j];
 	pi = exp(eta) / (1+exp(eta));
-	if (pi > .9999) {
-	  pi = 1;
-	  w[i] = .0001;
-	} else if (pi < .0001) {
-	  pi = 0;
-	  w[i] = .0001;
-	} else w[i] = pi*(1-pi);
-
 	if (strncmp(penalty, "gr", 2)==0) r[i] = (y[i] - pi) / 0.25;
-	else r[i] = (y[i] - pi) / w[i];
+	else {
+	  if (pi > .9999) {
+	    pi = 1;
+	    w[i] = .0001;
+	  } else if (pi < .0001) {
+	    pi = 0;
+	    w[i] = .0001;
+	  } else w[i] = pi*(1-pi);
+	  r[i] = (y[i] - pi) / w[i];
+	}
 	Dev[l] = Dev[l] - y[i]*log(pi) - (1-y[i])*log(1-pi);
       }
 
@@ -375,50 +425,32 @@ static void gpPathFit_binomial(double *beta0, double *beta, int *iter, double *d
       }
 
       // Update intercept
-      if (strncmp(penalty, "gr", 2)==0) {
-	double z = 0;
-	for (int i=0;i<n;i++) z = z + r[i];
-	beta0[l] = z/n + beta0_old;
-      } else {
-	double xwr = 0;
-	double xwx = 0;
-	for (int i=0;i<n;i++) {
-	  xwr = xwr + w[i]*r[i];
-	  xwx = xwx + w[i];
-	}
-	beta0[l] = xwr/xwx + beta0_old;
+      double xwr = 0;
+      double xwx = 0;
+      for (int i=0;i<n;i++) {
+	xwr = xwr + w[i]*r[i];
+	xwx = xwx + w[i];
       }
+      beta0[l] = xwr/xwx + beta0_old;
       for (int i=0;i<n;i++) r[i] = r[i] - (beta0[l] - beta0_old);
       df[l] = 1;
   
       // Update unpenalized covariates
-      int j;
-      for (j=0;; j++) {
-	if (group[j]!=0) break;
-	if (strncmp(penalty, "gr", 2)==0) {
-	  double z = 0;
-	  for (int i=0;i<n;i++) z = z + x[j*n+i] * r[i];
-	  beta[l*p+j] = z/n + beta_old[j];
-	} else {
-	  double xwr = 0;
-	  double xwx = 0;
-	  for (int i=0; i<n; i++) {
-	    xwr = xwr + x[j*n+i]*w[i]*r[i];
-	    xwx = xwx + x[j*n+i]*w[i]*x[j*n+i];
-	  }
-	  beta[l*p+j] = xwr/xwx + beta_old[j];
+      for (int j=0; j<K0; j++) {
+	xwr = 0;
+	xwx = 0;
+	for (int i=0; i<n; i++) {
+	  xwr = xwr + x[j*n+i]*w[i]*r[i];
+	  xwx = xwx + x[j*n+i]*w[i]*x[j*n+i];
 	}
+	beta[l*p+j] = xwr/xwx + beta_old[j];
         for (int i=0; i<n; i++) r[i] = r[i] - (beta[l*p+j] - beta_old[j]) * x[j*n+i];
 	df[l] = df[l] + 1;
       }
 
       // Update penalized groups
       for (int g=0; g<J; g++) {
-	int K0 = j;
-	int Kj = j + K[g];
-	if (strncmp(penalty, "gr", 2)==0) gd_binomial(beta, x, r, K0, Kj, n, l, p, penalty, lam1[l]*group_multiplier[g], lam2[l], gamma, &df[l], beta_old);
-	else gLCD_binomial(beta, penalty, x, r, K0, Kj, n, l, p, lam1[l]*group_multiplier[g], lam2[l], gamma, tau, &df[l], beta_old, w, delta);
-	j = Kj;
+	if (user | l!=0) gLCD_binomial(beta, penalty, x, r, g, K1, n, l, p, lam1[l]*group_multiplier[g], lam2[l], gamma, tau, &df[l], beta_old, w, delta);
       }
 
       // Check convergence
@@ -435,86 +467,168 @@ static void gpPathFit_binomial(double *beta0, double *beta, int *iter, double *d
   Free(r);
 }
 
-static void gpPathFit_gaussian(double *beta, int *iter, double *df, double *loss, double *x, double *y, int *group, int *n_, int *p_, char **penalty_, int *J_, int *K, double *lam1, double *lam2, int *L_, double *eps_, double *delta_, int *max_iter_, double *gamma_, double *tau_, int *dfmax_, int *group_multiplier, int *user_)
+static void grPathFit_gaussian(double *beta, int *iter, double *df, double *loss, double *x, double *y, int *n_, int *p_, char **penalty_, int *J_, int *K1, int *K0_, double *lam1, double *lam2, int *L_, double *eps_, int *max_iter_, double *gamma_, double *group_multiplier, int *dfmax_, int *user_)
 {
-  // Initialization of variables
-  int n=n_[0]; int p=p_[0]; char *penalty=penalty_[0]; int J=J_[0]; int L=L_[0]; int max_iter=max_iter_[0]; double eps=eps_[0]; double delta=delta_[0]; double gamma=gamma_[0]; double tau=tau_[0]; int dfmax=dfmax_[0]; int user=user_[0];
-  double *r, *beta_old;
-  r = vector(n);
+  int n=n_[0]; int p=p_[0]; char *penalty=penalty_[0]; int J=J_[0]; int K0=K0_[0]; int L=L_[0]; int max_iter=max_iter_[0]; double eps=eps_[0]; double gamma=gamma_[0]; int dfmax=dfmax_[0]; int user = user_[0];
+  double *r = Calloc(n, double);
+  double *beta_old = Calloc(p, double);
+  int *active = Calloc(J, int);
+
+  // Initialization
   for (int i=0; i<n; i++) r[i] = y[i];
-  beta_old = vector(p);
-  int lstart = 0;
-  if (!user) {
-    loss[0] = gLoss(r,n);
-    lstart = 1;
-  }
-  if (strcmp(penalty, "gBridge")==0) {
-    for (int j=0; j<p; j++) {
-      double z=0;
-      for (int i=0; i<n; i++) z = z + x[j*n+i]*r[i];
-      beta_old[j] = z/n;
-      for (int i=0; i<n; i++) r[i] = r[i] - beta_old[j] * x[j*n+i];
-    }
-  }
 
   // Path
-  for (int l=lstart; l<L; l++) {
-    //Rprintf("lambda: %f %f\n",lam1[l], lam2[l]);
+  for (int l=0; l<L; l++) {
     if (l != 0) for (int j=0; j<p; j++) beta_old[j] = beta[(l-1)*p+j];
     while (iter[l] < max_iter) {
       int converged = 0;
-      iter[l] = iter[l] + 1;
+      iter[l]++;
 
       // Check dfmax
-      int active = 0;
-      for (int j=0; j<p; j++) if (beta[l*p+j]!=0) active++;
-      if (active > dfmax) {
+      int a = 0;
+      for (int j=0; j<J; j++) a += (beta_old[j] !=0);
+      if (a > dfmax) {
 	for (int ll=l; ll<L; ll++) {
 	  for (int j=0; j<p; j++) beta[ll*p+j] = R_NaReal;
 	}
 	Free(beta_old);
 	Free(r);
+	Free(active);
 	return;
       }
       df[l] = 0;
 
       // Update unpenalized covariates
-      //Rprintf("b: %f  r1:%f  r2:%f\n", beta[l*p+0],  r[0],  r[1]);
-      int j;
-      for (j=0;; j++) {
-	if (group[j]!=0) break;
-	double z=0;
-	for (int i=0; i<n; i++) z = z + x[j*n+i]*r[i];
-	beta[l*p+j] = z/n + beta_old[j];
-        for (int i=0; i<n; i++) r[i] = r[i] - (beta[l*p+j] - beta_old[j]) * x[j*n+i];
+      for (int j=0; j<K0; j++) {
+	double shift = crossprod(x, r, n, j)/n;
+	beta[l*p+j] = shift + beta_old[j];
+	for (int i=0; i<n; i++) r[i] -= shift * x[n*j+i];
 	df[l] = df[l] + 1;
       }
 
       // Update penalized groups
       for (int g=0; g<J; g++) {
-	int K0 = j;
-	int Kj = j + K[g];
-	if (strncmp(penalty, "gr", 2)==0) gd_gaussian(beta, x, r, K0, Kj, n, l, p, penalty, lam1[l]*group_multiplier[g], lam2[l], gamma, &df[l], beta_old);
-	else gLCD_gaussian(beta, penalty, x, r, K0, Kj, n, l, p, lam1[l]*group_multiplier[g], lam2[l], gamma, tau, &df[l], beta_old, delta);
-	j = Kj;
+	//Rprintf("g=%d  K1[g]=%d  K1[g+1]=%d  gm[g] = %f\n",g,K1[g],K1[g+1],group_multiplier[g]);
+	if (user | l!=0) gd_gaussian(beta, x, r, g, K1, active, n, l, p, penalty, lam1[l]*group_multiplier[g], lam2[l], gamma, &df[l], beta_old);
       }
 
-      // Check for convergence      
+      // Check convergence
       if (checkConvergence(beta, beta_old, eps, l, p)) {
 	converged  = 1;
 	loss[l] = gLoss(r,n);
 	break;
-       }
-      for (j=0; j<p; j++) beta_old[j] = beta[l*p+j];
+      }
+      for (int j=0; j<p; j++) beta_old[j] = beta[l*p+j];
     }
   }
   Free(beta_old);
+  Free(active);
+  Free(r);
+}
+
+static void grPathFit_binomial(double *beta0, double *beta, int *iter, double *df, double *Dev, double *x, double *y, int *n_, int *p_, char **penalty_, int *J_, int *K1, int *K0_, double *lam1, double *lam2, int *L_, double *eps_, int *max_iter_, double *gamma_, double *group_multiplier, int *dfmax_, int *warn_, int *user_)
+{
+  int n=n_[0]; int p=p_[0]; char *penalty=penalty_[0]; int J=J_[0]; int K0=K0_[0]; int L=L_[0]; int max_iter=max_iter_[0]; double eps=eps_[0]; double gamma=gamma_[0]; int dfmax=dfmax_[0]; int warn = warn_[0]; int user = user_[0];
+  double beta0_old;
+  double *r = Calloc(n, double);
+  double *beta_old = Calloc(p, double);
+  int *active = Calloc(J, int);
+
+  // Initialization
+  double ybar = mean(y,n);
+  double nullDev = 0;
+  for (int i=0; i<n; i++) nullDev = nullDev - y[i]*log(ybar) - (1-y[i])*log(1-ybar);
+
+  // Path
+  double eta, pi;
+  for (int l=0; l<L; l++) {
+    if (l != 0) {
+      beta0_old = beta0[l-1];
+      for (int j=0; j<p; j++) beta_old[j] = beta[(l-1)*p+j];
+    }
+    while (iter[l] < max_iter) {
+      int converged = 0;
+      iter[l]++;
+
+      // Check dfmax
+      int a = 0;
+      for (int j=0; j<J; j++) a += (beta_old[j] !=0);
+      if (a > dfmax) {
+	for (int ll=l; ll<L; ll++) {
+	  for (int j=0; j<p; j++) beta[ll*p+j] = R_NaReal;
+	}
+	Free(beta_old);
+	Free(r);
+	Free(active);
+	return;
+      }
+
+      // Approximate L
+      Dev[l] = 0;
+      for (int i=0; i<n; i++) {
+	eta = beta0_old;
+	for (int j=0; j<K0; j++) eta += x[n*j+i] * beta_old[j];
+	for (int g=0; g<J; g++) {
+	  if (active[g]) {
+	    for (int j=K1[g]; j<K1[g+1]; j++) eta += x[n*j+i] * beta_old[j];
+	  }
+	}
+	pi = exp(eta) / (1+exp(eta));
+	r[i] = (y[i] - pi) / 0.25;
+	Dev[l] += - y[i]*log(pi) - (1-y[i])*log(1-pi);
+	}
+
+      // Check for saturation
+      if (Dev[l]/nullDev < .01) {
+	if (warn) warning("Model saturated; exiting...");
+	for (int ll=l; ll<L; ll++) {
+	  beta0[ll] = R_NaReal;
+	  for (int j=0; j<p; j++) beta[ll*p+j] = R_NaReal;
+	}
+	Free(beta_old);
+	Free(active);
+	Free(r);
+	return;
+      }
+
+      // Update intercept
+      double shift = mean(r,n);
+      beta0[l] = shift + beta0_old;
+      for (int i=0; i<n; i++) r[i] -= shift;
+      df[l] = 1;
+
+      // Update unpenalized covariates
+      for (int j=0; j<K0; j++) {
+	shift = crossprod(x, r, n, j)/n;
+	beta[l*p+j] = shift + beta_old[j];
+	for (int i=0; i<n; i++) r[i] -= shift * x[n*j+i];
+	df[l] = df[l] + 1;
+      }
+
+      // Update penalized groups
+      for (int g=0; g<J; g++) {
+	if (user | l!=0) gd_binomial(beta, x, r, g, K1, active, n, l, p, penalty, lam1[l]*group_multiplier[g], lam2[l], gamma, &df[l], beta_old);
+      }
+
+      // Check convergence
+      if (checkConvergence(beta, beta_old, eps, l, p)) {
+	converged  = 1;
+	break;
+      }
+      beta0_old = beta0[l];
+      for (int j=0; j<p; j++) beta_old[j] = beta[l*p+j];
+    }
+  }
+  Free(beta_old);
+  Free(active);
   Free(r);
 }
 
 static const R_CMethodDef cMethods[] = {
   {"gpPathFit_gaussian", (DL_FUNC) &gpPathFit_gaussian, 23},
   {"gpPathFit_binomial", (DL_FUNC) &gpPathFit_binomial, 25},
+  {"grPathFit_gaussian", (DL_FUNC) &grPathFit_gaussian, 21},
+  {"grPathFit_binomial", (DL_FUNC) &grPathFit_binomial, 23},
   NULL
 };
 

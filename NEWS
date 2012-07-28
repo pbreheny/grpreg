@@ -1,6 +1,11 @@
 *   Minor change
 **  Substantial change
 
+2.1-0
+	*  Fixed bug involving orthogonalization with unpenalized groups
+        *  grpreg can now handle constant columns (they produce beta=0)
+	*  Internal restructuring of C code
+
 2.0-0
 	** New algorithm for group lasso
 	** (L2) Group MCP, group SCAD methods added

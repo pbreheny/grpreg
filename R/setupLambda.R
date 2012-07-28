@@ -6,18 +6,16 @@ setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, nlambda
   if (length(ind)!=length(group)) {
     fit <- glm(y~X[, group==0], family=family)
   } else fit <- glm(y~1, family=family)
-  
+
   ## Determine lambda.max
   if (family=="gaussian") {
-    z <- crossprod(X[,ind], fit$residuals) / n
+    z <- crossprod(X[,ind, drop=FALSE], fit$residuals) / n
   } else {
-    z <- crossprod(X[,ind], fit$weights * residuals(fit, "working")) / n
-    ## v <- apply(X[ ,ind, drop=FALSE] * fit$weights * X[ ,ind, drop=FALSE], 2, sum) / n
-    ## z <- u/v
+    z <- crossprod(X[,ind, drop=FALSE], residuals(fit, "working") * fit$weights) / n
   }
   if (strtrim(penalty,2)=="gr") maxGradient <- sqrt(tapply(z^2, group[ind], sum))
   if (strtrim(penalty,2)=="ge") maxGradient <- tapply(abs(z),group[ind],max)
-  if (penalty=="gMCP") maxGradient <- sqrt(tapply(abs(z),group[ind],max))
+  if (penalty=="gMCP") maxGradient <- sqrt(tapply(abs(z), group[ind], max))
   lambda.max <- max(maxGradient/group.multiplier) / alpha
   
   if (lambda.min==0) {
