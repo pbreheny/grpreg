@@ -2,7 +2,7 @@ select.grpreg <- function(obj, criterion=c("BIC","AIC","GCV"), df.method=c("defa
 {
   criterion <- match.arg(criterion)
   df.method <- match.arg(df.method)
-  ll <- logLik(obj, df.method=df.method)
+  ll <- logLik(obj, df.method=df.method, ...)
   df <- as.numeric(attr(ll,"df"))
   
   if (criterion=="AIC") IC <- AIC(ll)
