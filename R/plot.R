@@ -1,11 +1,19 @@
-plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, ...)
+plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE, ...)
 {
-  penalized <- which(x$group!=0)+1
-  nonzero <- which(apply(abs(coef(x)),1,sum)!=0)
-  ind <- intersect(penalized, nonzero)
-  beta <- coef(x)[ind,,drop=FALSE]
-  g <- as.numeric(as.factor(x$group[ind-1]))
-  p <- nrow(beta)
+  if (norm) {
+    Y <- predict(x, type="norm")
+    if (any(x$group==0)) Y <- Y[-1,]
+    nonzero <- which(apply(abs(Y), 1, sum)!=0)
+    Y <- Y[nonzero,]
+    g <- 1:nrow(Y)
+  } else {
+    penalized <- which(x$group!=0)+1
+    nonzero <- which(apply(abs(coef(x)),1,sum)!=0)
+    ind <- intersect(penalized, nonzero)
+    Y <- coef(x)[ind,,drop=FALSE]    
+    g <- as.numeric(as.factor(x$group[ind-1]))
+  }
+  p <- nrow(Y)
   l <- x$lambda
   n.g <- max(g)
   
@@ -14,7 +22,7 @@ plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, ...)
     xlab <- expression(log(lambda))
   } else xlab <- expression(lambda)
   
-  plot.args <- list(x=l, y=1:length(l), ylim=range(beta), xlab=xlab, ylab=expression(hat(beta)), type="n", xlim=rev(range(l)), las=1)
+  plot.args <- list(x=l, y=1:length(l), ylim=range(Y), xlab=xlab, ylab=expression(hat(beta)), type="n", xlim=rev(range(l)), las=1)
   new.args <- list(...)
   if (length(new.args)) {
     new.plot.args <- new.args[names(new.args) %in% c(names(par()), names(formals(plot.default)))]
@@ -29,7 +37,7 @@ plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, ...)
   line.args <- list(col=cols, lwd=1+2*exp(-p/20), lty=1, pch="")
   if (length(new.args)) line.args[names(new.args)] <- new.args
   line.args$x <- l
-  line.args$y <- t(beta)
+  line.args$y <- t(Y)
   line.args$col <- rep(line.args$col, table(g))
   do.call("matlines",line.args)
   

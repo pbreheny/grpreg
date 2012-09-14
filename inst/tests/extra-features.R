@@ -44,8 +44,14 @@ test_that("cv.grpreg() seems to work", {
   b[abs(b) < 1] <- 0
   y <- rnorm(n, mean=X%*%b)
   yy <- y > .5
+  
+  par(mfrow=c(2,2))
+  require(glmnet)
+  cvfit <- cv.glmnet(X, y)
+  plot(cvfit)
   cvfit <- cv.grpreg(X, y, group)
-  par(mfrow=c(2,1))
+  plot(cvfit)
+  cvfit <- cv.glmnet(X, yy, family="binomial")
   plot(cvfit)
   cvfit <- cv.grpreg(X, yy, group, family="binomial")
   plot(cvfit)

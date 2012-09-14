@@ -1,8 +1,8 @@
 cv.grpreg <- function(X, y, ..., nfolds=10, seed, trace=FALSE)
 {
+  if (!missing(seed)) set.seed(seed)
   fit <- grpreg(X=X, y=y, ...)
-  
-  error <- array(NA,dim=c(nfolds,length(fit$lambda)))
+  E <- matrix(NA, nrow=length(y), ncol=length(fit$lambda))
   
   n <- length(y)
   if (fit$family=="gaussian") {
@@ -28,12 +28,17 @@ cv.grpreg <- function(X, y, ..., nfolds=10, seed, trace=FALSE)
 
     fit.i <- grpreg(X1, y1, warn=FALSE, ...)
     yhat <- predict(fit.i, X2, type="response")
-    error[i, 1:ncol(yhat)] <- loss.grpreg(y2, yhat, fit$family)
+    E[cv.ind==i, 1:ncol(yhat)] <- loss.grpreg(y2, yhat, fit$family)
   }
+
+  ## Remove saturated values
+  ind <- which(!apply(is.na(E),2,any))
+  E <- E[,ind]
+  lambda <- fit$lambda[ind]
   
-  val <- list(E=error, cve=apply(error,2,sum)/n, lambda=fit$lambda, fit=fit)
-  val$min <- which.min(val$cve)
-  val$lambda.min <- fit$lambda[val$min]
-  class(val) <- "cv.grpreg"
-  val
+  ## Return
+  cve <- apply(E, 2, mean)
+  cvse <- apply(E, 2, sd) / sqrt(n)
+  min <- which.min(cve)
+  structure(list(cve=cve, cvse=cvse, lambda=lambda, fit=fit, min=min, lambda.min=lambda[min]), class="cv.grpreg")
 }

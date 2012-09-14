@@ -7,7 +7,8 @@ orthogonalize <- function(X, group)
   for (j in 1:J) {
     ind <- which(group==j)
     if (length(ind)==0) next
-    U <- chol(crossprod(X[, ind, drop=FALSE])/n)
+    result <- try(U <- chol(crossprod(X[, ind, drop=FALSE])/n))
+    if (class(result)=="try-error") stop(paste("Group ", j," is not full-rank"))
     Uinv[[j]] <- backsolve(U,diag(length(ind)))
     XX[,ind] <- X[,ind] %*% Uinv[[j]]
   }

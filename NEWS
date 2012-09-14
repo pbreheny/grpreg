@@ -1,6 +1,13 @@
 *   Minor change
 **  Substantial change
 
+2.1-1   *  cv.grpreg: Now returns full data fit as well as CV errors
+        *  The above thereby allows cv.grpreg to handle constant columns
+        *  select: Now allows ... options to be passed to logLik
+	*  predict: "vars" and "groups" options added
+	*  fixed bug for returning group when some groups were eliminated
+	   due to constant columns
+
 2.1-0
 	*  Fixed bug involving orthogonalization with unpenalized groups
         *  grpreg can now handle constant columns (they produce beta=0)
