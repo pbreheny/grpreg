@@ -3,7 +3,7 @@
 \title{Plot coefficients from a "grpreg" object}
 \description{Produces a plot of the coefficient paths for a fitted \code{grpreg} object.}
 \usage{
-\method{plot}{grpreg}(x, alpha=1, legend.loc, log.l = FALSE, ...)
+\method{plot}{grpreg}(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE, ...)
 }
 \arguments{
   \item{x}{Fitted \code{"grpreg"} model.}
@@ -11,7 +11,9 @@
   \item{legend.loc}{Where should the legend go?  If left unspecified, no
     legend is drawn.  See \code{legend} for details.}
   \item{log.l}{Should horizontal axis be on the log scale?  Default is
-    FALSE.} 
+    FALSE.}
+  \item{norm}{If \code{TRUE}, plot the norm of each group, rather than
+    the individual coefficients.}
   \item{\dots}{Other graphical parameters to \code{plot},
     \code{matlines}, or \code{legend}}
 }
@@ -24,6 +26,7 @@ y <- birthwt.grpreg$bwt
 group <- c(1,1,1,2,2,2,3,3,4,5,5,6,7,8,8,8)
 fit <- grpreg(X, y, group, penalty="grLasso")
 plot(fit)
+plot(fit, norm=TRUE)
 myColors <- c("black", "red", "green", "blue", "yellow", "purple",
 "orange", "brown")
 plot(fit, legend.loc="topleft", col=myColors)

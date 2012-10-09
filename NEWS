@@ -1,10 +1,16 @@
 *   Minor change
-**  Substantial change
+**  Major change
 
-2.1-1   *  cv.grpreg: Now returns full data fit as well as CV errors
-        *  The above thereby allows cv.grpreg to handle constant columns
+2.2-0   *  cv.grpreg: Now returns full data fit as well as CV errors
+        *  The above thereby allows cv.grpreg to handle constant columns,
+	   and fixes some bugs
         *  select: Now allows ... options to be passed to logLik
-	*  predict: "vars" and "groups" options added
+	*  plot: Added option to plot norm of each group, rather than
+	   individual coefficients
+	*  predict: "vars", "groups", and "norm" options added
+	*  logLik: fixed bug -- no longer calculates (meaningless)
+	   log-likelihoods for saturated models (thank you to Xiaowei Ren 
+	   for pointing this out)
 	*  fixed bug for returning group when some groups were eliminated
 	   due to constant columns
 

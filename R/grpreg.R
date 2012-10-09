@@ -64,6 +64,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   iter <- iter[ind]
   lambda <- lambda[ind]
   df <- df[ind]
+  loss <- loss[ind]
   if (warn & any(iter==max.iter)) warning("Algorithm failed to converge for all values of lambda")
 
   ## Unstandardize

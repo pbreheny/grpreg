@@ -9,7 +9,7 @@ grpreg(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD",
 "gMCP", "gBridge", "gLasso"), family=c("gaussian","binomial"),
 nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05},
 alpha=1, eps=.005, max.iter=1000, dfmax=p, gamma = 3,
-group.multiplier=rep(1,J), warn=TRUE, ...)
+group.multiplier={if (strtrim(penalty,2)=="gr") sqrt(table(group[group!=0])) else rep(1,J)}, warn=TRUE, ...)
 }
 \arguments{
   \item{X}{The design matrix, without an intercept.  \code{grpreg}

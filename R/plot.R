@@ -22,7 +22,8 @@ plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE, ...)
     xlab <- expression(log(lambda))
   } else xlab <- expression(lambda)
   
-  plot.args <- list(x=l, y=1:length(l), ylim=range(Y), xlab=xlab, ylab=expression(hat(beta)), type="n", xlim=rev(range(l)), las=1)
+  ylab <- if (norm) expression("||"*hat(beta)*"||") else expression(hat(beta))
+  plot.args <- list(x=l, y=1:length(l), ylim=range(Y), xlab=xlab, ylab=ylab, type="n", xlim=rev(range(l)), las=1)
   new.args <- list(...)
   if (length(new.args)) {
     new.plot.args <- new.args[names(new.args) %in% c(names(par()), names(formals(plot.default)))]

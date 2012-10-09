@@ -6,7 +6,8 @@
   predictions from a fitted \code{"grpreg"} object.}
 \usage{
 \method{predict}{grpreg}(object, X, lambda, which=1:length(object$lambda),
-type=c("link","response","class","coefficients"), ...)
+type=c("link", "response", "class", "coefficients", "vars", "groups",
+"norm"), ...)
 \method{coef}{grpreg}(object, lambda, which=1:length(object$lambda),...)
 }
 \arguments{
@@ -22,7 +23,11 @@ type=c("link","response","class","coefficients"), ...)
   \item{type}{Type of prediction: \code{"link"} returns the
     linear predictors; \code{"response"} gives the fitted values;
     \code{"class"} returns the binomial outcome with the highest
-    probability; \code{"coefficients"} returns the coefficients.}
+    probability; \code{"coefficients"} returns the coefficients;
+    \code{"vars"} returns the indices for the nonzero coefficients;
+    \code{"groups"} returns the indices for the groups with at least one
+    nonzero coefficient; \code{"norm"} returns the L2 norm of the
+    coefficients in each group.}
   \item{\dots}{Not used.}}
 \value{The object returned depends on type.}
 \author{Patrick Breheny <patrick.breheny@uky.edu>}
@@ -37,4 +42,7 @@ coef(fit, lambda=.001)
 predict(fit, X, type="link", lambda=.001)
 predict(fit, X, type="response", lambda=.001)
 predict(fit, X, type="class", lambda=.001)
+predict(fit, X, type="vars", lambda=.07)
+predict(fit, X, type="groups", lambda=.07)
+predict(fit, X, type="norm", lambda=.07)
 }
