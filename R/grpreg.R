@@ -11,12 +11,12 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   if (!(identical(as.integer(sort(unique(group))),as.integer(1:max(group))) | identical(as.integer(sort(unique(group))),as.integer(0:max(group))))) stop("Groups must be consecutively numbered 1,2,3,...")
   if (length(group.multiplier)!=max(group)) stop("Length of group.multiplier must equal number of penalized groups")
   
-  ## Set up X, y, lambda
+  ## Set up XX, yy, lambda
   XX <- standardize(X)
   center <- attr(XX, "center")
   scale <- attr(XX, "scale")
   nz <- which(scale > 1e-6)
-  nzg <- setdiff(unique(group),unique(group[nz]))
+  nzg <- setdiff(unique(group), unique(group[nz]))
   if (length(nzg)) {
     J  <- J - length(nzg)
     group.multiplier <- group.multiplier[-nzg]    
@@ -77,7 +77,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   ## Names
   if (is.null(colnames(X))) varnames <- paste("V",1:ncol(X),sep="")
   else varnames <- colnames(X)
-  varnames <- c("(Intercept)",varnames)
+  varnames <- c("(Intercept)", varnames)
   dimnames(beta) <- list(varnames, round(lambda,digits=4))
   
   structure(list(beta=beta,
@@ -86,7 +86,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
                  lambda=lambda,
                  alpha=alpha,
                  loss = loss,
-                 n = length(y),
+                 n = n,
                  penalty=penalty,
                  df=df,
                  iter=iter),

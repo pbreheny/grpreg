@@ -1,7 +1,8 @@
 *   Minor change
 **  Major change
 
-2.2-0   *  cv.grpreg: Now returns full data fit as well as CV errors
+2.2-0 
+        *  cv.grpreg: Now returns full data fit as well as CV errors
         *  The above thereby allows cv.grpreg to handle constant columns,
 	   and fixes some bugs
         *  select: Now allows ... options to be passed to logLik
