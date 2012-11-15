@@ -1,6 +1,9 @@
 *   Minor change
 **  Major change
 
+2.2-1
+	*  Fixed compilation error for 32-bit Windows
+
 2.2-0 
         *  cv.grpreg: Now returns full data fit as well as CV errors
         *  The above thereby allows cv.grpreg to handle constant columns,
