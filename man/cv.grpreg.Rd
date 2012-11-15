@@ -32,7 +32,7 @@ cv.grpreg(X, y, ..., nfolds=10, seed, trace=FALSE)
   \item{lambda}{The sequence of regularization parameter values along
     which the cross-validation error was calculated.}
   \item{fit}{The fitted \code{grpreg} object for the whole data.}
-  \item{min}{The index of \code{lambda} corresponding
+  \item{min}{The index of \code{lambda} corresponding to
     \code{lambda.min}.}
   \item{lambda.min}{The value of \code{lambda} with the minimum
     cross-validation error.}

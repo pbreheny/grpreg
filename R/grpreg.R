@@ -16,10 +16,10 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   center <- attr(XX, "center")
   scale <- attr(XX, "scale")
   nz <- which(scale > 1e-6)
-  nzg <- setdiff(unique(group), unique(group[nz]))
-  if (length(nzg)) {
-    J  <- J - length(nzg)
-    group.multiplier <- group.multiplier[-nzg]    
+  zg <- setdiff(unique(group), unique(group[nz]))
+  if (length(zg)) {
+    J  <- J - length(zg)
+    group.multiplier <- group.multiplier[-zg]
   }
   XX <- XX[ ,nz, drop=FALSE]
   group.orig <- group
