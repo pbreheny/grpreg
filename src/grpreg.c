@@ -395,20 +395,19 @@ static void gpPathFit_binomial(double *beta0, double *beta, int *iter, double *d
       for (int i=0; i<n; i++) {
 	eta = beta0_old;
 	for (int j=0; j<p; j++) if (beta_old[j] != 0) eta = eta + x[j*n+i] * beta_old[j];
-	pi = exp(eta) / (1+exp(eta));
-	if (strncmp(penalty, "gr", 2)==0) r[i] = (y[i] - pi) / 0.25;
-	else {
-	  if (pi > .9999) {
-	    pi = 1;
-	    w[i] = .0001;
-	  } else if (pi < .0001) {
-	    pi = 0;
-	    w[i] = .0001;
-	  } else w[i] = pi*(1-pi);
-	  r[i] = (y[i] - pi) / w[i];
+	if (eta > 15) {
+	  pi = 0.999999;
+	  w[i] = 0.000001;
+	} else if (eta < -15) {
+	  pi = 0.000001;
+	  w[i] = 0.000001;
+	} else {
+	  pi = exp(eta) / (1+exp(eta));
+	  w[i] = pi*(1-pi);
 	}
-	Dev[l] = Dev[l] - y[i]*log(pi) - (1-y[i])*log(1-pi);
-      }
+	r[i] = (y[i] - pi) / w[i];
+	Dev[l] += - y[i]*log(pi) - (1-y[i])*log(1-pi);
+	}
 
       // Check for saturation
       if (Dev[l]/nullDev < .01) {
@@ -573,7 +572,9 @@ static void grPathFit_binomial(double *beta0, double *beta, int *iter, double *d
 	    for (int j=K1[g]; j<K1[g+1]; j++) eta += x[n*j+i] * beta_old[j];
 	  }
 	}
-	pi = exp(eta) / (1+exp(eta));
+	if (eta > 15) pi = 0.999999;
+	else if (eta < -15) pi = 0.000001;
+	else pi = exp(eta) / (1+exp(eta));
 	r[i] = (y[i] - pi) / 0.25;
 	Dev[l] += - y[i]*log(pi) - (1-y[i])*log(1-pi);
 	}
