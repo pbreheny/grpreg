@@ -349,7 +349,7 @@ static void gpPathFit_gaussian(double *beta, int *iter, double *df, double *loss
 static void gpPathFit_binomial(double *beta0, double *beta, int *iter, double *df, double *Dev, double *x, double *y, int *n_, int *p_, char **penalty_, int *J_, int *K1, int *K0_, double *lam1, double *lam2, int *L_, double *eps_, double *delta_, int *max_iter_, double *gamma_, double *tau_, double *group_multiplier, int *dfmax_, int *warn_, int *user_)
 {
   int n=n_[0]; int p=p_[0]; char *penalty=penalty_[0]; int J=J_[0]; int K0=K0_[0]; int L=L_[0]; int max_iter=max_iter_[0]; double eps=eps_[0]; double delta=delta_[0]; double gamma=gamma_[0]; double tau=tau_[0]; int dfmax=dfmax_[0]; int warn = warn_[0]; int user = user_[0];
-  double beta0_old;
+  double beta0_old=0;
   double *r = Calloc(n, double);
   double *w = Calloc(n, double);
   double *beta_old = Calloc(p, double);

@@ -24,8 +24,12 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   XX <- XX[ ,nz, drop=FALSE]
   group.orig <- group
   group <- group[nz]
+  if (strtrim(penalty,2)=="gr") {
+    XX <- orthogonalize(XX, group)
+    group.full <- group
+    group <- attr(XX, "group")
+  }
   K <- as.numeric(table(group))
-  if (strtrim(penalty,2)=="gr") XX <- orthogonalize(XX, group)
   yy <- if (family=="gaussian") y - mean(y) else y
   if (missing(lambda)) {
     lambda <- setupLambda(XX, yy, group, family, penalty, alpha, lambda.min, nlambda, group.multiplier)
@@ -68,7 +72,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   if (warn & any(iter==max.iter)) warning("Algorithm failed to converge for all values of lambda")
 
   ## Unstandardize
-  if (strtrim(penalty,2)=="gr") b <- unorthogonalize(b, XX, group)
+  if (strtrim(penalty,2)=="gr") b <- unorthogonalize(b, XX, group.full, group)
   b <- unstandardize(b, center[nz], scale[nz])
   beta <- matrix(0, nrow=(ncol(X)+1), ncol=length(lambda))
   beta[1,] <- b[1,]

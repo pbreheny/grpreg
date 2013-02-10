@@ -1,8 +1,14 @@
 *   Minor change
 **  Major change
 
+2.3-0
+	*  Switched to SVD-based orthogonalization to allow for linear
+	   dependency within groups
+
 2.2-1
 	*  Fixed compilation error for 32-bit Windows
+	*  Fixed bug in calculation of binomial deviance when fitted
+	   probabilities close to 0 or 1 arise
 
 2.2-0 
         *  cv.grpreg: Now returns full data fit as well as CV errors

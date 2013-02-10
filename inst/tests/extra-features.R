@@ -29,10 +29,26 @@ test_that("grpreg handles constant columns", {
   X[,group==2] <- 0
   y <- rnorm(n)
   yy <- y > 0
-  fit <- grpreg(X, y, group, penalty="grLasso")
-  fit <- grpreg(X, y, group, penalty="gMCP")
-  fit <- grpreg(X, yy, group, penalty="grLasso", family="binomial")
-  fit <- grpreg(X, yy, group, penalty="gMCP", family="binomial")
+  par(mfrow=c(2,2))
+  fit <- grpreg(X, y, group, penalty="grLasso"); plot(fit)
+  fit <- grpreg(X, y, group, penalty="gMCP"); plot(fit)
+  fit <- grpreg(X, yy, group, penalty="grLasso", family="binomial"); plot(fit)
+  fit <- grpreg(X, yy, group, penalty="gMCP", family="binomial"); plot(fit)
+})
+
+test_that("grpreg handles groups of non-full rank", {
+  n <- 50
+  group <- rep(0:3,4:1)
+  p <- length(group)
+  X <- matrix(rnorm(n*p),ncol=p)
+  X[,7] <- X[,6]
+  y <- rnorm(n)
+  yy <- y > 0
+  par(mfrow=c(2,2))
+  fit <- grpreg(X, y, group, penalty="grLasso"); plot(fit)
+  fit <- grpreg(X, y, group, penalty="gMCP"); plot(fit)
+  fit <- grpreg(X, yy, group, penalty="grLasso", family="binomial"); plot(fit)
+  fit <- grpreg(X, yy, group, penalty="gMCP", family="binomial"); plot(fit)
 })
 
 test_that("cv.grpreg() seems to work", {

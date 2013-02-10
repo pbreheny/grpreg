@@ -36,7 +36,7 @@ test_that("unorthogonalize() unorthogonalizes correctly", {
   X <- matrix(rnorm(n*p), ncol=p)
   XX <- orthogonalize(X, group)
   bb <- matrix(rnorm(l*(p+1)), nrow=p+1)
-  b <- unorthogonalize(bb, XX, group)
+  b <- unorthogonalize(bb, XX, group, attr(XX, "group"))
   expect_that(cbind(1,XX) %*% bb, equals(cbind(1,X) %*% b))
 })
 
@@ -48,6 +48,19 @@ test_that("orthogonalize() orthogonalizes correctly w/ 0's present", {
   XX <- orthogonalize(X, group)
   for (j in 1:group[p]) {
     ind <- which(group==j)
+    expect_that(crossprod(XX[,ind])/n, equals(diag(length(ind))))
+  }
+})
+
+test_that("orthogonalize() orthogonalizes correctly w/o full rank", {
+  n <- 50
+  p <- 10
+  X <- matrix(rnorm(n*p),ncol=p)
+  group <- rep(0:3,4:1)
+  X[,7] <- X[,6]
+  XX <- orthogonalize(X, group)
+  for (j in 1:group[p]) {
+    ind <- which(attr(XX, "group")==j)
     expect_that(crossprod(XX[,ind])/n, equals(diag(length(ind))))
   }
 })

@@ -1,8 +1,8 @@
 Package: grpreg
 Title: Regularization paths for regression models with grouped
         covariates
-Version: 2.2-1
-Date: 2012-11-15
+Version: 2.3-0
+Date: 2013-02-10
 Author: Patrick Breheny
 Maintainer: Patrick Breheny <patrick.breheny@uky.edu>
 Depends: R (>= 2.13.0)

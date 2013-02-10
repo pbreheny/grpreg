@@ -11,7 +11,7 @@ setupLambda.gBridge(X, y, group, family, alpha, lambda.min, lambda.max, nlambda,
 standardize(X)
 unstandardize(b, center, scale)
 orthogonalize(X, group)
-unorthogonalize(b, XX, group)
+unorthogonalize(b, XX, group.full, group)
 }
 \author{Patrick Breheny <patrick.breheny@uky.edu>}
 \details{These are not intended for use by users. \code{setupLambda} and
