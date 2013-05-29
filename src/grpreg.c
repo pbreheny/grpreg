@@ -478,6 +478,7 @@ static void grPathFit_gaussian(double *beta, int *iter, double *df, double *loss
   // Path
   for (int l=0; l<L; l++) {
     if (l != 0) for (int j=0; j<p; j++) beta_old[j] = beta[(l-1)*p+j];
+    else for (int j=0; j<p; j++) beta_old[j] = 0;
     while (iter[l] < max_iter) {
       int converged = 0;
       iter[l]++;

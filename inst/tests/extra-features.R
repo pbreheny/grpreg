@@ -29,11 +29,13 @@ test_that("grpreg handles constant columns", {
   X[,group==2] <- 0
   y <- rnorm(n)
   yy <- y > 0
-  par(mfrow=c(2,2))
+  par(mfrow=c(2,3))
   fit <- grpreg(X, y, group, penalty="grLasso"); plot(fit)
   fit <- grpreg(X, y, group, penalty="gMCP"); plot(fit)
+  fit <- gBridge(X, y, group); plot(fit)
   fit <- grpreg(X, yy, group, penalty="grLasso", family="binomial"); plot(fit)
-  fit <- grpreg(X, yy, group, penalty="gMCP", family="binomial"); plot(fit)
+  fit <- grpreg(X, yy, group, penalty="gMCP", family="binomial"); plot(fit); fit$beta[,100]
+  fit <- gBridge(X, yy, group, family="binomial"); plot(fit); fit$beta[,100]
 })
 
 test_that("grpreg handles groups of non-full rank", {

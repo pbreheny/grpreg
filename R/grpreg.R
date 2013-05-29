@@ -1,15 +1,14 @@
-grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD", "gMCP", "gBridge", "gLasso"), family=c("gaussian","binomial"), nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05}, alpha=1, eps=.005, max.iter=1000, dfmax=p, gamma = 3, group.multiplier={if (strtrim(penalty,2)=="gr") sqrt(table(group[group!=0])) else rep(1,J)}, warn=TRUE, ...)
-{
+grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD", "gMCP", "gBridge", "gLasso"), family=c("gaussian","binomial"), nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05}, alpha=1, eps=.005, max.iter=1000, dfmax=p, gamma = 3, group.multiplier={if (strtrim(penalty,2)=="gr") sqrt(table(group[group!=0])) else rep(1,J)}, warn=TRUE, ...) {
   ## Check for errors
   family <- match.arg(family)
   penalty <- match.arg(penalty)
   if (penalty=="gLasso") penalty <- "grLasso"
-  if (penalty=="gBridge") stop("gBridge has been divorced from the grpreg function; use the gBridge() function instead")  
+  if (penalty=="gBridge") stop("gBridge has been divorced from the grpreg function; use the gBridge() function instead")
   if (alpha > 1 | alpha <= 0) stop("alpha must be in (0,1]")
   if (length(group)!=ncol(X)) stop("group does not match X")
   J <- max(group)
-  if (!(identical(as.integer(sort(unique(group))),as.integer(1:max(group))) | identical(as.integer(sort(unique(group))),as.integer(0:max(group))))) stop("Groups must be consecutively numbered 1,2,3,...")
-  if (length(group.multiplier)!=max(group)) stop("Length of group.multiplier must equal number of penalized groups")
+  if (!(identical(as.integer(sort(unique(group))),as.integer(1:J)) | identical(as.integer(sort(unique(group))),as.integer(0:max(group))))) stop("Groups must be consecutively numbered 1,2,3,...")
+  if (length(group.multiplier)!=J) stop("Length of group.multiplier must equal number of penalized groups")
   
   ## Set up XX, yy, lambda
   XX <- standardize(X)

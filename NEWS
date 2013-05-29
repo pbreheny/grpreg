@@ -1,6 +1,10 @@
 *   Minor change
 **  Major change
 
+2.4-0
+	*  Brought gBridge up to date so that it now handles constant
+	   columns, etc. (see 2.2-0)
+
 2.3-0
 	*  Switched to SVD-based orthogonalization to allow for linear
 	   dependency within groups

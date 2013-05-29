@@ -18,7 +18,7 @@ group.multiplier={if (strtrim(penalty,2)=="gr") sqrt(table(group[group!=0])) els
   \item{group}{A vector of consecutive integers describing the grouping
     of the coefficients.  Integers for penalized groups must run from 1
     to the number of penalized groups (see example below).  If there are
-    coefficients to be included in the model without being penalzied,
+    coefficients to be included in the model without being penalized,
     assign them to group 0.}
   \item{penalty}{The penalty to be applied to the model.  One of
     \code{grLasso}, \code{grMCP}, \code{grSCAD}, or \code{gMCP}.  See

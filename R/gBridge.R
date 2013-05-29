@@ -1,19 +1,27 @@
-gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial"), nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) .001 else .05}, lambda.max, alpha=1, eps=.005, delta=1e-7, max.iter=1000, gamma=0.5, group.multiplier=rep(1,J), warn=TRUE)
-{
+gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial"), nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) .001 else .05}, lambda.max, alpha=1, eps=.005, delta=1e-7, max.iter=1000, gamma=0.5, group.multiplier=rep(1,J), warn=TRUE) {
   ## Check for errors
   family <- match.arg(family)
   if (alpha > 1 | alpha < 0) stop("alpha must be in [0,1]")
   if (length(group)!=ncol(X)) stop("group does not match X")
   if (delta <= 0) stop("Delta must be a positive number")
   J <- max(group)
-  K <- as.numeric(table(group))
   if (!(identical(as.integer(sort(unique(group))),as.integer(1:J)) | identical(as.integer(sort(unique(group))),as.integer(0:J)))) stop("Groups must be consecutively numbered 1,2,3,...")
   if (length(group.multiplier)!=J) stop("Length of group.multiplier must equal number of penalized groups")
 
-  ## Set up X, y, lambda
+  ## Set up XX, yy, lambda
   XX <- standardize(X)
   center <- attr(XX, "center")
   scale <- attr(XX, "scale")
+  nz <- which(scale > 1e-6)
+  zg <- setdiff(unique(group), unique(group[nz]))
+  if (length(zg)) {
+    J  <- J - length(zg)
+    group.multiplier <- group.multiplier[-zg]
+  }
+  XX <- XX[ ,nz, drop=FALSE]
+  group.orig <- group
+  group <- group[nz]
+  K <- as.numeric(table(group))  
   yy <- if (family=="gaussian") y - mean(y) else y
   if (missing(lambda)) {
     lambda <- setupLambda.gBridge(XX, yy, group, family, alpha, lambda.min, lambda.max, nlambda, gamma, group.multiplier)
@@ -43,23 +51,28 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial"), nlam
 
   ## Eliminate saturated lambda values, if any
   ind <- !is.na(b[p,])
-  b <- b[,ind,drop=FALSE]
+  b <- b[, ind, drop=FALSE]
   iter <- iter[ind]
   lambda <- lambda[ind]
   df <- df[ind]
+  loss <- loss[ind]
   if (warn & any(iter==max.iter)) warning("Algorithm failed to converge for all values of lambda")
-  beta <- unstandardize(b, center, scale)
   
-  
+  ## Unstandardize
+  b <- unstandardize(b, center[nz], scale[nz])
+  beta <- matrix(0, nrow=(ncol(X)+1), ncol=length(lambda))
+  beta[1,] <- b[1,]
+  beta[nz+1,] <- b[-1,]
+    
   ## Names
   if (is.null(colnames(X))) varnames <- paste("V",1:ncol(X),sep="")
   else varnames <- colnames(X)
-  varnames <- c("(Intercept)",varnames)
+  varnames <- c("(Intercept)", varnames)
   dimnames(beta) <- list(varnames, round(lambda,digits=4))
   
   structure(list(beta = beta,
                  family = family,
-                 group = group,
+                 group = group.orig,
                  lambda = lambda,
                  alpha = alpha,
                  loss = loss,
