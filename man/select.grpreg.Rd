@@ -6,7 +6,8 @@
   grpreg object according to the AIC, BIC, or GCV criteria.}
 \usage{
 select(obj,\dots)
-\method{select}{grpreg}(obj, criterion=c("BIC","AIC","GCV"), df.method=c("default","active"), smooth=FALSE, \dots)
+\method{select}{grpreg}(obj, criterion=c("BIC","AIC","GCV"),
+df.method=c("default","active"), smooth=FALSE, \dots)
 }
 \arguments{
   \item{obj}{A fitted grpreg object.}

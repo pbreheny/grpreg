@@ -1,6 +1,8 @@
 \name{predict.grpreg}
 \alias{predict.grpreg}
 \alias{coef.grpreg}
+\alias{predict.cv.grpreg}
+\alias{coef.cv.grpreg}
 \title{Model predictions based on a fitted \code{grpreg} object}
 \description{Similar to other predict methods, this function returns
   predictions from a fitted \code{"grpreg"} object.}
@@ -8,10 +10,16 @@
 \method{predict}{grpreg}(object, X, lambda, which=1:length(object$lambda),
 type=c("link", "response", "class", "coefficients", "vars", "groups",
 "norm"), ...)
-\method{coef}{grpreg}(object, lambda, which=1:length(object$lambda),...)
+\method{coef}{grpreg}(object, lambda, which=1:length(object$lambda),
+drop=TRUE, ...)
+\method{predict}{cv.grpreg}(object, X, lambda=object$lambda.min,
+which=object$min, type=c("link", "response", "class", "coefficients",
+"vars", "groups", "norm"), ...)
+\method{coef}{cv.grpreg}(object, lambda=object$lambda.min,
+which=object$min, ...)
 }
 \arguments{
-  \item{object}{Fitted \code{"grpreg"} model object.}
+  \item{object}{Fitted \code{"grpreg"} or \code{"cv.grpreg"} model object.}
   \item{X}{Matrix of values at which predictions are to be made.  Not
     used for \code{type="coefficients"}}
   \item{lambda}{Values of the regularization parameter \code{lambda} at
@@ -28,7 +36,16 @@ type=c("link", "response", "class", "coefficients", "vars", "groups",
     \code{"groups"} returns the indices for the groups with at least one
     nonzero coefficient; \code{"norm"} returns the L2 norm of the
     coefficients in each group.}
+  \item{drop}{By default, if a single value of \code{lambda} is
+    supplied, a vector of coefficients is returned.  Set
+    \code{drop=FALSE} if you wish to have \code{coef} always return a
+    matrix (see \code{\link{drop}}).}
   \item{\dots}{Not used.}}
+\details{
+  \code{coef} and \code{predict} methods are provided for
+  \code{"cv.grpreg"} options as a convenience.  They simply call
+  \code{coef.grpreg} and \code{predict.grpreg} with \code{lambda} set to
+  the value that minimizes the cross-validation error.}
 \value{The object returned depends on type.}
 \author{Patrick Breheny <patrick.breheny@uky.edu>}
 \seealso{\code{grpreg}}
@@ -42,7 +59,13 @@ coef(fit, lambda=.001)
 predict(fit, X, type="link", lambda=.001)
 predict(fit, X, type="response", lambda=.001)
 predict(fit, X, type="class", lambda=.001)
-predict(fit, X, type="vars", lambda=.07)
-predict(fit, X, type="groups", lambda=.07)
-predict(fit, X, type="norm", lambda=.07)
+predict(fit, type="vars", lambda=.07)
+predict(fit, type="groups", lambda=.07)
+predict(fit, type="norm", lambda=.07)
+
+cvfit <- cv.grpreg(X, y, group, family="binomial", penalty="grMCP")
+coef(cvfit)
+predict(cvfit, X)
+predict(cvfit, X, type="response")
+predict(cvfit, type="groups")
 }

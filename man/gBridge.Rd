@@ -11,8 +11,8 @@ lambda.max, alpha=1, eps=.005, delta=1e-7, max.iter=1000, gamma=0.5,
 group.multiplier=rep(1,J), warn=TRUE) 
 }
 \arguments{
-   \item{X}{The design matrix, as in \code{grpreg}.}
-  \item{y}{The response vector.}
+  \item{X}{The design matrix, as in \code{grpreg}.}
+  \item{y}{The response vector (or matrix), as in \code{grpreg}.}
   \item{group}{The grouping vector, as in \code{grpreg}.}
   \item{family}{Either "gaussian" or "binomial", depending on the
     response.}

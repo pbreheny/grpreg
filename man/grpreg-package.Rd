@@ -7,8 +7,8 @@
   regression models with grouped penalties, such as the group lasso,
   group MCP, group SCAD, and group bridge.  The algorithms are based on
   the idea of either locally approximated coordinate descent or group
-  descent, depending on the penalty.  All of the algorithms are stable
-  and fast.
+  descent, depending on the penalty.  All of the algorithms (with the
+  exception of group bridge) are stable and fast.
 }
 \details{The following penalties are available:
   \itemize{
@@ -63,9 +63,9 @@
     \item Breheny, P. and Huang, J. (2009) Penalized methods for
     bi-level variable selection.  \emph{Statistics and its interface},
     \strong{2}: 369-380.
-    \item Huang J., Breheny, P. and Ma, S. (to appear). A selective
+    \item Huang J., Breheny, P. and Ma, S. (2012). A selective
     review of group selection in high dimensional
-    models. \emph{Statistical Science}.}
+    models. \emph{Statistical Science}, \strong{27}: 481-499.}
   }
 \author{Patrick Breheny <patrick.breheny@uky.edu>}
 \examples{## See examples in grpreg}

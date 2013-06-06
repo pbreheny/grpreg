@@ -3,7 +3,8 @@
 \title{Plot coefficients from a "grpreg" object}
 \description{Produces a plot of the coefficient paths for a fitted \code{grpreg} object.}
 \usage{
-\method{plot}{grpreg}(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE, ...)
+\method{plot}{grpreg}(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE,
+...) 
 }
 \arguments{
   \item{x}{Fitted \code{"grpreg"} model.}
@@ -33,5 +34,6 @@ plot(fit, legend.loc="topleft", col=myColors)
 labs <- c("Mother's Age", "Mother's weight", "Race", "Smoking",
 "# Premature", "Hypertension", "Uterine irritability", "# Phys. visits")
 plot(fit, legend.loc="topleft", lwd=6, alpha=0.5, legend=labs)
+plot(fit, norm=TRUE, legend.loc="topleft", lwd=6, alpha=0.5, legend=labs)
 }
 \keyword{graphics}

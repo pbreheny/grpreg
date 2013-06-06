@@ -1,5 +1,4 @@
-plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE, ...)
-{
+plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE, ...) {
   if (norm) {
     Y <- predict(x, type="norm")
     if (any(x$group==0)) Y <- Y[-1,]
@@ -7,11 +6,12 @@ plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE, ...)
     Y <- Y[nonzero,]
     g <- 1:nrow(Y)
   } else {
-    penalized <- which(x$group!=0)+1
-    nonzero <- which(apply(abs(coef(x)),1,sum)!=0)
+    beta <- if (length(dim(x$beta))==3) matrix(x$beta[,-1,,drop=FALSE], ncol=dim(x$beta)[3]) else x$beta[-1,,drop=FALSE]
+    penalized <- which(x$group!=0)
+    nonzero <- which(apply(abs(beta),1,sum)!=0)
     ind <- intersect(penalized, nonzero)
-    Y <- coef(x)[ind,,drop=FALSE]    
-    g <- as.numeric(as.factor(x$group[ind-1]))
+    Y <- beta[ind,,drop=FALSE]
+    g <- as.numeric(as.factor(x$group[ind]))
   }
   p <- nrow(Y)
   l <- x$lambda

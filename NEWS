@@ -2,8 +2,20 @@
 **  Major change
 
 2.4-0
+	** Added options in plot.cv.grpreg to plot estimates of r-squared,
+	   signal-to-noise ratio, scale parameter, and prediction error in
+	   addition to cross-validation error (deviance)
+	** grpreg and cv.grpreg now allow matrix y to facilitation group
+	   penalized methods for seemingly unrelated regressions/multitask
+	   learning.  This is something of a 'beta' release at this point,
+	   and will be developed and refined further in future releases.
+	*  Added summary method for cv.grpreg objects
+	*  Added coef and predict methods for cv.grpreg objects
+	*  Fixed bug in predict type='coefficients' when 'lambda'
+	   argument specified.
 	*  Brought gBridge up to date so that it now handles constant
 	   columns, etc. (see 2.2-0)
+	*  Fixed bug in cv.grpreg with user-defined lambda values.
 
 2.3-0
 	*  Switched to SVD-based orthogonalization to allow for linear
@@ -36,7 +48,7 @@
 2.0-0
 	** New algorithm for group lasso
 	** (L2) Group MCP, group SCAD methods added
-	** Added cv.ncvreg to facilitate cross-validation
+	** Added cv.grpreg to facilitate cross-validation
 	*  Extensive internal refactoring of code
 	*  Added dfmax option
 	*  Added group.multiplier option

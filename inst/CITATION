@@ -1,4 +1,4 @@
-citHeader("To cite ncvreg in publications use:")
+citHeader("To cite grpreg in publications use:")
 
 citEntry(entry="Article",
 	 author = personList(as.person("Patrick Breheny"),

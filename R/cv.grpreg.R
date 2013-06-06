@@ -1,13 +1,30 @@
-cv.grpreg <- function(X, y, ..., nfolds=10, seed, trace=FALSE)
-{
+cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, trace=FALSE) {
   if (!missing(seed)) set.seed(seed)
-  fit <- grpreg(X=X, y=y, ...)
+  fit <- grpreg(X=X, y=y, group=group, ...)
+  multi <- FALSE
+  if (is.matrix(y) && ncol(y) > 1) {
+    multi <- TRUE
+    m <- ncol(y)
+    p <- ncol(X)
+    n <- nrow(X)
+    y <- as.numeric(t(y))
+    A <- matrix(0, m*n, m*p)
+    for (i in 1:m) {
+      A[m*(1:n)-2,m*(1:p)-2] <- X
+      A[m*(1:n)-1,m*(1:p)-1] <- X
+      A[m*(1:n),m*(1:p)] <- X
+    }
+    xnames <- colnames(X)
+    X <- cbind(matrix(as.numeric(diag(m)),m*n,m,byrow=TRUE),A)
+  }
+  g <- if (multi) c(rep(0,m), fit$group) else fit$group
   E <- matrix(NA, nrow=length(y), ncol=length(fit$lambda))
+  if (fit$family=="binomial") PE <- E
   
   n <- length(y)
   if (fit$family=="gaussian") {
     cv.ind <- ceiling(sample(1:n)/n*nfolds)
-  } else if (fit$family=="binomial") {
+  } else {
     ind1 <- which(y==1)
     ind0 <- which(y==0)
     n1 <- length(ind1)
@@ -25,14 +42,15 @@ cv.grpreg <- function(X, y, ..., nfolds=10, seed, trace=FALSE)
     y1 <- y[cv.ind!=i]
     X2 <- X[cv.ind==i,]
     y2 <- y[cv.ind==i]
-
-    fit.i <- grpreg(X1, y1, warn=FALSE, ...)
+    
+    fit.i <- grpreg(X1, y1, g, lambda=fit$lambda, warn=FALSE, ...)
     yhat <- predict(fit.i, X2, type="response")
     E[cv.ind==i, 1:ncol(yhat)] <- loss.grpreg(y2, yhat, fit$family)
+    if (fit$family=="binomial") PE[cv.ind==i, 1:ncol(yhat)] <- (yhat < 0.5) == y2
   }
 
-  ## Remove saturated values
-  ind <- which(!apply(is.na(E),2,any))
+  ## Eliminate saturated lambda values, if any
+  ind <- which(apply(is.finite(E), 2, all))
   E <- E[,ind]
   lambda <- fit$lambda[ind]
   
@@ -40,5 +58,9 @@ cv.grpreg <- function(X, y, ..., nfolds=10, seed, trace=FALSE)
   cve <- apply(E, 2, mean)
   cvse <- apply(E, 2, sd) / sqrt(n)
   min <- which.min(cve)
-  structure(list(cve=cve, cvse=cvse, lambda=lambda, fit=fit, min=min, lambda.min=lambda[min]), class="cv.grpreg")
+  null.dev <- calcNullDev(X, y, group=g, family=fit$family)
+  
+  val <- list(cve=cve, cvse=cvse, lambda=lambda, fit=fit, min=min, lambda.min=lambda[min], null.dev=null.dev)
+  if (fit$family=="binomial") val$pe <- apply(PE[,ind], 2, mean)
+  structure(val, class="cv.grpreg")
 }

@@ -9,6 +9,17 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial"), nlam
   if (length(group.multiplier)!=J) stop("Length of group.multiplier must equal number of penalized groups")
 
   ## Set up XX, yy, lambda
+  xnames <- if (is.null(colnames(X))) paste("V",1:ncol(X),sep="") else colnames(X)
+  multi <- FALSE
+  if (is.matrix(y) && ncol(y) > 1) {
+    multi <- TRUE
+    m <- ncol(y)
+    response.names <- if (is.null(colnames(y))) paste("Y",1:m,sep="") else colnames(y)
+    y <- multiY(y)
+    X <- multiX(X, m)
+    group <- c(rep(0, m-1), rep(group, rep(m,length(group))))
+    group.multiplier <- rep(1,J)
+  }
   XX <- standardize(X)
   center <- attr(XX, "center")
   scale <- attr(XX, "scale")
@@ -65,10 +76,15 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial"), nlam
   beta[nz+1,] <- b[-1,]
     
   ## Names
-  if (is.null(colnames(X))) varnames <- paste("V",1:ncol(X),sep="")
-  else varnames <- colnames(X)
-  varnames <- c("(Intercept)", varnames)
-  dimnames(beta) <- list(varnames, round(lambda,digits=4))
+  varnames <- c("(Intercept)", xnames)
+  if (multi) {
+    beta[2:m,] <- sweep(beta[2:m,], 2, beta[1,], FUN="+")
+    beta <- array(beta, dim=c(m, nrow(beta)/m, ncol(beta)))
+    group.orig <- group.orig[-(1:(m-1))]
+    dimnames(beta) <- list(response.names, varnames, round(lambda,digits=4))
+  } else {
+    dimnames(beta) <- list(varnames, round(lambda,digits=4))
+  }
   
   structure(list(beta = beta,
                  family = family,
