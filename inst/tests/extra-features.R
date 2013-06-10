@@ -9,7 +9,7 @@ test_that("logLik() is correct", {
   fit <- grpreg(X, y, group, penalty="grLasso", lambda.min=0)
   expect_that(logLik(fit)[100], equals(logLik(fit.mle)[1], check.attributes=FALSE, tol=.001))
   expect_that(AIC(fit)[100], equals(AIC(fit.mle), check.attributes=FALSE, tol=.001))
-  fit <- grpreg(X, y, group, penalty="gMCP", lambda.min=0)
+  fit <- grpreg(X, y, group, penalty="gel", lambda.min=0)
   expect_that(logLik(fit)[100], equals(logLik(fit.mle)[1], check.attributes=FALSE, tol=.001))
   expect_that(AIC(fit)[100], equals(AIC(fit.mle), check.attributes=FALSE, tol=.001))
   fit.mle <- glm(yy~X, family="binomial")

@@ -173,8 +173,7 @@ static void gLCD_gaussian(double *beta, char *penalty, double *x, double *r, int
   // Make initial local approximation
   int K = K1[g+1] - K1[g];
   double sG = 0; // Sum of inner penalties for group
-  if (strcmp(penalty, "geLasso")==0) for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + fabs(beta_old[j]);
-  if (strcmp(penalty, "geMCP")==0) for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + MCP(beta_old[j], lam1, gamma);
+  if (strcmp(penalty, "gel")==0) for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + fabs(beta_old[j]);
   if (strcmp(penalty, "gMCP")==0) for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + MCP(beta_old[j], lam1, gamma);
   if (strcmp(penalty, "gBridge")==0) {
       for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + fabs(beta_old[j]);
@@ -200,8 +199,7 @@ static void gLCD_gaussian(double *beta, char *penalty, double *x, double *r, int
     double ljk=0;
     if (lam1 != 0) {
       if (strcmp(penalty, "gMCP")==0) ljk = dMCP(sG, lam1, (K*gamma*pow(lam1,2))/(2*lam1)) * dMCP(beta[l*p+j], lam1, gamma);
-      if (strcmp(penalty, "geLasso")==0) ljk = lam1*exp(-tau/lam1*sG);
-      if (strcmp(penalty, "geMCP")==0) ljk = exp(-tau/pow(lam1,2)*sG)*dMCP(beta[j],lam1,gamma);
+      if (strcmp(penalty, "gel")==0) ljk = lam1*exp(-tau/lam1*sG);
       if (strcmp(penalty,"gBridge")==0) ljk = lam1 * gamma * pow(sG, gamma-1);
     }
 
@@ -212,8 +210,7 @@ static void gLCD_gaussian(double *beta, char *penalty, double *x, double *r, int
     if (beta[l*p+j] != beta_old[j]) {
       for (int i=0; i<n; i++) r[i] = r[i] - (beta[l*p+j] - beta_old[j]) * x[n*j+i];
       if (strcmp(penalty, "gBridge")==0) sG = sG + fabs(beta[l*p+j]) - fabs(beta_old[j]);
-      if (strcmp(penalty, "geLasso")==0) sG = sG + fabs(beta[l*p+j]) - fabs(beta_old[j]);
-      if (strcmp(penalty, "geMCP")==0) sG = sG + MCP(beta[l*p+j], lam1, gamma) - MCP(beta_old[j], lam1, gamma);
+      if (strcmp(penalty, "gel")==0) sG = sG + fabs(beta[l*p+j]) - fabs(beta_old[j]);
       if (strcmp(penalty, "gMCP")==0) sG = sG + MCP(beta[l*p+j], lam1, gamma) - MCP(beta_old[j], lam1, gamma);
     }
 
@@ -235,8 +232,7 @@ static void gLCD_binomial(double *beta, char *penalty, double *x, double *r, int
 
   // Make initial local approximation
   double sG = 0; // Sum of inner penalties for group
-  if (strcmp(penalty, "geLasso")==0) for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + fabs(beta_old[j]);
-  if (strcmp(penalty, "geMCP")==0) for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + MCP(beta_old[j], lam1, gamma);
+  if (strcmp(penalty, "gel")==0) for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + fabs(beta_old[j]);
   if (strcmp(penalty, "gMCP")==0) for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + MCP(beta_old[j], lam1, gamma);
   if (strcmp(penalty, "gBridge")==0) {
       for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + fabs(beta_old[j]);
@@ -262,9 +258,8 @@ static void gLCD_binomial(double *beta, char *penalty, double *x, double *r, int
     double ljk=0;
     if (lam1 != 0) {
       if (strcmp(penalty, "gMCP")==0) ljk = dMCP(sG, lam1, (K*gamma*pow(lam1,2))/(2*lam1)) * dMCP(beta[l*p+j], lam1, gamma);
-      if (strcmp(penalty, "geLasso")==0) ljk = lam1*exp(-tau/lam1*sG);
-      if (strcmp(penalty, "geMCP")==0) ljk = exp(-tau/pow(lam1,2)*sG)*dMCP(beta[j],lam1,gamma);
-      if (strcmp(penalty,"gBridge")==0) ljk = lam1 * gamma * pow(sG, gamma-1);
+      if (strcmp(penalty, "gel")==0) ljk = lam1*exp(-tau*v[j-K1[g]]/lam1*sG);
+      if (strcmp(penalty, "gBridge")==0) ljk = lam1 * gamma * pow(sG, gamma-1);
     }
 
     // Update beta
@@ -275,8 +270,7 @@ static void gLCD_binomial(double *beta, char *penalty, double *x, double *r, int
     if (beta[l*p+j] != beta_old[j]) {
       for (int i=0; i<n; i++) r[i] = r[i] - (beta[l*p+j] - beta_old[j]) * x[n*j+i];
       if (strcmp(penalty, "gBridge")==0) sG = sG + fabs(beta[l*p+j]) - fabs(beta_old[j]);
-      if (strcmp(penalty, "geLasso")==0) sG = sG + fabs(beta[l*p+j]) - fabs(beta_old[j]);
-      if (strcmp(penalty, "geMCP")==0) sG = sG + MCP(beta[l*p+j], lam1, gamma) - MCP(beta_old[j], lam1, gamma);
+      if (strcmp(penalty, "gel")==0) sG = sG + fabs(beta[l*p+j]) - fabs(beta_old[j]);
       if (strcmp(penalty, "gMCP")==0) sG = sG + MCP(beta[l*p+j], lam1, gamma) - MCP(beta_old[j], lam1, gamma);
     }
 
