@@ -51,7 +51,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, trace=FALSE) 
 
   ## Eliminate saturated lambda values, if any
   ind <- which(apply(is.finite(E), 2, all))
-  E <- E[,ind]
+  E <- E[,ind,drop=FALSE]
   lambda <- fit$lambda[ind]
   
   ## Return
