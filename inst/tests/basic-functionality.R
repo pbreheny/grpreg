@@ -35,6 +35,7 @@ test_that("grpreg() reproduces linear regression", {
   group <- rep(0:3,4:1)
   fit.mle <- lm(y~X)
   reg <- coef(fit.mle)
+  nlam=100
   par(mfcol=c(3,2))
   gel <- coef(fit <- grpreg(X, y, group, penalty="gel", nlambda=nlam, lambda.min=0))[,nlam]
   plot(fit, main=fit$penalty)

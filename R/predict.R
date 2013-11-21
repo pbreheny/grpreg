@@ -1,10 +1,18 @@
-predict.grpreg <- function(object, X, lambda, which=1:length(object$lambda), type=c("link","response","class","coefficients","vars","groups","norm"), ...) {
+predict.grpreg <- function(object, X, lambda, which=1:length(object$lambda), type=c("link","response","class","coefficients","vars","groups","nvars","ngroups","norm"), ...) {
   type <- match.arg(type)
   beta <- coef.grpreg(object, lambda=lambda, which=which, drop=FALSE)
   if (type=="coefficients") return(beta)
   if (length(dim(object$beta)) == 2) {
     if (type=="vars") return(drop(apply(beta[-1, , drop=FALSE]!=0, 2, FUN=which)))
     if (type=="groups") return(drop(apply(beta[-1, , drop=FALSE]!=0, 2, function(x) unique(object$group[x]))))
+    if (type=="nvars") {
+      v <- drop(apply(beta[-1, , drop=FALSE]!=0, 2, FUN=which))
+      return(sapply(v, length))
+    }
+    if (type=="ngroups") {
+      g <- drop(apply(beta[-1, , drop=FALSE]!=0, 2, function(x) unique(object$group[x])))
+      return(sapply(g, length))
+    }
     if (type=="norm") return(drop(apply(beta[-1, , drop=FALSE], 2, function(x) tapply(x, object$group, l2))))
     if (missing(X)) stop("Must supply X")
     eta <- sweep(X %*% beta[-1,,drop=FALSE], 2, beta[1,], "+")

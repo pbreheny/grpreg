@@ -46,14 +46,14 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial"), nlam
   K0 <- if (min(group)==0) K[1] else 0
   K1 <- if (min(group)==0) cumsum(K) else c(0, cumsum(K))
   if (family=="gaussian") {
-    fit <- .C("gpPathFit_gaussian", double(p*nlambda), integer(nlambda), double(nlambda), double(nlambda), as.double(XX), as.double(yy), as.integer(n), as.integer(p), "gBridge", as.integer(J), as.integer(K1), as.integer(K0), as.double(lambda*alpha), as.double(lambda*(1-alpha)), as.integer(nlambda), as.double(eps), as.double(delta), as.integer(max.iter), as.double(gamma), as.double(0), as.integer(p), as.double(group.multiplier), as.integer(TRUE))
+    fit <- .C("gpPathFit_gaussian", double(p*nlambda), integer(nlambda), double(nlambda), double(nlambda), as.double(XX), as.double(yy), as.integer(n), as.integer(p), "gBridge", as.integer(J), as.integer(K1), as.integer(K0), as.double(lambda*alpha), as.double(lambda*(1-alpha)), as.integer(nlambda), as.double(eps), as.double(delta), as.integer(max.iter), as.double(gamma), as.double(0), as.integer(p), as.integer(J), as.double(group.multiplier), as.integer(TRUE))
     b <- rbind(mean(y), matrix(fit[[1]], nrow=p))
     iter <- fit[[2]]
     df <- fit[[3]] + 1 ## Intercept
     loss <- fit[[4]]
   }
   if (family=="binomial") {
-    fit <- .C("gpPathFit_binomial", double(nlambda), double(p*nlambda), integer(nlambda), double(nlambda), double(nlambda), as.double(XX), as.double(yy), as.integer(n), as.integer(p), "gBridge", as.integer(J), as.integer(K1), as.integer(K0), as.double(lambda*alpha), as.double(lambda*(1-alpha)), as.integer(nlambda), as.double(eps), as.double(delta), as.integer(max.iter), as.double(gamma), as.double(0), as.double(group.multiplier), as.integer(p), as.integer(warn), as.integer(TRUE))
+    fit <- .C("gpPathFit_binomial", double(nlambda), double(p*nlambda), integer(nlambda), double(nlambda), double(nlambda), as.double(XX), as.double(yy), as.integer(n), as.integer(p), "gBridge", as.integer(J), as.integer(K1), as.integer(K0), as.double(lambda*alpha), as.double(lambda*(1-alpha)), as.integer(nlambda), as.double(eps), as.double(delta), as.integer(max.iter), as.double(gamma), as.double(0), as.double(group.multiplier), as.integer(p), as.integer(J), as.integer(warn), as.integer(TRUE))
     b <- rbind(fit[[1]], matrix(fit[[2]], nrow=p))
     iter <- fit[[3]]
     df <- fit[[4]]
