@@ -196,4 +196,4 @@ test_that("dfmax, gmax work", {
   ng <- sapply(predict(fit, type="groups"), length)
   expect_true(max(head(ng, length(ng)-1)) <= gmax)
   expect_true(max(ng) > 2)
-}
+})

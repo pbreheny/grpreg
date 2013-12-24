@@ -1,5 +1,4 @@
-setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, nlambda, group.multiplier)
-{
+setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, nlambda, group.multiplier) {
   ## Fit to unpenalized covariates
   n <- length(y)
   ind <- which(group!=0)
@@ -15,7 +14,7 @@ setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, nlambda
   }
   if (strtrim(penalty,2)=="gr") maxGradient <- sqrt(tapply(z^2, group[ind], sum))
   if (strtrim(penalty,2)=="ge") maxGradient <- tapply(abs(z),group[ind],max)
-  if (penalty=="gMCP") maxGradient <- sqrt(tapply(abs(z), group[ind], max))
+  if (penalty=="cMCP") maxGradient <- sqrt(tapply(abs(z), group[ind], max))
   lambda.max <- max(maxGradient/group.multiplier) / alpha
   
   if (lambda.min==0) {

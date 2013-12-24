@@ -38,7 +38,7 @@ df.method=c("default","active"), smooth=FALSE, \dots)
   \item{IC}{A vector of the calculated model selection criteria for each
     point on the regularization path.}
   }
-\author{Patrick Breheny <patrick.breheny@uky.edu>}
+\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
 \seealso{\code{grpreg}}
 \examples{
 data(birthwt.grpreg)

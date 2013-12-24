@@ -66,7 +66,7 @@ group.multiplier=rep(1,J), warn=TRUE)
     bi-level variable selection.  \emph{Statistics and its interface},
     \strong{2}: 369-380.
     }}
-\author{Patrick Breheny <patrick.breheny@uky.edu>}
+\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
 \seealso{\code{\link{grpreg}}}
 \examples{
 ## Linear regression

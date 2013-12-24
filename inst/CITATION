@@ -1,4 +1,20 @@
-citHeader("To cite grpreg in publications use:")
+citHeader("If you use any of the L2-norm penalties (penalty='grLasso', 'grMCP', or 'grSCAD'), cite the Statistics and Computing article.  If you use the group exponential lasso (penalty='gel'), cite the preprint (check my website for its arXiv citation number).  If you use the composite MCP (penalty='cMCP'), cite the Statistics and its Interface (2009) article; note that this penalty is referred to as the 'group MCP' in the original article, but it would be better to refer to it as 'composite MCP' in future works.")
+
+citEntry(entry="Article",
+	 author = personList(as.person("Patrick Breheny"),
+	 	  	     as.person("Jian Huang")),
+         title = "Group descent algorithms for nonconvex penalized linear and logistic regression models with grouped predictors",
+         journal = "Statistics and Computing",
+         year = "to appear",
+         textVersion = "Breheny, P. and Huang, J. (to appear) Group descent algorithms for nonconvex penalized linear and logistic regression models with grouped predictors.  Statistics and Computing.")
+
+citEntry(entry="Article",
+	 author = personList(as.person("Patrick Breheny")),
+         title = "The group exponential lasso for bi-level variable selection",
+         url = "myweb.uiowa.edu/pbreheny/publications/grpexp.pdf",
+	 year = "In submission",
+         journal = "Preprint",
+         textVersion = "Breheny, P. The group exponential lasso for bi-level variable selection.  In submission.")
 
 citEntry(entry="Article",
 	 author = personList(as.person("Patrick Breheny"),
@@ -10,3 +26,4 @@ citEntry(entry="Article",
          pages = "369--380",
          textVersion = "Breheny, P. and Huang, J. (2009) Penalized methods for
   bi-level variable selection.  Statistics and its interface, 2: 369-380.")
+

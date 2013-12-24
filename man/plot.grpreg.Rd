@@ -18,7 +18,7 @@
   \item{\dots}{Other graphical parameters to \code{plot},
     \code{matlines}, or \code{legend}}
 }
-\author{Patrick Breheny <patrick.breheny@uky.edu>}
+\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
 \seealso{\code{grpreg}}
 \examples{
 data(birthwt.grpreg)

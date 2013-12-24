@@ -11,7 +11,7 @@ test_that("multitask learning works", {
   
   par(mfcol=c(3,2))
   fit <- grpreg(X, Y, penalty="grLasso"); plot(fit)
-  fit <- grpreg(X, Y, penalty="gMCP"); plot(fit)
+  fit <- grpreg(X, Y, penalty="cMCP"); plot(fit)
   fit <- gBridge(X, Y); plot(fit)
   
   n <- 200
@@ -20,7 +20,7 @@ test_that("multitask learning works", {
              rnorm(n, mean=X%*%b/10, sd=1),
              rnorm(n, mean=X%*%b/10, sd=1)) > 0
   fit <- grpreg(X, Y, penalty="grLasso", family="binomial", lambda.min=0.1); plot(fit)
-  fit <- grpreg(X, Y, penalty="gMCP", family="binomial", lambda.min=0.2); plot(fit)
+  fit <- grpreg(X, Y, penalty="cMCP", family="binomial", lambda.min=0.2); plot(fit)
   fit <- gBridge(X, Y, family="binomial", lambda.min=0.2); plot(fit)
 })
 
@@ -69,8 +69,8 @@ test_that("multitask learning reproduces linear regression", {
   fit.mle <- lm(Y~X)
   reg <- coef(fit.mle)
   
-  gMCP <- coef(fit <- grpreg(X, Y, penalty="gMCP", lambda.min=0), which=100)
-  expect_that(t(gMCP), equals(reg, tolerance=.01, check.attributes=FALSE))
+  cMCP <- coef(fit <- grpreg(X, Y, penalty="cMCP", lambda.min=0), which=100)
+  expect_that(t(cMCP), equals(reg, tolerance=.01, check.attributes=FALSE))
   p <- predict(fit, X, which=100)
   expect_that(p, equals(predict(fit.mle), tolerance=.01, check.attributes=FALSE))
   
@@ -130,14 +130,14 @@ test_that("cross-validation for multitask learning works", {
   
   par(mfcol=c(2,2))
   cvfit <- cv.grpreg(X, Y); plot(cvfit, type="all")
-  cvfit <- cv.grpreg(X, Y, penalty="gMCP"); plot(cvfit, type="all")
+  cvfit <- cv.grpreg(X, Y, penalty="cMCP"); plot(cvfit, type="all")
   
   b <- rep(0,10)
   Y <- cbind(rnorm(n, mean=X%*%b, sd=1),
              5+rnorm(n, mean=X%*%b, sd=1),
              10+rnorm(n, mean=X%*%b, sd=1))
   cvfit <- cv.grpreg(X, Y); plot(cvfit, type="all")
-  cvfit <- cv.grpreg(X, Y, penalty="gMCP"); plot(cvfit, type="all")
+  cvfit <- cv.grpreg(X, Y, penalty="cMCP"); plot(cvfit, type="all")
   
   n <- 200
   X <- matrix(rnorm(n*p),ncol=p)
@@ -146,12 +146,12 @@ test_that("cross-validation for multitask learning works", {
              rnorm(n, mean=X%*%b, sd=1),
              rnorm(n, mean=X%*%b, sd=1)) > 0
   cvfit <- cv.grpreg(X, Y, family="binomial"); plot(cvfit, type="all")
-  cvfit <- cv.grpreg(X, Y, penalty="gMCP", family="binomial"); plot(cvfit, type="all")
+  cvfit <- cv.grpreg(X, Y, penalty="cMCP", family="binomial"); plot(cvfit, type="all")
 
   b <- rep(0,10)
   Y <- cbind(rnorm(n, mean=X%*%b, sd=1),
              rnorm(n, mean=X%*%b, sd=1),
              rnorm(n, mean=X%*%b, sd=1)) > 0
   cvfit <- cv.grpreg(X, Y, family="binomial"); plot(cvfit, type="all")
-  cvfit <- cv.grpreg(X, Y, penalty="gMCP", family="binomial"); plot(cvfit, type="all")
+  cvfit <- cv.grpreg(X, Y, penalty="cMCP", family="binomial"); plot(cvfit, type="all")
 })

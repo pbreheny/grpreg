@@ -17,12 +17,13 @@
     penalty on the norm of each group
     \item \code{grSCAD}: Group SCAD; like the group lasso, but with a SCAD
     penalty on the norm of each group
-    \item \code{gMCP}: A hierarchical penalty which places an outer MCP
+    \item \code{cMCP}: A hierarchical penalty which places an outer MCP
     penalty on a sum of inner MCP penalties for each group (Breheny &
     Huang, 2009)
+    \item \code{gel}: Group exponential lasso
     \item \code{gBridge}: A penalty which places a bridge penalty on the
     L1-norm of each group (Huang et al., 2009)}
-  The \code{gMCP} and \code{gBridge} penalties carry out bi-level
+  The \code{cMCP}, \code{gel}, and \code{gBridge} penalties carry out bi-level
   selection, meaning that they carry out variable selection at the group
   level and at the level of individual covariates (i.e., they select
   important groups as well as important members of those groups).  The
@@ -55,17 +56,28 @@
 \references{
   \itemize{
     \item Yuan, M. and Lin, Y. (2006) Model selection and estimation in
-    regression with grouped variables.  \emph{Journal of the Royal Statistical
-    Society Series B}, \strong{68}: 49-67. 
+    regression with grouped variables.  \emph{Journal of the Royal
+      Statistical Society Series B}, \strong{68}: 49-67.
+
     \item Huang, J., Ma, S., Xie, H., and Zhang, C. (2009) A group bridge
     approach for variable selection.  \emph{Biometrika}, \strong{96}:
-    339-355. 
+    339-355.
+
     \item Breheny, P. and Huang, J. (2009) Penalized methods for
     bi-level variable selection.  \emph{Statistics and its interface},
     \strong{2}: 369-380.
+    
     \item Huang J., Breheny, P. and Ma, S. (2012). A selective
     review of group selection in high dimensional
-    models. \emph{Statistical Science}, \strong{27}: 481-499.}
+    models. \emph{Statistical Science}, \strong{27}: 481-499.
+
+    \item Breheny, P. and Huang, J. (to appear) Group descent algorithms
+    for nonconvex penalized linear and logistic regression models with
+    grouped predictors.  \emph{Statistics and Computing}, to appear.
+    
+    \item Breheny, P. The group exponential lasso for bi-level
+    variable selection. In submission.
   }
-\author{Patrick Breheny <patrick.breheny@uky.edu>}
+}
+\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
 \examples{## See examples in grpreg}

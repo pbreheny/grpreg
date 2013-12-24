@@ -30,7 +30,7 @@
   \code{lambda}.  For \code{rsq} and \code{snr}, these confidence
   intervals are quite crude, especially near zero, and will hopefully be
   improved upon in later versions of \code{grpreg}.}
-\author{Patrick Breheny <patrick.breheny@uky.edu>}
+\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
 \seealso{\code{\link{grpreg}}, \code{\link{cv.grpreg}}}
 \examples{
 ## Linear regression

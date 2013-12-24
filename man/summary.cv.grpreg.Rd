@@ -37,7 +37,7 @@
     estimate.}
   \item{pe}{For logistic regression models, the prediction error
     (misclassification error).}}
-\author{Patrick Breheny <patrick.breheny@uky.edu>}
+\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
 \seealso{\code{\link{grpreg}}, \code{\link{cv.grpreg}}, \code{\link{plot.cv.grpreg}}}
 \examples{
 ## Linear regression

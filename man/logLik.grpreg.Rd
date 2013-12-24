@@ -30,14 +30,14 @@ REML=FALSE, ...)
   display correctly.  However, it works with 'AIC' and 'BIC' without any
   glitches and returns the expected vectorized output.
   }
-\author{Patrick Breheny <patrick.breheny@uky.edu>}
+\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
 \seealso{\code{grpreg}}
 \examples{
 data(birthwt.grpreg)
 X <- as.matrix(birthwt.grpreg[,-1:-2])
 y <- birthwt.grpreg$bwt
 group <- c(1,1,1,2,2,2,3,3,4,5,5,6,7,8,8,8)
-fit <- grpreg(X,y,group,penalty="gMCP")
+fit <- grpreg(X,y,group,penalty="cMCP")
 logLik(fit) ## Display is glitchy for vectors
 AIC(fit)
 BIC(fit)

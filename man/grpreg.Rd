@@ -5,12 +5,12 @@
   over a grid of values for the regularization parameter lambda. Fits
   linear and logistic regression models.}
 \usage{
-grpreg(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD", 
-"gMCP", "gBridge", "gLasso"), family=c("gaussian","binomial"), 
-nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05}, 
-alpha=1, eps=.005, max.iter=1000, dfmax=p, gamma = 3, 
-group.multiplier={if (strtrim(penalty,2)=="gr") 
-sqrt(table(group[group!=0])) else rep(1,J)}, warn=TRUE, ...) 
+grpreg(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD",
+"gel", "cMCP", "gBridge", "gLasso", "gMCP"), family=c("gaussian","binomial"),
+nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05},
+alpha=1, eps=.005, max.iter=1000, dfmax=p, gmax=J, gamma=3, tau=1/3,
+group.multiplier={if (strtrim(penalty,2)=="gr")
+sqrt(table(group[group!=0])) else rep(1,J)}, warn=TRUE, ...)
 }
 \arguments{
   \item{X}{The design matrix, without an intercept.  \code{grpreg}
@@ -22,8 +22,9 @@ sqrt(table(group[group!=0])) else rep(1,J)}, warn=TRUE, ...)
     to the number of penalized groups (see example below).  If there are
     coefficients to be included in the model without being penalized,
     assign them to group 0.}
-  \item{penalty}{The penalty to be applied to the model.  One of
-    \code{grLasso}, \code{grMCP}, \code{grSCAD}, or \code{gMCP}.  See
+  \item{penalty}{The penalty to be applied to the model.  For group
+    selection, one of \code{grLasso}, \code{grMCP}, or \code{grSCAD}.
+    For bi-level selection, one of \code{gel} or \code{cMCP}.  See
     below for details.}
   \item{family}{Either "gaussian" or "binomial", depending on the
     response.}
@@ -49,7 +50,12 @@ sqrt(table(group[group!=0])) else rep(1,J)}, warn=TRUE, ...)
   \item{dfmax}{Limit on the number of parameters allowed to be nonzero.
     If this limit is exceeded, the algorithm will exit early from the
     regularization path.}
+  \item{gmax}{Limit on the number of groups allowed to have nonzero
+    elements.  If this limit is exceeded, the algorithm will exit early
+    from the regularization path.}
   \item{gamma}{Tuning parameter of the MCP penalty; defaults to 3.}
+  \item{tau}{Tuning parameter for the group exponential lasso; defaults
+    to 1/3.}
   \item{group.multiplier}{A vector of values representing multiplicative
     factors by which each group's penalty is to be multiplied.
     Often, this is a function (such as the square root) of the number of
@@ -62,24 +68,32 @@ sqrt(table(group[group!=0])) else rep(1,J)}, warn=TRUE, ...)
 \details{
   There are two general classes of methods involving grouped penalties:
   those that carry out bi-level selection and those that carry out group
-  selection.  Bi-level means  carrying out variable selection at the group
+  selection.  Bi-level means carrying out variable selection at the group
   level as well as the level of individual covariates (i.e., selecting
   important groups as well as important members of those groups).  Group
-  selection selects important groups, not members within the group --
+  selection selects important groups, and not members within the group --
   i.e., within a group, coefficients will either all be zero or all
   nonzero.  The \code{grLasso}, \code{grMCP}, and \code{grSCAD}
-  penalties carry out group selection, while the \code{gMCP} penalty
-  carries out bi-level selection.  For bi-level selection, see also the
-  \code{\link{gBridge}} function.
+  penalties carry out group selection, while the \code{gel} and
+  \code{cMCP} penalties carry out bi-level selection.  For bi-level
+  selection, see also the \code{\link{gBridge}} function.  For
+  historical reasons and backwards compatibility, some of these
+  penalties have aliases; e.g., \code{gLasso} will do the same thing as
+  \code{grLasso}, but users are encouraged to use \code{grLasso}.
 
-  Please note the distinction between \code{grMCP} and \code{gMCP},
-  which have unfortunately similar names.  The former involves an MCP
-  penalty being applied to an L2-norm of each group.  The latter
-  involves a hierarchical penalty which places an outer MCP penalty on a
-  sum of inner MCP penalties for each group, as proposed in Breheny &
-  Huang, 2009.  Either penalty may be referred to as the "group MCP",
-  depending on the publication.  The \code{gMCP} method is referred to
-  as "composite MCP" in Huang et al. (2012).
+  Please note the distinction between \code{grMCP} and \code{cMCP}.  The
+  former involves an MCP penalty being applied to an L2-norm of each
+  group.  The latter involves a hierarchical penalty which places an
+  outer MCP penalty on a sum of inner MCP penalties for each group, as
+  proposed in Breheny & Huang, 2009.  Either penalty may be referred to
+  as the "group MCP", depending on the publication.  To resolve this
+  confusion, Huang et al. (2012) proposed the name "composite MCP" for
+  the \code{cMCP} penalty.
+
+  For more information about the penalties and their properties, please
+  consult the references below, many of which contain discussion, case
+  studies, and simulation studies comparing the methods.  If you use
+  \code{grpreg} for an analysis, please cite the appropriate reference.
 
   In keeping with the notation from the original MCP paper, the tuning
   parameter of the MCP penalty is denoted 'gamma'.  Note, however, that
@@ -92,7 +106,7 @@ sqrt(table(group[group!=0])) else rep(1,J)}, warn=TRUE, ...)
   for \code{"binomial"}, where the likelihood is from a traditional
   generalized linear model for the log-odds of an event.  For logistic
   regression models, some care is taken to avoid model saturation; the
-  algorithm  may exit early in this setting. 
+  algorithm  may exit early in this setting.
   
   For the bi-level selection methods, a locally approximated coordinate
   descent algorithm is employed.  For the group selection methods, group
@@ -150,12 +164,28 @@ sqrt(table(group[group!=0])) else rep(1,J)}, warn=TRUE, ...)
     \item Breheny, P. and Huang, J. (2009) Penalized methods for
     bi-level variable selection.  \emph{Statistics and its interface},
     \strong{2}: 369-380.
+    \url{myweb.uiowa.edu/pbreheny/publications/Breheny2009.pdf}
+    
     \item Huang J., Breheny, P. and Ma, S. (2012). A selective
     review of group selection in high dimensional
-    models. \emph{Statistical Science}, \strong{27}: 481-499.}
+    models. \emph{Statistical Science}, \strong{27}: 481-499.
+    \url{myweb.uiowa.edu/pbreheny/publications/Huang2012.pdf}
+    
+    \item Breheny, P. and Huang, J. (to appear) Group descent algorithms for
+    nonconvex penalized linear and logistic regression models with grouped
+    predictors.  \emph{Statistics and Computing}, to appear.
+    \url{www.springerlink.com/openurl.asp?genre=article&id=doi:10.1007/s11222-013-9424-2}
+    
+    \item Breheny, P. The group exponential lasso for bi-level
+    variable selection. In submission.
+    \url{myweb.uiowa.edu/pbreheny/publications/grpexp.pdf}
   }
-\author{Patrick Breheny <patrick.breheny@uky.edu>}
-\seealso{\code{\link{cv.grpreg}}, as well as \code{\link[=plot.grpreg]{plot}} and \code{\link[=select.grpreg]{select}} methods.}
+}
+
+\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
+\seealso{\code{\link{cv.grpreg}}, as well as
+  \code{\link[=plot.grpreg]{plot}} and
+  \code{\link[=select.grpreg]{select}} methods.}
 \examples{
 ## Linear regression
 data(birthwt.grpreg)
@@ -168,7 +198,9 @@ fit <- grpreg(X,y,group,penalty="grMCP")
 plot(fit)
 fit <- grpreg(X,y,group,penalty="grSCAD")
 plot(fit)
-fit <- grpreg(X,y,group,penalty="gMCP")
+fit <- grpreg(X,y,group,penalty="gel")
+plot(fit)
+fit <- grpreg(X,y,group,penalty="cMCP")
 plot(fit)
 select(fit,"AIC")
 
@@ -180,9 +212,23 @@ fit <- grpreg(X,y,group,penalty="grMCP", family="binomial")
 plot(fit)
 fit <- grpreg(X,y,group,penalty="grSCAD", family="binomial")
 plot(fit)
-fit <- grpreg(X,y,group,penalty="gMCP", family="binomial")
+fit <- grpreg(X,y,group,penalty="gel", family="binomial")
+plot(fit)
+fit <- grpreg(X,y,group,penalty="cMCP", family="binomial")
 plot(fit)
 select(fit,"BIC")
+
+## Multitask learning
+## Simulated example
+set.seed(1)
+n <- 50
+p <- 10
+k <- 5
+X <- matrix(runif(n*p), n, p)
+y <- matrix(rnorm(n*k, X[,1] + X[,2]), n, k)
+fit <- grpreg(X, y)
+## Note that group is set up automatically:
+fit$group
+plot(fit)
 }
 \keyword{models}
-

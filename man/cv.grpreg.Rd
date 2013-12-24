@@ -49,7 +49,7 @@ cv.grpreg(X, y, group=1:ncol(X), ..., nfolds=10, seed, trace=FALSE)
   \item{pe}{If \code{family="binomial"}, the cross-validation prediction
     error for each value of \code{lambda}.}
 }
-\author{Patrick Breheny <patrick.breheny@uky.edu>}
+\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
 \seealso{\code{\link{grpreg}}, \code{\link{plot.cv.grpreg}},
   \code{\link{summary.cv.grpreg}}, \code{\link{predict.cv.grpreg}}}
 \examples{
@@ -62,4 +62,8 @@ cvfit <- cv.grpreg(X, y, group)
 plot(cvfit)
 summary(cvfit)
 coef(cvfit) ## Beta at minimum CVE
+
+cvfit <- cv.grpreg(X, y, group, penalty="gel")
+plot(cvfit)
+summary(cvfit)
 }

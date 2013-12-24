@@ -7,14 +7,14 @@
 \description{Similar to other predict methods, this function returns
   predictions from a fitted \code{"grpreg"} object.}
 \usage{
-\method{predict}{grpreg}(object, X, lambda, which=1:length(object$lambda),
-type=c("link", "response", "class", "coefficients", "vars", "groups",
-"norm"), ...)
+\method{predict}{grpreg}(object, X, lambda,
+which=1:length(object$lambda), type=c("link", "response", "class",
+"coefficients", "vars", "groups", "nvars", "ngroups", "norm"), ...) 
 \method{coef}{grpreg}(object, lambda, which=1:length(object$lambda),
 drop=TRUE, ...)
 \method{predict}{cv.grpreg}(object, X, lambda=object$lambda.min,
 which=object$min, type=c("link", "response", "class", "coefficients",
-"vars", "groups", "norm"), ...)
+"vars", "groups", "", "nvars", "ngroups", "norm"), ...) 
 \method{coef}{cv.grpreg}(object, lambda=object$lambda.min,
 which=object$min, ...)
 }
@@ -34,8 +34,10 @@ which=object$min, ...)
     probability; \code{"coefficients"} returns the coefficients;
     \code{"vars"} returns the indices for the nonzero coefficients;
     \code{"groups"} returns the indices for the groups with at least one
-    nonzero coefficient; \code{"norm"} returns the L2 norm of the
-    coefficients in each group.}
+    nonzero coefficient; \code{"nvars"} returns the number of nonzero
+    coefficients; \code{"ngroups"} returns the number of groups with at
+    least one nonzero coefficient; \code{"norm"} returns the L2 norm of
+    the coefficients in each group.}
   \item{drop}{By default, if a single value of \code{lambda} is
     supplied, a vector of coefficients is returned.  Set
     \code{drop=FALSE} if you wish to have \code{coef} always return a
@@ -47,7 +49,7 @@ which=object$min, ...)
   \code{coef.grpreg} and \code{predict.grpreg} with \code{lambda} set to
   the value that minimizes the cross-validation error.}
 \value{The object returned depends on type.}
-\author{Patrick Breheny <patrick.breheny@uky.edu>}
+\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
 \seealso{\code{grpreg}}
 \examples{
 data(birthwt.grpreg)

@@ -10,9 +10,9 @@ test_that("grpreg() reproduces simple linear regression", {
   gel <- coef(fit <- grpreg(X, y, group, penalty="gel", nlambda=nlam, lambda.min=0))[,nlam]
   plot(fit, main=fit$penalty)
   expect_that(gel, equals(reg, tolerance=.01, check.attributes=FALSE))
-  gMCP <- coef(fit <- grpreg(X, y, group, penalty="gMCP", nlambda=nlam, lambda.min=0))[,nlam]
+  cMCP <- coef(fit <- grpreg(X, y, group, penalty="cMCP", nlambda=nlam, lambda.min=0))[,nlam]
   plot(fit, main=fit$penalty)
-  expect_that(gMCP, equals(reg, tolerance=.01, check.attributes=FALSE))
+  expect_that(cMCP, equals(reg, tolerance=.01, check.attributes=FALSE))
   bridge <- coef(fit <- gBridge(X, y, group, nlambda=nlam, lambda.min=0))[,1]
   plot(fit, main=fit$penalty)
   expect_that(bridge, equals(reg, tolerance=.01, check.attributes=FALSE))
@@ -40,9 +40,9 @@ test_that("grpreg() reproduces linear regression", {
   gel <- coef(fit <- grpreg(X, y, group, penalty="gel", nlambda=nlam, lambda.min=0))[,nlam]
   plot(fit, main=fit$penalty)
   expect_that(gel, equals(reg, tolerance=.01, check.attributes=FALSE))
-  gMCP <- coef(fit <- grpreg(X, y, group, penalty="gMCP", lambda.min=0))[,100]
+  cMCP <- coef(fit <- grpreg(X, y, group, penalty="cMCP", lambda.min=0))[,100]
   plot(fit, main=fit$penalty)
-  expect_that(gMCP, equals(reg, tolerance=.01, check.attributes=FALSE))
+  expect_that(cMCP, equals(reg, tolerance=.01, check.attributes=FALSE))
   bridge <- coef(fit <- gBridge(X, y, group, lambda.min=0))[,1]
   plot(fit, main=fit$penalty)
   expect_that(bridge, equals(reg, tolerance=.01, check.attributes=FALSE))
@@ -70,9 +70,9 @@ test_that("grpreg() reproduces simple logistic regression", {
   gel <- coef(fit <- grpreg(X, y, group, penalty="gel", nlambda=nlam, lambda.min=0, family="binomial", gamma=12))[,nlam]
   plot(fit, main=fit$penalty)
   expect_that(gel, equals(reg, tolerance=.01, check.attributes=FALSE))
-  gMCP <- coef(fit <- grpreg(X, y, group, penalty="gMCP", nlambda=nlam, lambda.min=0, family="binomial", gamma=12))[,nlam]
+  cMCP <- coef(fit <- grpreg(X, y, group, penalty="cMCP", nlambda=nlam, lambda.min=0, family="binomial", gamma=12))[,nlam]
   plot(fit, main=fit$penalty)
-  expect_that(gMCP, equals(reg, tolerance=.01, check.attributes=FALSE))
+  expect_that(cMCP, equals(reg, tolerance=.01, check.attributes=FALSE))
   bridge <- coef(fit <- gBridge(X, y, group, lambda.min=0, nlambda=nlam, family="binomial"))[,1]
   plot(fit, main=fit$penalty)
   expect_that(bridge, equals(reg, tolerance=.01, check.attributes=FALSE))
@@ -99,9 +99,9 @@ test_that("grpreg() reproduces logistic regression", {
   gel <- coef(fit <- grpreg(X, y, group, penalty="gel", family="binomial"))[,100]
   plot(fit, main=fit$penalty)
   expect_that(gel, equals(reg, tolerance=.01, check.attributes=FALSE))
-  gMCP <- coef(fit <- grpreg(X, y, group, penalty="gMCP", family="binomial"))[,100]
+  cMCP <- coef(fit <- grpreg(X, y, group, penalty="cMCP", family="binomial"))[,100]
   plot(fit, main=fit$penalty)
-  expect_that(gMCP, equals(reg, tolerance=.01, check.attributes=FALSE))
+  expect_that(cMCP, equals(reg, tolerance=.01, check.attributes=FALSE))
   bridge <- coef(fit <- gBridge(X, y, group, family="binomial"))[,1]
   plot(fit, main=fit$penalty)
   expect_that(bridge, equals(reg, tolerance=.01, check.attributes=FALSE))
