@@ -1,4 +1,4 @@
-cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, trace=FALSE) {
+cv.grpreg <- function(X, y, group=1:ncol(X), lambda, ..., nfolds=10, seed, trace=FALSE) {
   if (!missing(seed)) set.seed(seed)
   fit <- grpreg(X=X, y=y, group=group, ...)
   multi <- FALSE
