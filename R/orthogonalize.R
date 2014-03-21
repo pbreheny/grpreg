@@ -7,9 +7,9 @@ orthogonalize <- function(X, group) {
   for (j in seq_along(numeric(J))) {
     ind <- which(group==j)
     if (length(ind)==0) next
-    SVD <- svd(crossprod(X[, ind, drop=FALSE])/n)
+    SVD <- svd(X[, ind, drop=FALSE], nu=0)
     r <- which(SVD$d > 1e-10)
-    T[[j]] <- sweep(SVD$u[,r,drop=FALSE], 2, SVD$d[r]^(-1/2), "*")
+    T[[j]] <- sweep(SVD$v[,r,drop=FALSE], 2, sqrt(n)/SVD$d[r], "*")
     XX[,ind[r]] <- X[,ind]%*%T[[j]]
   }
   nz <- !apply(XX==0,2,all)
@@ -18,16 +18,9 @@ orthogonalize <- function(X, group) {
   attr(XX, "group") <- group[nz]
   XX
 }
-unorthogonalize <- function(b, XX, group.full, group)
-{
-  beta <- matrix(NA, nrow=length(group.full)+1, ncol=ncol(b))
-  beta[c(1,1+which(group==0)),] <- b[c(1,1+which(group==0)),]
-  J <- max(group)
-  for (j in seq_along(numeric(J))) {
-    ind.full <- which(group.full==j)
-    ind <- which(group==j)
-    if (length(ind)==0) next
-    beta[ind.full+1,] <- attr(XX,"T")[[j]] %*% b[ind+1,]
-  }
-  beta
+unorthogonalize <- function(b, XX, group) {
+  ind <- !sapply(attr(XX, "T"), is.null)
+  T <- bdiag(attr(XX, "T")[ind])
+  ind0 <- c(1, 1+which(group==0))
+  rbind(b[ind0,,drop=FALSE], as.matrix(T %*% b[-ind0,,drop=FALSE]))
 }

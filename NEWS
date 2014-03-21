@@ -1,6 +1,10 @@
 *   Minor change
 **  Major change
 
+2.6-0
+	** Various internal changes to make the package more efficient for
+	   large data sets
+
 2.5-0
 	** Added group exponential lasso method.
 	*  Added gmax option

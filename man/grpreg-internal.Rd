@@ -13,7 +13,7 @@ nlambda, gamma, group.multiplier)
 standardize(X)
 unstandardize(b, center, scale)
 orthogonalize(X, group)
-unorthogonalize(b, XX, group.full, group)
+unorthogonalize(b, XX, group)
 }
 \author{Patrick Breheny <patrick-breheny@uiowa.edu>}
 \details{These are not intended for use by users. \code{setupLambda} and

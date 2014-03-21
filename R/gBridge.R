@@ -20,9 +20,10 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial"), nlam
     group <- c(rep(0, m-1), rep(group, rep(m,length(group))))
     group.multiplier <- rep(1,J)
   }
-  XX <- standardize(X)
-  center <- attr(XX, "center")
-  scale <- attr(XX, "scale")
+  std <- .Call("standardize", X)
+  XX <- std[[1]]
+  center <- std[[2]]
+  scale <- std[[3]]
   nz <- which(scale > 1e-6)
   zg <- setdiff(unique(group), unique(group[nz]))
   if (length(zg)) {
@@ -61,7 +62,7 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial"), nlam
   }
 
   ## Eliminate saturated lambda values, if any
-  ind <- !is.na(b[p,])
+  ind <- !is.na(iter)
   b <- b[, ind, drop=FALSE]
   iter <- iter[ind]
   lambda <- lambda[ind]

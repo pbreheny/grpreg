@@ -1,22 +1,21 @@
 setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, nlambda, group.multiplier) {
   ## Fit to unpenalized covariates
   n <- length(y)
-  ind <- which(group!=0)
-  if (length(ind)!=length(group)) {
+  K <- table(group)
+  K1 <- if (min(group)==0) cumsum(K) else c(0, cumsum(K))
+  if (K1[1]!=0) {
     fit <- glm(y~X[, group==0], family=family)
   } else fit <- glm(y~1, family=family)
 
   ## Determine lambda.max
-  if (family=="gaussian") {
-    z <- crossprod(X[,ind, drop=FALSE], fit$residuals) / n
+  r <- if (family=="gaussian") fit$residuals else residuals(fit, "working")*fit$weights
+  if (strtrim(penalty,2)=="gr") {
+    zmax <- .Call("maxgrad", X, r, as.integer(K1), as.double(group.multiplier)) / n
   } else {
-    z <- crossprod(X[,ind, drop=FALSE], residuals(fit, "working") * fit$weights) / n
+    zmax <- .Call("maxprod", X, r, as.integer(K1), as.double(group.multiplier)) / n
   }
-  if (strtrim(penalty,2)=="gr") maxGradient <- sqrt(tapply(z^2, group[ind], sum))
-  if (strtrim(penalty,2)=="ge") maxGradient <- tapply(abs(z),group[ind],max)
-  if (penalty=="cMCP") maxGradient <- sqrt(tapply(abs(z), group[ind], max))
-  lambda.max <- max(maxGradient/group.multiplier) / alpha
-  
+  lambda.max <- zmax/alpha
+
   if (lambda.min==0) {
     lambda <- c(exp(seq(log(lambda.max), log(.001*lambda.max), length=nlambda-1)), 0)
   } else lambda <- exp(seq(log(lambda.max), log(lambda.min*lambda.max), length=nlambda))

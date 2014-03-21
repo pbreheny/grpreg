@@ -23,9 +23,10 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
     group <- c(rep(0, m-1), rep(group, rep(m,length(group))))
     group.multiplier <- rep(1,J) ## Think about changing in the future
   }
-  XX <- standardize(X)
-  center <- attr(XX, "center")
-  scale <- attr(XX, "scale")
+  std <- .Call("standardize", X)
+  XX <- std[[1]]
+  center <- std[[2]]
+  scale <- std[[3]]
   nz <- which(scale > 1e-6)
   zg <- setdiff(unique(group), unique(group[nz]))
   if (length(zg)) {
@@ -37,7 +38,6 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   group <- group[nz]
   if (strtrim(penalty,2)=="gr") {
     XX <- orthogonalize(XX, group)
-    group.full <- group
     group <- attr(XX, "group")
   }
   K <- as.numeric(table(group))
@@ -73,7 +73,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   }
   
   ## Eliminate saturated lambda values, if any
-  ind <- !is.na(b[p,])
+  ind <- !is.na(iter)
   b <- b[, ind, drop=FALSE]
   iter <- iter[ind]
   lambda <- lambda[ind]
@@ -82,7 +82,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   if (warn & any(iter==max.iter)) warning("Algorithm failed to converge for all values of lambda")
 
   ## Unstandardize
-  if (strtrim(penalty,2)=="gr") b <- unorthogonalize(b, XX, group.full, group)
+  if (strtrim(penalty,2)=="gr") b <- unorthogonalize(b, XX, group)
   b <- unstandardize(b, center[nz], scale[nz])
   beta <- matrix(0, nrow=(ncol(X)+1), ncol=length(lambda))
   beta[1,] <- b[1,]
