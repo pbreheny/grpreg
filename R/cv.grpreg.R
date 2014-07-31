@@ -38,15 +38,15 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, trace=FALSE) 
   
   for (i in 1:nfolds) {
     if (trace) cat("Starting CV fold #",i,sep="","\n")
-    X1 <- X[cv.ind!=i,]
+    X1 <- X[cv.ind!=i, , drop=FALSE]
     y1 <- y[cv.ind!=i]
-    X2 <- X[cv.ind==i,]
+    X2 <- X[cv.ind==i, , drop=FALSE]
     y2 <- y[cv.ind==i]
     
     fit.i <- grpreg(X1, y1, g, lambda=fit$lambda, warn=FALSE, ...)
     yhat <- predict(fit.i, X2, type="response")
-    E[cv.ind==i, 1:ncol(yhat)] <- loss.grpreg(y2, yhat, fit$family)
-    if (fit$family=="binomial") PE[cv.ind==i, 1:ncol(yhat)] <- (yhat < 0.5) == y2
+    E[cv.ind==i, 1:length(fit.i$lambda)] <- loss.grpreg(y2, yhat, fit$family)
+    if (fit$family=="binomial") PE[cv.ind==i, 1:length(fit.i$lambda)] <- (yhat < 0.5) == y2
   }
 
   ## Eliminate saturated lambda values, if any

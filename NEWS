@@ -1,6 +1,11 @@
 *   Minor change
 **  Major change
 
+2.6-1
+	*  Fixed bug in cv.grpreg when attempting to use leave-one-out
+	   cross-validation (thank you to Cajo ter Braak for pointing this
+	   out)
+
 2.6-0
 	** Various internal changes to make the package more efficient for
 	   large data sets
