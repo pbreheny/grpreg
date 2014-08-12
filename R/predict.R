@@ -18,9 +18,17 @@ predict.grpreg <- function(object, X, lambda, which=1:length(object$lambda), typ
     eta <- sweep(X %*% beta[-1,,drop=FALSE], 2, beta[1,], "+")
     if (object$family=="gaussian" & type=="class") stop("type='class' is not applicable for family='gaussian'")
     if (object$family=="gaussian" | type=="link") return(drop(eta))
-    pihat <- exp(eta)/(1+exp(eta))
-    if (type=="response") return(drop(pihat))
-    if (type=="class") return(drop(eta > 0))
+    resp <- switch(object$family,
+                   binomial = exp(eta)/(1+exp(eta)),
+                   poisson = exp(eta))
+    if (type=="response") return(drop(resp))
+    if (type=="class") {
+      if (object$family=="binomial") {
+        return(drop(1*(eta>0)))
+      } else {
+        stop("type='class' can only be used with family='binomial'")
+      }
+    }
   } else {
     if (type=="vars") return(apply(beta[,-1, , drop=FALSE], 1, function(x){apply(x!=0, 2, FUN=which)}))
     if (type=="groups") return(drop(apply(beta[,-1, , drop=FALSE], 3, function(x){which(apply(x!=0, 2, any))})))
@@ -31,9 +39,17 @@ predict.grpreg <- function(object, X, lambda, which=1:length(object$lambda), typ
     eta <- sweep(eta, 2:3, beta[,1,], "+")
     if (object$family=="gaussian" & type=="class") stop("type='class' is not applicable for family='gaussian'")
     if (object$family=="gaussian" | type=="link") return(drop(eta))
-    pihat <- exp(eta)/(1+exp(eta))
-    if (type=="response") return(drop(pihat))
-    if (type=="class") return(drop(eta > 0))    
+    resp <- switch(object$family,
+                   binomial = exp(eta)/(1+exp(eta)),
+                   poisson = exp(eta))
+    if (type=="response") return(drop(resp))
+    if (type=="class") {
+      if (object$family=="binomial") {
+        return(drop(1*(eta>0)))
+      } else {
+        stop("type='class' can only be used with family='binomial'")
+      }
+    }
   }
 }
 coef.grpreg <- function(object, lambda, which=1:length(object$lambda), drop=TRUE, ...) {

@@ -22,9 +22,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, trace=FALSE) 
   if (fit$family=="binomial") PE <- E
   
   n <- length(y)
-  if (fit$family=="gaussian") {
-    cv.ind <- ceiling(sample(1:n)/n*nfolds)
-  } else {
+  if (fit$family=="binomial") {
     ind1 <- which(y==1)
     ind0 <- which(y==0)
     n1 <- length(ind1)
@@ -33,22 +31,24 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, trace=FALSE) 
     cv.ind0 <- ceiling(sample(1:n0)/n0*nfolds)
     cv.ind <- numeric(n)
     cv.ind[y==1] <- cv.ind1
-    cv.ind[y==0] <- cv.ind0
+    cv.ind[y==0] <- cv.ind0    
+  } else {
+    cv.ind <- ceiling(sample(1:n)/n*nfolds)    
   }
-  
+
   for (i in 1:nfolds) {
     if (trace) cat("Starting CV fold #",i,sep="","\n")
     X1 <- X[cv.ind!=i, , drop=FALSE]
     y1 <- y[cv.ind!=i]
     X2 <- X[cv.ind==i, , drop=FALSE]
     y2 <- y[cv.ind==i]
-    
+
     fit.i <- grpreg(X1, y1, g, lambda=fit$lambda, warn=FALSE, ...)
     yhat <- predict(fit.i, X2, type="response")
     E[cv.ind==i, 1:length(fit.i$lambda)] <- loss.grpreg(y2, yhat, fit$family)
     if (fit$family=="binomial") PE[cv.ind==i, 1:length(fit.i$lambda)] <- (yhat < 0.5) == y2
   }
-
+  
   ## Eliminate saturated lambda values, if any
   ind <- which(apply(is.finite(E), 2, all))
   E <- E[,ind,drop=FALSE]

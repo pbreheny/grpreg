@@ -68,7 +68,7 @@ test_that("grpreg() reproduces simple logistic regression", {
   reg <- glm(y~X, family="binomial")$coef
   nlam <- 100
   par(mfcol=c(3,2))
-  gel <- coef(fit <- grpreg(X, y, group, penalty="gel", nlambda=nlam, lambda.min=0, family="binomial", gamma=12))[,nlam]
+  gel <- coef(fit <- grpreg(X, y, group, penalty="gel", nlambda=nlam, lambda.min=0, family="binomial"))[,nlam]
   plot(fit, main=fit$penalty)
   expect_that(gel, equals(reg, tolerance=.01, check.attributes=FALSE))
   cMCP <- coef(fit <- grpreg(X, y, group, penalty="cMCP", nlambda=nlam, lambda.min=0, family="binomial", gamma=12))[,nlam]
@@ -113,6 +113,37 @@ test_that("grpreg() reproduces logistic regression", {
   plot(fit, main=fit$penalty)
   expect_that(grMCP, equals(reg, tolerance=.01, check.attributes=FALSE))
   grSCAD <- coef(fit <- grpreg(X, y, group, penalty="grSCAD", family="binomial", gamma=2))[,100]
+  plot(fit, main=fit$penalty)
+  expect_that(grSCAD, equals(reg, tolerance=.01, check.attributes=FALSE))
+  expect_that(predict(fit, X)[,100], equals(predict(fit.mle), tolerance=.001, check.attributes=FALSE))
+  expect_that(predict(fit, X, type="response")[,100], equals(predict(fit.mle, type="response"), tolerance=.001, check.attributes=FALSE))
+})
+
+test_that("grpreg() reproduces poisson regression", {
+  n <- 50
+  group <- rep(0:3,1:4)
+  p <- length(group)
+  X <- matrix(rnorm(n*p),ncol=p)
+  y <- sample(1:5, n, replace=TRUE)
+  fit.mle <- glm(y~X, family="poisson")
+  reg <- coef(fit.mle)
+  par(mfcol=c(3,2))
+  gel <- coef(fit <- grpreg(X, y, group, penalty="gel", family="poisson"))[,100]
+  plot(fit, main=fit$penalty)
+  expect_that(gel, equals(reg, tolerance=.01, check.attributes=FALSE))
+  cMCP <- coef(fit <- grpreg(X, y, group, penalty="cMCP", family="poisson"))[,100]
+  plot(fit, main=fit$penalty)
+  expect_that(cMCP, equals(reg, tolerance=.01, check.attributes=FALSE))
+  bridge <- coef(fit <- gBridge(X, y, group, family="poisson"))[,1]
+  plot(fit, main=fit$penalty)
+  expect_that(bridge, equals(reg, tolerance=.01, check.attributes=FALSE))
+  grLasso <- coef(fit <- grpreg(X, y, group, penalty="grLasso", family="poisson"))[,100]
+  plot(fit, main=fit$penalty)
+  expect_that(grLasso, equals(reg, tolerance=.01, check.attributes=FALSE))
+  grMCP <- coef(fit <- grpreg(X, y, group, penalty="grMCP", family="poisson", gamma=2))[,100]
+  plot(fit, main=fit$penalty)
+  expect_that(grMCP, equals(reg, tolerance=.01, check.attributes=FALSE))
+  grSCAD <- coef(fit <- grpreg(X, y, group, penalty="grSCAD", family="poisson", gamma=2))[,100]
   plot(fit, main=fit$penalty)
   expect_that(grSCAD, equals(reg, tolerance=.01, check.attributes=FALSE))
   expect_that(predict(fit, X)[,100], equals(predict(fit.mle), tolerance=.001, check.attributes=FALSE))

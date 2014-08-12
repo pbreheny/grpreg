@@ -3,6 +3,7 @@ setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, nlambda
   n <- length(y)
   K <- table(group)
   K1 <- if (min(group)==0) cumsum(K) else c(0, cumsum(K))
+  storage.mode(K1) <- "integer"
   if (K1[1]!=0) {
     fit <- glm(y~X[, group==0], family=family)
   } else fit <- glm(y~1, family=family)
@@ -10,9 +11,9 @@ setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, nlambda
   ## Determine lambda.max
   r <- if (family=="gaussian") fit$residuals else residuals(fit, "working")*fit$weights
   if (strtrim(penalty,2)=="gr") {
-    zmax <- .Call("maxgrad", X, r, as.integer(K1), as.double(group.multiplier)) / n
+    zmax <- .Call("maxgrad", X, r, K1, as.double(group.multiplier)) / n
   } else {
-    zmax <- .Call("maxprod", X, r, as.integer(K1), as.double(group.multiplier)) / n
+    zmax <- .Call("maxprod", X, r, K1, as.double(group.multiplier)) / n
   }
   lambda.max <- zmax/alpha
 

@@ -4,24 +4,43 @@
 #include "R_ext/Rdynload.h"
 #include <R.h>
 #include <R_ext/Applic.h>
-void gpPathFit_gaussian(double *beta, int *iter, double *df, double *loss, double *x, double *y, int *n_, int *p_, char **penalty_, int *J_, int *K1, int *K0_, double *lam1, double *lam2, int *L_, double *eps_, double *delta_, int *max_iter_, double *gamma_, double *tau_, int *dfmax_, int *gmax_, double *group_multiplier, int *user_);
-void gpPathFit_binomial(double *beta0, double *beta, int *iter, double *df, double *Dev, double *x, double *y, int *n_, int *p_, char **penalty_, int *J_, int *K1, int *K0_, double *lam1, double *lam2, int *L_, double *eps_, double *delta_, int *max_iter_, double *gamma_, double *tau_, double *group_multiplier, int *dfmax_, int *gmax_, int *warn_, int *user_);
-void grPathFit_gaussian(double *beta, int *iter, double *df, double *loss, double *x, double *y, int *n_, int *p_, char **penalty_, int *J_, int *K1, int *K0_, double *lam1, double *lam2, int *L_, double *eps_, int *max_iter_, double *gamma_, double *group_multiplier, int *dfmax_, int *gmax_, int *user_);
-void grPathFit_binomial(double *beta0, double *beta, int *iter, double *df, double *Dev, double *x, double *y, int *n_, int *p_, char **penalty_, int *J_, int *K1, int *K0_, double *lam1, double *lam2, int *L_, double *eps_, int *max_iter_, double *gamma_, double *group_multiplier, int *dfmax_, int *gmax_, int *warn_, int *user_);
+SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP user_);
+SEXP gdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
+SEXP gdfit_poisson(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
+SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_, SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP user_);
+SEXP lcdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_, SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
+SEXP lcdfit_poisson(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_, SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
 SEXP standardize(SEXP X_);
 SEXP maxprod(SEXP X_, SEXP y_, SEXP v_, SEXP m_);
 
 // Cleanup
-void cleanupG(double *a, double *r, int *e) {
+SEXP cleanupG(double *a, double *r, int *e, SEXP beta, SEXP iter, SEXP df, SEXP loss) {
   Free(a);
   Free(r);
   Free(e);
+  SEXP res;
+  PROTECT(res = allocVector(VECSXP, 4));
+  SET_VECTOR_ELT(res, 0, beta);
+  SET_VECTOR_ELT(res, 1, iter);
+  SET_VECTOR_ELT(res, 2, df);
+  SET_VECTOR_ELT(res, 3, loss);
+  UNPROTECT(5);
+  return(res);
 }
-void cleanupB(double *a, double *r, int *e, double *eta) {
+SEXP cleanupB(double *a, double *r, int *e, double *eta, SEXP beta0, SEXP beta, SEXP iter, SEXP df, SEXP Dev) {
   Free(a);
   Free(r);
   Free(e);
   Free(eta);
+  SEXP res;
+  PROTECT(res = allocVector(VECSXP, 5));
+  SET_VECTOR_ELT(res, 0, beta0);
+  SET_VECTOR_ELT(res, 1, beta);
+  SET_VECTOR_ELT(res, 2, iter);
+  SET_VECTOR_ELT(res, 3, df);
+  SET_VECTOR_ELT(res, 4, Dev);
+  UNPROTECT(6);
+  return(res);
 }
 
 // Check for convergence of beta[l]
@@ -57,6 +76,15 @@ double crossprod(double *x, double *y, int n, int j) {
 double sum(double *x, int n) {
   double val = 0;
   for (int i=0; i<n; i++) val += x[i];
+  return(val);
+}
+
+// Max of x
+double max(double *x, int n) {
+  double val = x[0];
+  for (int i=1; i<n; i++) {
+    if (x[i] > val) val = x[i];
+  }
   return(val);
 }
 
@@ -117,20 +145,18 @@ double dMCP(double theta, double l, double a) {
   else return(0);
 }
 
-static R_CMethodDef cMethods[] = {
-  {"gpPathFit_gaussian", (DL_FUNC) &gpPathFit_gaussian, 24},
-  {"gpPathFit_binomial", (DL_FUNC) &gpPathFit_binomial, 26},
-  {"grPathFit_gaussian", (DL_FUNC) &grPathFit_gaussian, 22},
-  {"grPathFit_binomial", (DL_FUNC) &grPathFit_binomial, 24},
-  {NULL, NULL, 0}
-};
-
 static R_CallMethodDef callMethods[] = {
+  {"gdfit_gaussian", (DL_FUNC) &gdfit_gaussian, 14},
+  {"gdfit_binomial", (DL_FUNC) &gdfit_binomial, 15},
+  {"gdfit_poisson", (DL_FUNC) &gdfit_poisson, 15},
+  {"lcdfit_gaussian", (DL_FUNC) &lcdfit_gaussian, 16},
+  {"lcdfit_binomial", (DL_FUNC) &lcdfit_binomial, 17},
+  {"lcdfit_poisson", (DL_FUNC) &lcdfit_poisson, 17},
   {"standardize", (DL_FUNC) &standardize, 1},
   {"maxprod", (DL_FUNC) &maxprod, 4},
   {NULL, NULL, 0}
 };
 
 void R_init_grpreg(DllInfo *info) {
-  R_registerRoutines(info,cMethods,callMethods,NULL,NULL);
+  R_registerRoutines(info,NULL,callMethods,NULL,NULL);
 }

@@ -19,6 +19,13 @@ test_that("logLik() is correct", {
   fit <- grpreg(X, yy, group, penalty="gMCP", lambda.min=0, family="binomial")
   expect_that(logLik(fit)[100], equals(logLik(fit.mle)[1], check.attributes=FALSE, tol=.001))
   expect_that(AIC(fit)[100], equals(AIC(fit.mle), check.attributes=FALSE, tol=.001))
+  fit.mle <- glm(yy~X, family="poisson")
+  fit <- grpreg(X, yy, group, penalty="grLasso", lambda.min=0, family="poisson")
+  expect_that(logLik(fit)[100], equals(logLik(fit.mle)[1], check.attributes=FALSE, tol=.001))
+  expect_that(AIC(fit)[100], equals(AIC(fit.mle), check.attributes=FALSE, , tol=.001))
+  fit <- grpreg(X, yy, group, penalty="gMCP", lambda.min=0, family="poisson")
+  expect_that(logLik(fit)[100], equals(logLik(fit.mle)[1], check.attributes=FALSE, tol=.001))
+  expect_that(AIC(fit)[100], equals(AIC(fit.mle), check.attributes=FALSE, tol=.001))
 })
 
 test_that("grpreg handles constant columns", {
@@ -29,13 +36,16 @@ test_that("grpreg handles constant columns", {
   X[,group==2] <- 0
   y <- rnorm(n)
   yy <- y > 0
-  par(mfrow=c(2,3))
+  par(mfrow=c(3,3))
   fit <- grpreg(X, y, group, penalty="grLasso"); plot(fit)
   fit <- grpreg(X, y, group, penalty="gMCP"); plot(fit)
   fit <- gBridge(X, y, group); plot(fit)
   fit <- grpreg(X, yy, group, penalty="grLasso", family="binomial"); plot(fit)
   fit <- grpreg(X, yy, group, penalty="gMCP", family="binomial"); plot(fit); fit$beta[,100]
   fit <- gBridge(X, yy, group, family="binomial"); plot(fit); fit$beta[,100]
+  fit <- grpreg(X, yy, group, penalty="grLasso", family="poisson"); plot(fit)
+  fit <- grpreg(X, yy, group, penalty="gMCP", family="poisson"); plot(fit); fit$beta[,100]
+  fit <- gBridge(X, yy, group, family="poisson"); plot(fit); fit$beta[,100]
 })
 
 test_that("grpreg handles groups of non-full rank", {
@@ -46,11 +56,13 @@ test_that("grpreg handles groups of non-full rank", {
   X[,7] <- X[,6]
   y <- rnorm(n)
   yy <- y > 0
-  par(mfrow=c(2,2))
+  par(mfrow=c(2,3))
   fit <- grpreg(X, y, group, penalty="grLasso"); plot(fit)
   fit <- grpreg(X, y, group, penalty="gMCP"); plot(fit)
   fit <- grpreg(X, yy, group, penalty="grLasso", family="binomial"); plot(fit)
   fit <- grpreg(X, yy, group, penalty="gMCP", family="binomial"); plot(fit)
+  fit <- grpreg(X, yy, group, penalty="grLasso", family="poisson"); plot(fit)
+  fit <- grpreg(X, yy, group, penalty="gMCP", family="poisson"); plot(fit)
 })
 
 test_that("cv.grpreg() seems to work", {
@@ -63,7 +75,7 @@ test_that("cv.grpreg() seems to work", {
   y <- rnorm(n, mean=X%*%b)
   yy <- y > .5
   
-  par(mfrow=c(2,2))
+  par(mfrow=c(3,2))
   require(glmnet)
   cvfit <- cv.glmnet(X, y)
   plot(cvfit)
@@ -72,6 +84,10 @@ test_that("cv.grpreg() seems to work", {
   cvfit <- cv.glmnet(X, yy, family="binomial")
   plot(cvfit)
   cvfit <- cv.grpreg(X, yy, group, family="binomial")
+  plot(cvfit)
+  cvfit <- cv.glmnet(X, yy, family="poisson")
+  plot(cvfit)
+  cvfit <- cv.grpreg(X, yy, group, family="poisson")
   plot(cvfit)
 })  
 
@@ -148,6 +164,32 @@ test_that("cv.grpreg() options work for binomial", {
   b <- rep(0, 15)
   y <- rnorm(n, mean=X%*%b, sd=5) > 0.5
   cvfit <- cv.grpreg(X, y, group=group, family="binomial")
+  plot(cvfit, type="all")
+})
+
+test_that("cv.grpreg() options work for poisson", {
+  n <- 100
+  group <- rep(1:4, 4:1)
+  p <- length(group)
+  X <- matrix(rnorm(n*p),ncol=p)
+  b <- c(-3, 3, rep(0, p-2))
+  y <- floor(exp(X%*%b + rnorm(n)))
+  
+  par(mfrow=c(3,1))
+  cvfit <- cv.grpreg(X, y, group=group, family="poisson")
+  plot(cvfit, type="all")
+  summary(cvfit)
+  
+  coef(cvfit)
+  predict(cvfit, type="coef")
+  predict(cvfit, type="vars")
+  predict(cvfit, type="groups")
+  predict(cvfit, type="norm")
+  predict(cvfit, X)
+  predict(cvfit, X, type="response")
+  
+  y <- sample(0:5, n, replace=TRUE)
+  cvfit <- cv.grpreg(X, y, group=group, family="poisson")
   plot(cvfit, type="all")
 })  
 

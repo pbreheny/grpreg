@@ -13,10 +13,10 @@ double Fs(double z, double l1, double l2, double gamma);
 double MCP(double theta, double l, double a);
 double dMCP(double theta, double l, double a);
 double gLoss(double *r, int n);
-double cleanupG(double *a, double *r, int *e);
+SEXP cleanupG(double *a, double *r, int *e, SEXP beta, SEXP iter, SEXP df, SEXP loss);
 
 // Groupwise local coordinate descent updates
-void gLCD_gaussian(double *b, char *penalty, double *x, double *r, int g, int *K1, int n, int l, int p, double lam1, double lam2, double gamma, double tau, double *df, double *a, double delta, int *e)
+void gLCD_gaussian(double *b, const char *penalty, double *x, double *r, int g, int *K1, int n, int l, int p, double lam1, double lam2, double gamma, double tau, SEXP df, double *a, double delta, int *e)
 {
   // Make initial local approximation
   int K = K1[g+1] - K1[g];
@@ -62,13 +62,13 @@ void gLCD_gaussian(double *b, char *penalty, double *x, double *r, int g, int *K
       }
 
       // Update df
-      df[l] = df[l] + fabs(b[l*p+j]) / fabs(z);
+      REAL(df)[l] += fabs(b[l*p+j]) / fabs(z);
     }
   }
 }
 
 // Check inactive variables
-int gLCD_gCheck(double *b, char *penalty, double *x, double *r, int g, int *K1, int n, int l, int p, double lam1, double lam2, double gamma, double tau, double *a, int *e) {
+int gLCD_gCheck(double *b, const char *penalty, double *x, double *r, int g, int *K1, int n, int l, int p, double lam1, double lam2, double gamma, double tau, double *a, int *e) {
 
   // Make initial local approximation
   int K = K1[g+1] - K1[g];
@@ -103,19 +103,51 @@ int gLCD_gCheck(double *b, char *penalty, double *x, double *r, int g, int *K1, 
   return(violations);
 }
 
-void gpPathFit_gaussian(double *b, int *iter, double *df, double *loss, double *x, double *y, int *n_, int *p_, char **penalty_, int *J_, int *K1, int *K0_, double *lam1, double *lam2, int *L_, double *eps_, double *delta_, int *max_iter_, double *gamma_, double *tau_, int *dfmax_, int *gmax_, double *group_multiplier, int *user_)
-{
-  // Initialization of variables
-  int n=n_[0]; int p=p_[0]; char *penalty=penalty_[0]; int J=J_[0]; int K0=K0_[0]; int L=L_[0]; int max_iter=max_iter_[0]; double eps=eps_[0]; double delta=delta_[0]; double gamma=gamma_[0]; double tau=tau_[0]; int dfmax=dfmax_[0]; int gmax=gmax_[0]; int user=user_[0];
-  int lstart, violations;
+SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_, SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP user_) {
+
+  // Lengths/dimensions
+  int n = length(y_);
+  int L = length(lambda);
+  int J = length(K1_) - 1;
+  int p = length(X_)/n;
+
+  // Pointers
+  double *X = REAL(X_);
+  double *y = REAL(y_);
+  const char *penalty = CHAR(STRING_ELT(penalty_, 0));
+  int *K1 = INTEGER(K1_);
+  int K0 = INTEGER(K0_)[0];
+  double *lam = REAL(lambda);
+  double alpha = REAL(alpha_)[0];
+  double eps = REAL(eps_)[0];
+  double delta = REAL(delta_)[0];
+  double gamma = REAL(gamma_)[0];
+  double tau = REAL(tau_)[0];
+  int max_iter = INTEGER(max_iter_)[0];
+  double *m = REAL(group_multiplier);
+  int dfmax = INTEGER(dfmax_)[0];
+  int gmax = INTEGER(gmax_)[0];
+  int user = INTEGER(user_)[0];
+
+  // Outcome
+  SEXP res, beta, iter, df, loss;
+  PROTECT(beta = allocVector(REALSXP, L*p));
+  double *b = REAL(beta);
+  for (int j=0; j<(L*p); j++) b[j] = 0;
+  PROTECT(iter = allocVector(INTSXP, L));
+  for (int i=0; i<L; i++) INTEGER(iter)[i] = 0;
+  PROTECT(df = allocVector(REALSXP, L));
+  PROTECT(loss = allocVector(REALSXP, L));
+
+  // Intermediate quantities
+  double *a = Calloc(p, double);
   double *r = Calloc(n, double);
   int *e = Calloc(p, int);
-  double *a = Calloc(p, double);
   if (strcmp(penalty, "gBridge")==0) {
     for (int i=0; i<n; i++) r[i] = y[i];
     for (int j=0; j<p; j++) {
-      a[j] = crossprod(x, r, n, j)/n;
-      for (int i=0; i<n; i++) r[i] = r[i] - a[j] * x[j*n+i];
+      a[j] = crossprod(X, r, n, j)/n;
+      for (int i=0; i<n; i++) r[i] = r[i] - a[j] * X[j*n+i];
       e[j] = 1;
     }
   } else {
@@ -123,12 +155,14 @@ void gpPathFit_gaussian(double *b, int *iter, double *df, double *loss, double *
     for (int j=0; j<p; j++) e[j] = 0;
     for (int i=0; i<n; i++) r[i] = y[i];
   }
+  int converged, lstart, ng, nv, violations;
+  double shift, l1, l2;
 
   // If lam[0]=lam_max, skip lam[0] -- closed form sol'n available
-  if (user | strcmp(penalty, "gBridge")==0) {
+  if (user) {
     lstart = 0;
   } else {
-    loss[0] = gLoss(r,n);
+    REAL(loss)[0] = gLoss(r,n);
     lstart = 1;
   }
 
@@ -138,8 +172,8 @@ void gpPathFit_gaussian(double *b, int *iter, double *df, double *loss, double *
       for (int j=0; j<p; j++) a[j] = b[(l-1)*p+j];
 
       // Check dfmax, gmax
-      int ng = 0;
-      int nv = 0;
+      ng = 0;
+      nv = 0;
       for (int g=0; g<J; g++) {
 	int nv_old = nv;
 	for (int j=K1[g]; j<K1[g+1]; j++) {
@@ -148,35 +182,37 @@ void gpPathFit_gaussian(double *b, int *iter, double *df, double *loss, double *
 	if (nv != nv_old) ng++;
       }
       if (ng > gmax | nv > dfmax) {
-	for (int ll=l; ll<L; ll++) iter[ll] = NA_INTEGER;
-	cleanupG(a, r, e);
-	return;
+	for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
+	res = cleanupG(a, r, e, beta, iter, df, loss);
+	return(res);
       }
     }
 
-    while (iter[l] < max_iter) {
-      while (iter[l] < max_iter) {
-	int converged = 0;
-	iter[l]++;
-	df[l] = 0;
+    while (INTEGER(iter)[l] < max_iter) {
+      while (INTEGER(iter)[l] < max_iter) {
+	converged = 0;
+	INTEGER(iter)[l]++;
+	REAL(df)[l] = 0;
 
 	// Update unpenalized covariates
 	for (int j=0; j<K0; j++) {
-	  double shift = crossprod(x, r, n, j)/n;
+	  double shift = crossprod(X, r, n, j)/n;
 	  b[l*p+j] = shift + a[j];
-	  for (int i=0; i<n; i++) r[i] -= shift * x[n*j+i];
-	  df[l] = df[l] + 1;
+	  for (int i=0; i<n; i++) r[i] -= shift * X[n*j+i];
+	  REAL(df)[l]++;
 	}
 
 	// Update penalized groups
 	for (int g=0; g<J; g++) {
-	  gLCD_gaussian(b, penalty, x, r, g, K1, n, l, p, lam1[l]*group_multiplier[g], lam2[l], gamma, tau, df, a, delta, e);
+	  l1 = lam[l] * m[g] * alpha;
+	  l2 = lam[l] * m[g] * (1-alpha);
+	  gLCD_gaussian(b, penalty, X, r, g, K1, n, l, p, l1, l2, gamma, tau, df, a, delta, e);
 	}
 
 	// Check for convergence      
 	if (checkConvergence(b, a, eps, l, p)) {
 	  converged  = 1;
-	  loss[l] = gLoss(r,n);
+	  REAL(loss)[l] = gLoss(r,n);
 	  break;
 	}
 	for (int j=0; j<p; j++) a[j] = b[l*p+j];
@@ -185,15 +221,18 @@ void gpPathFit_gaussian(double *b, int *iter, double *df, double *loss, double *
       // Scan for violations
       violations = 0;
       for (int g=0; g<J; g++) {
-	violations += gLCD_gCheck(b, penalty, x, r, g, K1, n, l, p, lam1[l]*group_multiplier[g], lam2[l], gamma, tau, a, e);
+	l1 = lam[l] * m[g] * alpha;
+	l2 = lam[l] * m[g] * (1-alpha);
+	violations += gLCD_gCheck(b, penalty, X, r, g, K1, n, l, p, l1, l2, gamma, tau, a, e);
       }
 
       if (violations==0) {
-	loss[l] = gLoss(r, n);
+	REAL(loss)[l] = gLoss(r, n);
 	break;
       }
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }
   }
-  cleanupG(a, r, e);
+  res = cleanupG(a, r, e, beta, iter, df, loss);
+  return(res);
 }

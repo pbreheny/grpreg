@@ -4,7 +4,10 @@ summary.cv.grpreg <- function(object, ...) {
   snr <- S/object$cve
   nvars <- predict(object$fit, type="nvars")
   ngroups <- predict(object$fit, type="ngroups")
-  model <- if (object$fit$family=="gaussian") "linear" else if (object$fit$family=="binomial") "logistic"
+  model <- switch(object$fit$family,
+                  gaussian = "linear",
+                  binomial = "logistic",
+                  poisson = "Poisson")
   val <- list(penalty=object$fit$penalty, model=model, n=object$fit$n, p=nrow(object$fit$beta)-1, min=object$min, lambda=object$lambda, cve=object$cve, r.squared=rsq, snr=snr, nvars=nvars, ngroups=ngroups)
   if (object$fit$family=="gaussian") val$sigma <- sqrt(object$cve)
   if (object$fit$family=="binomial") val$pe <- object$pe

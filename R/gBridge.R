@@ -1,5 +1,9 @@
-gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial"), nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) .001 else .05}, lambda.max, alpha=1, eps=.005, delta=1e-7, max.iter=1000, gamma=0.5, group.multiplier=rep(1,J), warn=TRUE) {
+gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poisson"), nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) .001 else .05}, lambda.max, alpha=1, eps=.005, delta=1e-7, max.iter=1000, gamma=0.5, group.multiplier=rep(1,J), warn=TRUE) {
   ## Check for errors
+  if (class(X) != "matrix") {
+    tmp <- try(X <- as.matrix(X), silent=TRUE)
+    if (class(tmp)[1] == "try-error") stop("X must be a matrix or able to be coerced to a matrix")
+  }
   family <- match.arg(family)
   if (alpha > 1 | alpha < 0) stop("alpha must be in [0,1]")
   if (length(group)!=ncol(X)) stop("group does not match X")
@@ -34,7 +38,7 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial"), nlam
   group.orig <- group
   group <- group[nz]
   K <- as.numeric(table(group))  
-  yy <- if (family=="gaussian") y - mean(y) else y
+  yy <- as.numeric(if (family=="gaussian") y - mean(y) else y)
   if (missing(lambda)) {
     lambda <- setupLambda.gBridge(XX, yy, group, family, alpha, lambda.min, lambda.max, nlambda, gamma, group.multiplier)
   } else {
@@ -44,22 +48,29 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial"), nlam
   ## Fit
   n <- length(yy)
   p <- ncol(XX)
-  K0 <- if (min(group)==0) K[1] else 0
-  K1 <- if (min(group)==0) cumsum(K) else c(0, cumsum(K))
+  K0 <- as.integer(if (min(group)==0) K[1] else 0)
+  K1 <- as.integer(if (min(group)==0) cumsum(K) else c(0, cumsum(K)))
   if (family=="gaussian") {
-    fit <- .C("gpPathFit_gaussian", double(p*nlambda), integer(nlambda), double(nlambda), double(nlambda), as.double(XX), as.double(yy), as.integer(n), as.integer(p), "gBridge", as.integer(J), as.integer(K1), as.integer(K0), as.double(lambda*alpha), as.double(lambda*(1-alpha)), as.integer(nlambda), as.double(eps), as.double(delta), as.integer(max.iter), as.double(gamma), as.double(0), as.integer(p), as.integer(J), as.double(group.multiplier), as.integer(TRUE))
+    fit <- .Call("lcdfit_gaussian", XX, yy, "gBridge", K1, K0, lambda, alpha, eps, delta, gamma, 0, as.integer(max.iter), as.double(group.multiplier), as.integer(p), as.integer(J), as.integer(TRUE))
     b <- rbind(mean(y), matrix(fit[[1]], nrow=p))
     iter <- fit[[2]]
     df <- fit[[3]] + 1 ## Intercept
     loss <- fit[[4]]
   }
   if (family=="binomial") {
-    fit <- .C("gpPathFit_binomial", double(nlambda), double(p*nlambda), integer(nlambda), double(nlambda), double(nlambda), as.double(XX), as.double(yy), as.integer(n), as.integer(p), "gBridge", as.integer(J), as.integer(K1), as.integer(K0), as.double(lambda*alpha), as.double(lambda*(1-alpha)), as.integer(nlambda), as.double(eps), as.double(delta), as.integer(max.iter), as.double(gamma), as.double(0), as.double(group.multiplier), as.integer(p), as.integer(J), as.integer(warn), as.integer(TRUE))
+    fit <- .Call("lcdfit_binomial", XX, yy, "gBridge", K1, K0, lambda, alpha, eps, delta, gamma, 0, as.integer(max.iter), as.double(group.multiplier), as.integer(p), as.integer(J), as.integer(warn), as.integer(TRUE))    
     b <- rbind(fit[[1]], matrix(fit[[2]], nrow=p))
     iter <- fit[[3]]
     df <- fit[[4]]
     loss <- fit[[5]]
   }
+  if (family=="poisson") {
+    fit <- .Call("lcdfit_poisson", XX, yy, "gBridge", K1, K0, lambda, alpha, eps, delta, gamma, 0, as.integer(max.iter), as.double(group.multiplier), as.integer(p), as.integer(J), as.integer(warn), as.integer(TRUE))    
+    b <- rbind(fit[[1]], matrix(fit[[2]], nrow=p))
+    iter <- fit[[3]]
+    df <- fit[[4]]
+    loss <- fit[[5]]
+  }  
 
   ## Eliminate saturated lambda values, if any
   ind <- !is.na(iter)

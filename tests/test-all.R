@@ -1,7 +1,7 @@
-## Tests for consistency, both internal and external
-## To run, you need the testthat, Matrix, glmnet, and ncvreg packages
-## Some of these tests are interactive
-
-## library(grpreg)
-## library(testthat)
-## test_package("grpreg")
+## source("~/dev/.grpreg.setup.R")
+## require(testthat)
+## source("~/dev/grpreg/inst/tests/standardization-orthogonalization.R")
+## source("~/dev/grpreg/inst/tests/basic-functionality.R")
+## source("~/dev/grpreg/inst/tests/agreement.R")
+## source("~/dev/grpreg/inst/tests/extra-features.R")
+## source("~/dev/grpreg/inst/tests/multitask.R")

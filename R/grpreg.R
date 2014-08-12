@@ -1,5 +1,9 @@
-grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD", "gel", "cMCP", "gBridge", "gLasso", "gMCP"), family=c("gaussian","binomial"), nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05}, alpha=1, eps=.005, max.iter=1000, dfmax=p, gmax=J, gamma=3, tau=1/3, group.multiplier={if (strtrim(penalty,2)=="gr") sqrt(table(group[group!=0])) else rep(1,J)}, warn=TRUE, ...) {
-  ## Check for errors
+grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD", "gel", "cMCP", "gBridge", "gLasso", "gMCP"), family=c("gaussian","binomial", "poisson"), nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05}, alpha=1, eps=.005, max.iter=1000, dfmax=p, gmax=J, gamma=3, tau=1/3, group.multiplier={if (strtrim(penalty,2)=="gr") sqrt(table(group[group!=0])) else rep(1,J)}, warn=TRUE, ...) {
+  ## Error checking
+  if (class(X) != "matrix") {
+    tmp <- try(X <- as.matrix(X), silent=TRUE)
+    if (class(tmp)[1] == "try-error") stop("X must be a matrix or able to be coerced to a matrix")
+  }
   family <- match.arg(family)
   penalty <- match.arg(penalty)
   if (penalty=="gLasso") penalty <- "grLasso"
@@ -41,7 +45,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
     group <- attr(XX, "group")
   }
   K <- as.numeric(table(group))
-  yy <- if (family=="gaussian") y - mean(y) else y
+  yy <- as.numeric(if (family=="gaussian") y - mean(y) else y)
   if (missing(lambda)) {
     lambda <- setupLambda(XX, yy, group, family, penalty, alpha, lambda.min, nlambda, group.multiplier)
     user.lambda <- FALSE
@@ -53,19 +57,27 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   ## Fit
   n <- length(yy)
   p <- ncol(XX)
-  K0 <- if (min(group)==0) K[1] else 0
-  K1 <- if (min(group)==0) cumsum(K) else c(0, cumsum(K))
+  K0 <- as.integer(if (min(group)==0) K[1] else 0)
+  K1 <- as.integer(if (min(group)==0) cumsum(K) else c(0, cumsum(K)))
   if (family=="gaussian") {
-    if (strtrim(penalty,2)=="gr") fit <- .C("grPathFit_gaussian", double(p*nlambda), integer(nlambda), double(nlambda), double(nlambda), as.double(XX), as.double(yy), as.integer(n), as.integer(p), penalty, as.integer(J), as.integer(K1), as.integer(K0), as.double(lambda*alpha), as.double(lambda*(1-alpha)), as.integer(nlambda), as.double(eps), as.integer(max.iter), as.double(gamma), as.double(group.multiplier), as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
-    else fit <- .C("gpPathFit_gaussian", double(p*nlambda), integer(nlambda), double(nlambda), double(nlambda), as.double(XX), as.double(yy), as.integer(n), as.integer(p), penalty, as.integer(J), as.integer(K1), as.integer(K0), as.double(lambda*alpha), as.double(lambda*(1-alpha)), as.integer(nlambda), as.double(eps), as.double(0), as.integer(max.iter), as.double(gamma), as.double(tau), as.integer(dfmax), as.integer(gmax), as.double(group.multiplier), as.integer(user.lambda))
+    if (strtrim(penalty,2)=="gr") fit <- .Call("gdfit_gaussian", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, as.double(group.multiplier), as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+    else fit <- .Call("lcdfit_gaussian", XX, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), as.double(group.multiplier), as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
     b <- rbind(mean(y), matrix(fit[[1]], nrow=p))
     iter <- fit[[2]]
     df <- fit[[3]] + 1 ## Intercept
     loss <- fit[[4]]
   }
   if (family=="binomial") {
-    if (strtrim(penalty,2)=="gr") fit <- .C("grPathFit_binomial", double(nlambda), double(p*nlambda), integer(nlambda), double(nlambda), double(nlambda), as.double(XX), as.double(yy), as.integer(n), as.integer(p), penalty, as.integer(J), as.integer(K1), as.integer(K0), as.double(lambda*alpha), as.double(lambda*(1-alpha)), as.integer(nlambda), as.double(eps), as.integer(max.iter), as.double(gamma), as.double(group.multiplier), as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
-    else fit <- .C("gpPathFit_binomial", double(nlambda), double(p*nlambda), integer(nlambda), double(nlambda), double(nlambda), as.double(XX), as.double(yy), as.integer(n), as.integer(p), penalty, as.integer(J), as.integer(K1), as.integer(K0), as.double(lambda*alpha), as.double(lambda*(1-alpha)), as.integer(nlambda), as.double(eps), as.double(0), as.integer(max.iter), as.double(gamma), as.double(tau), as.double(group.multiplier), as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+    if (strtrim(penalty,2)=="gr") fit <- .Call("gdfit_binomial", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, as.double(group.multiplier), as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+    else fit <- .Call("lcdfit_binomial", XX, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), as.double(group.multiplier), as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+    b <- rbind(fit[[1]], matrix(fit[[2]], nrow=p))
+    iter <- fit[[3]]
+    df <- fit[[4]]
+    loss <- fit[[5]]
+  }
+  if (family=="poisson") {
+    if (strtrim(penalty,2)=="gr") fit <- .Call("gdfit_poisson", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, as.double(group.multiplier), as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+    else fit <- .Call("lcdfit_poisson", XX, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), as.double(group.multiplier), as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
     b <- rbind(fit[[1]], matrix(fit[[2]], nrow=p))
     iter <- fit[[3]]
     df <- fit[[4]]
@@ -99,15 +111,17 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
     dimnames(beta) <- list(varnames, round(lambda,digits=4))
   }
   
-  structure(list(beta=beta,
-                 family=family,
-                 group=group.orig,
-                 lambda=lambda,
-                 alpha=alpha,
-                 loss = loss,
-                 n = n,
-                 penalty=penalty,
-                 df=df,
-                 iter=iter),
-            class = "grpreg")
+  val <- structure(list(beta=beta,
+                        family=family,
+                        group=group.orig,
+                        lambda=lambda,
+                        alpha=alpha,
+                        loss = loss,
+                        n = n,
+                        penalty=penalty,
+                        df=df,
+                        iter=iter),
+                   class = "grpreg")
+  if (family=="poisson") val$y <- y
+  val
 }

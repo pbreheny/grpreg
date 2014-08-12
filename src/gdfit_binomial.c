@@ -13,10 +13,10 @@ double F(double z, double l1, double l2, double gamma);
 double Fs(double z, double l1, double l2, double gamma);
 double MCP(double theta, double l, double a);
 double dMCP(double theta, double l, double a);
-void cleanupB(double *a, double *r, int *e, double *eta);
+SEXP cleanupB(double *a, double *r, int *e, double *eta, SEXP beta0, SEXP beta, SEXP iter, SEXP df, SEXP Dev);
 
 // Group descent update -- binomial
-void gd_binomial(double *b, double *x, double *r, double *eta, int g, int *K1, int n, int l, int p, char *penalty, double lam1, double lam2, double gamma, double *df, double *a) {
+void gd_binomial(double *b, double *x, double *r, double *eta, int g, int *K1, int n, int l, int p, const char *penalty, double lam1, double lam2, double gamma, SEXP df, double *a) {
 
   // Calculate z
   int K = K1[g+1] - K1[g];
@@ -44,21 +44,59 @@ void gd_binomial(double *b, double *x, double *r, double *eta, int g, int *K1, i
   }
 
   // Update df
-  if (len > 0) df[l] = df[l] + K * len / z_norm;
+  if (len > 0) REAL(df)[l] += K * len / z_norm;
   Free(z);
 }
 
-void grPathFit_binomial(double *b0, double *b, int *iter, double *df, double *Dev, double *x, double *y, int *n_, int *p_, char **penalty_, int *J_, int *K1, int *K0_, double *lam1, double *lam2, int *L_, double *eps_, int *max_iter_, double *gamma_, double *group_multiplier, int *dfmax_, int *gmax_, int *warn_, int *user_)
-{
-  int n=n_[0]; int p=p_[0]; char *penalty=penalty_[0]; int J=J_[0]; int K0=K0_[0]; int L=L_[0]; int max_iter=max_iter_[0]; double eps=eps_[0]; double gamma=gamma_[0]; int dfmax=dfmax_[0]; int gmax=gmax_[0]; int warn=warn_[0]; int user=user_[0];
-  double a0=0;
+SEXP gdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_) {
+
+  // Lengths/dimensions
+  int n = length(y_);
+  int L = length(lambda);
+  int J = length(K1_) - 1;
+  int p = length(X_)/n;
+
+  // Pointers
+  double *X = REAL(X_);
+  double *y = REAL(y_);
+  const char *penalty = CHAR(STRING_ELT(penalty_, 0));
+  int *K1 = INTEGER(K1_);
+  int K0 = INTEGER(K0_)[0];
+  double *lam = REAL(lambda);
+  double alpha = REAL(alpha_)[0];
+  double eps = REAL(eps_)[0];
+  int max_iter = INTEGER(max_iter_)[0];
+  double gamma = REAL(gamma_)[0];
+  double *m = REAL(group_multiplier);
+  int dfmax = INTEGER(dfmax_)[0];
+  int gmax = INTEGER(gmax_)[0];
+  int warn = INTEGER(warn_)[0];
+  int user = INTEGER(user_)[0];
+
+  // Outcome
+  SEXP res, beta0, beta, iter, df, Dev;
+  PROTECT(beta0 = allocVector(REALSXP, L));
+  double *b0 = REAL(beta0);
+  for (int i=0; i<L; i++) b0[i] = 0;
+  PROTECT(beta = allocVector(REALSXP, L*p));
+  double *b = REAL(beta);
+  for (int j=0; j<(L*p); j++) b[j] = 0;
+  PROTECT(iter = allocVector(INTSXP, L));
+  for (int i=0; i<L; i++) INTEGER(iter)[i] = 0;
+  PROTECT(df = allocVector(REALSXP, L));
+  PROTECT(Dev = allocVector(REALSXP, L));
+
+  // Intermediate quantities
+  double a0 = 0; // Beta0 from previous iteration
   double *r = Calloc(n, double);
+  for (int i=0; i<n; i++) r[i] = y[i];
   double *eta = Calloc(n, double);
   double *a = Calloc(p, double);
   for (int j=0; j<p; j++) a[j] = 0;
   int *e = Calloc(J, int);
   for (int g=0; g<J; g++) e[g] = 0;
-  int lstart, violations;
+  int converged, lstart, ng, nv, violations;
+  double shift, l1, l2;
 
   // Initialization
   double ybar = sum(y, n)/n;
@@ -72,7 +110,7 @@ void grPathFit_binomial(double *b0, double *b, int *iter, double *df, double *De
     lstart = 0;
   } else {
     lstart = 1;
-    Dev[0] = nullDev;
+    REAL(Dev)[0] = nullDev;
   }
 
   // Path
@@ -83,8 +121,8 @@ void grPathFit_binomial(double *b0, double *b, int *iter, double *df, double *De
       for (int j=0; j<p; j++) a[j] = b[(l-1)*p+j];
 
       // Check dfmax, gmax
-      int ng = 0;
-      int nv = 0;
+      ng = 0;
+      nv = 0;
       for (int g=0; g<J; g++) {
 	if (a[K1[g]] != 0) {
 	  ng++;
@@ -92,19 +130,19 @@ void grPathFit_binomial(double *b0, double *b, int *iter, double *df, double *De
 	}
       }
       if (ng > gmax | nv > dfmax) {
-	for (int ll=l; ll<L; ll++) iter[ll] = NA_INTEGER;
-	cleanupB(a, r, e, eta); 
-	return;
+	for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
+	res = cleanupB(a, r, e, eta, beta0, beta, iter, df, Dev);
+	return(res);
       }
     }
 
-    while (iter[l] < max_iter) {
-      while (iter[l] < max_iter) {
-	int converged = 0;
-	iter[l]++;
+    while (INTEGER(iter)[l] < max_iter) {
+      while (INTEGER(iter)[l] < max_iter) {
+	converged = 0;
+	INTEGER(iter)[l]++;
 
 	// Approximate L
-	Dev[l] = 0;
+	REAL(Dev)[l] = 0;
 	for (int i=0; i<n; i++) {
 	  if (eta[i] > 10) {
 	    pi = 1;
@@ -114,41 +152,43 @@ void grPathFit_binomial(double *b0, double *b, int *iter, double *df, double *De
 	    pi = exp(eta[i])/(1+exp(eta[i]));
 	  }
 	  r[i] = (y[i] - pi) / 0.25;
-	  Dev[l] += - y[i]*log(pi) - (1-y[i])*log(1-pi);
+	  REAL(Dev)[l] += - y[i]*log(pi) - (1-y[i])*log(1-pi);
 	}
 
 	// Check for saturation
-	if (Dev[l]/nullDev < .01) {
+	if (REAL(Dev)[l]/nullDev < .01) {
 	  if (warn) warning("Model saturated; exiting...");
-	  for (int ll=l; ll<L; ll++) iter[ll] = NA_INTEGER;
-	  cleanupB(a, r, e, eta);
-	  return;
+	  for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
+	  res = cleanupB(a, r, e, eta, beta0, beta, iter, df, Dev);
+	  return(res);
 	}
 
 	// Update intercept
-	double shift = sum(r, n)/n;
+	shift = sum(r, n)/n;
 	b0[l] = shift + a0;
 	for (int i=0; i<n; i++) {
 	  r[i] -= shift;
 	  eta[i] += shift;
 	}
-	df[l] = 1;
+	REAL(df)[l] = 1;
 
 	// Update unpenalized covariates
 	for (int j=0; j<K0; j++) {
-	  shift = crossprod(x, r, n, j)/n;
+	  shift = crossprod(X, r, n, j)/n;
 	  b[l*p+j] = shift + a[j];
 	  for (int i=0; i<n; i++) {
-	    double si = shift * x[n*j+i];
+	    double si = shift * X[n*j+i];
 	    r[i] -= si;
 	    eta[i] += si;
 	  }
-	  df[l] = df[l] + 1;
+	  REAL(df)[l]++;
 	}
 
 	// Update penalized groups
 	for (int g=0; g<J; g++) {
-	  if (e[g]) gd_binomial(b, x, r, eta, g, K1, n, l, p, penalty, lam1[l]*group_multiplier[g], lam2[l], gamma, df, a);
+	  l1 = lam[l] * m[g] * alpha;
+	  l2 = lam[l] * m[g] * (1-alpha);
+	  if (e[g]) gd_binomial(b, X, r, eta, g, K1, n, l, p, penalty, l1, l2, gamma, df, a);
 	}
 
 	// Check convergence
@@ -164,7 +204,9 @@ void grPathFit_binomial(double *b0, double *b, int *iter, double *df, double *De
       violations = 0;
       for (int g=0; g<J; g++) {
 	if (e[g]==0) {
-	  gd_binomial(b, x, r, eta, g, K1, n, l, p, penalty, lam1[l]*group_multiplier[g], lam2[l], gamma, df, a);
+	  l1 = lam[l] * m[g] * alpha;
+	  l2 = lam[l] * m[g] * (1-alpha);
+	  gd_binomial(b, X, r, eta, g, K1, n, l, p, penalty, l1, l2, gamma, df, a);
 	  if (b[l*p+K1[g]] != 0) {
 	    e[g] = 1;
 	    violations++;
@@ -177,6 +219,6 @@ void grPathFit_binomial(double *b0, double *b, int *iter, double *df, double *De
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }
   }
-  cleanupB(a, r, e, eta);
-  return;
+  res = cleanupB(a, r, e, eta, beta0, beta, iter, df, Dev);
+  return(res);
 }
