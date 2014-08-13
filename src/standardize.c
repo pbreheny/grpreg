@@ -11,8 +11,11 @@ SEXP standardize(SEXP X_) {
   int p = ncols(X_);
   SEXP XX_, c_, s_;
   PROTECT(XX_ = allocMatrix(REALSXP, n, p));
+  for (int j=0; j<(n*p); j++) REAL(XX_)[j] = 0;
   PROTECT(c_ = allocVector(REALSXP, p));
+  for (int j=0; j<p; j++) REAL(c_)[j] = 0;
   PROTECT(s_ = allocVector(REALSXP, p));
+  for (int j=0; j<p; j++) REAL(s_)[j] = 0;
   double *X = REAL(X_);
   double *XX = REAL(XX_);
   double *c = REAL(c_);

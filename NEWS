@@ -1,6 +1,15 @@
 *   Minor change
 **  Major change
 
+2.7-1
+	*  More rigorous initialization at C level to prevent possible 
+	   memory access problems
+	*  Fixed predict() for types 'vars', 'nvars', and 'ngroups' with
+	   multivariate outcomes
+	*  As a consequence, summary(cvfit) now works for multivariate
+	   outcomes (thank you to Cajo ter Braak for pointing out that
+	   that this was broken)
+
 2.7-0
 	*  Internal restructuring: .Call now used instead of .C
 	*  Added support for Poisson regression

@@ -69,12 +69,14 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP la
   // Outcome
   SEXP res, beta, iter, df, loss;
   PROTECT(beta = allocVector(REALSXP, L*p));
-  double *b = REAL(beta);
-  for (int j=0; j<(L*p); j++) b[j] = 0;
+  for (int j=0; j<(L*p); j++) REAL(beta)[j] = 0;
   PROTECT(iter = allocVector(INTSXP, L));
   for (int i=0; i<L; i++) INTEGER(iter)[i] = 0;
   PROTECT(df = allocVector(REALSXP, L));
+  for (int i=0; i<L; i++) REAL(df)[i] = 0;
   PROTECT(loss = allocVector(REALSXP, L));
+  for (int i=0; i<L; i++) REAL(loss)[i] = 0;
+  double *b = REAL(beta);
 
   // Intermediate quantities
   double *r = Calloc(n, double);

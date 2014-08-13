@@ -30,9 +30,15 @@ predict.grpreg <- function(object, X, lambda, which=1:length(object$lambda), typ
       }
     }
   } else {
-    if (type=="vars") return(apply(beta[,-1, , drop=FALSE], 1, function(x){apply(x!=0, 2, FUN=which)}))
+    if (type=="vars") stop("Predicting type 'vars' not implemented with multivariate outcomes") ##return(apply(beta[,-1, , drop=FALSE], 1, function(x){apply(x!=0, 2, FUN=which)}))
     if (type=="groups") return(drop(apply(beta[,-1, , drop=FALSE], 3, function(x){which(apply(x!=0, 2, any))})))
     if (type=="norm") return(drop(apply(beta[, -1, , drop=FALSE], 3, function(x) apply(x, 2, function(x){sqrt(sum(x^2))}))))
+    if (type=="nvars") {
+      return(drop(apply(beta[,-1, , drop=FALSE]!=0, 3, FUN=sum)))
+    }
+    if (type=="ngroups") {
+      return(apply(apply(beta[,-1,,drop=FALSE]!=0, c(2,3), any), 2, sum))
+    }
     if (missing(X)) stop("Must supply X")
     eta <- apply(beta[,-1,,drop=FALSE],1,function(b){X%*%b})
     eta <- array(eta, dim=c(nrow(X), dim(beta)[1], dim(beta)[3]), dimnames=list(NULL, dimnames(beta)[[1]], dimnames(beta)[[3]]))

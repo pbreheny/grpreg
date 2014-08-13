@@ -76,15 +76,17 @@ SEXP gdfit_poisson(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lam
   // Outcome
   SEXP res, beta0, beta, iter, df, Dev;
   PROTECT(beta0 = allocVector(REALSXP, L));
-  double *b0 = REAL(beta0);
-  for (int i=0; i<L; i++) b0[i] = 0;
+  for (int i=0; i<L; i++) REAL(beta0)[i] = 0;
   PROTECT(beta = allocVector(REALSXP, L*p));
-  double *b = REAL(beta);
-  for (int j=0; j<(L*p); j++) b[j] = 0;
+  for (int j=0; j<(L*p); j++) REAL(beta)[j] = 0;
   PROTECT(iter = allocVector(INTSXP, L));
   for (int i=0; i<L; i++) INTEGER(iter)[i] = 0;
   PROTECT(df = allocVector(REALSXP, L));
+  for (int i=0; i<L; i++) REAL(df)[i] = 0;
   PROTECT(Dev = allocVector(REALSXP, L));
+  for (int i=0; i<L; i++) REAL(Dev)[i] = 0;
+  double *b0 = REAL(beta0);
+  double *b = REAL(beta);
 
   // Intermediate quantities
   double a0 = 0; // Beta0 from previous iteration
