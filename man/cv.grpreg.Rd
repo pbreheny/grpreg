@@ -23,8 +23,14 @@ cv.grpreg(X, y, group=1:ncol(X), ..., nfolds=10, seed, trace=FALSE)
   The function calls \code{grpreg} \code{nfolds} times, each time
   leaving out 1/\code{nfolds} of the data.  The cross-validation
   error is based on the residual sum of squares when
-  \code{family="gaussian"} and the binomial deviance when
-  \code{family="binomial"}.
+  \code{family="gaussian"} and the deviance when
+  \code{family="binomial"} or \code{family="poisson"}.
+
+  For Gaussian and Poisson responses, the folds are chosen according to
+  simple random sampling.  For binomial responses, the numbers for each
+  outcome class are balanced across the folds; i.e., the number of
+  outcomes in which \code{y} is equal to 1 is the same for each fold, or
+  possibly off by 1 if the numbers do not divide evenly.
 
   As in \code{grpreg}, seemingly unrelated regressions/multitask
   learning can be carried out by setting \code{y} to be a matrix, in
