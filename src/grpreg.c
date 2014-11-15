@@ -49,7 +49,7 @@ int checkConvergence(double *beta, double *beta_old, double eps, int l, int J) {
   int converged = 1;
   for (j=0; j < J; j++) {
     if (beta[l*J+j]!=0 & beta_old[j]!=0) {
-      if (fabs((beta[l*J+j]-beta_old[j])/beta_old[j]) > eps) {
+      if (fabs(beta[l*J+j]-beta_old[j]) > eps) {
 	converged = 0;
 	break;
       }

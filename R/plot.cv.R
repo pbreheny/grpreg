@@ -1,5 +1,4 @@
-plot.cv.grpreg <- function(x, log.l=TRUE, type=c("cve", "rsq", "scale", "snr", "pred", "all"), selected=TRUE, ...)
-{
+plot.cv.grpreg <- function(x, log.l=TRUE, type=c("cve", "rsq", "scale", "snr", "pred", "all"), selected=TRUE, ...) {
   type <- match.arg(type)
   if (type=="all") {
     plot(x, log.l=log.l, type="cve", selected=selected, ...)

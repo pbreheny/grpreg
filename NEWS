@@ -1,6 +1,23 @@
 *   Minor change
 **  Major change
 
+2.8-0
+	** More flexible interface through the 'group' argument:
+           groups may now be out of order, and may be named rather
+           than only consecutive integers
+	*  Fixed bug for multitask learning when number of outcomes = 2
+	*  Cross-validation for multitask learning now respects the
+           multivariate structure of the response matrix
+	*  summary.cv.grpreg now describes multitask learning models
+           more accurately
+	*  Fixed bug in cv.grpreg when attempting to use leave-one-out
+	   cross-validation
+	*  'X' can now be a matrix of integers (previously this would
+           result in the passing of an incompatible storage type to C)
+	*  Additional error checks to prevent cryptic error messages
+	*  Internal modifications to convergence monitoring
+	*  Added corrected AIC and extended BIC as options with select()
+
 2.7-1
 	*  More rigorous initialization at C level to prevent possible 
 	   memory access problems

@@ -1,9 +1,10 @@
-gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poisson"), nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) .001 else .05}, lambda.max, alpha=1, eps=.005, delta=1e-7, max.iter=1000, gamma=0.5, group.multiplier=rep(1,J), warn=TRUE) {
+gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poisson"), nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) .001 else .05}, lambda.max, alpha=1, eps=.001, delta=1e-7, max.iter=1000, gamma=0.5, group.multiplier=rep(1,J), warn=TRUE) {
   ## Check for errors
   if (class(X) != "matrix") {
     tmp <- try(X <- as.matrix(X), silent=TRUE)
     if (class(tmp)[1] == "try-error") stop("X must be a matrix or able to be coerced to a matrix")
   }
+  if (storage.mode(X)=="integer") X <- 1.0*X
   family <- match.arg(family)
   if (alpha > 1 | alpha < 0) stop("alpha must be in [0,1]")
   if (length(group)!=ncol(X)) stop("group does not match X")
@@ -12,8 +13,32 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
   if (!(identical(as.integer(sort(unique(group))),as.integer(1:J)) | identical(as.integer(sort(unique(group))),as.integer(0:J)))) stop("Groups must be consecutively numbered 1,2,3,...")
   if (length(group.multiplier)!=J) stop("Length of group.multiplier must equal number of penalized groups")
 
-  ## Set up XX, yy, lambda
+  ## Reorder groups, if necessary
   xnames <- if (is.null(colnames(X))) paste("V",1:ncol(X),sep="") else colnames(X)
+  if (any(order(group) != 1:length(group)) | !is.numeric(group)) {
+    reorder.groups <- TRUE
+    gf <- as.factor(group)
+    if (any(levels(gf)=="0")) {
+      gf <- relevel(gf, "0")
+      g <- as.numeric(gf) - 1
+      J <- max(g)
+      tryCatch(names(group.multiplier) <- setdiff(levels(gf), "0"), finally="Length of group.multiplier must equal number of penalized groups")
+    } else {
+      g <- as.numeric(gf)
+      tryCatch(names(group.multiplier) <- levels(gf), finally="Length of group.multiplier must equal number of penalized groups")
+    }
+    g.ord <- order(g)
+    g.ord.inv <- match(1:length(g), g.ord)
+    g <- g[g.ord]
+    X <- X[,g.ord]
+  } else {
+    reorder.groups <- FALSE
+    g <- group
+    J <- max(g)
+    if (length(group.multiplier)!=max(g)) stop("Length of group.multiplier must equal number of penalized groups")
+  }
+  
+  ## Set up XX, yy, lambda
   multi <- FALSE
   if (is.matrix(y) && ncol(y) > 1) {
     multi <- TRUE
@@ -21,7 +46,7 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
     response.names <- if (is.null(colnames(y))) paste("Y",1:m,sep="") else colnames(y)
     y <- multiY(y)
     X <- multiX(X, m)
-    group <- c(rep(0, m-1), rep(group, rep(m,length(group))))
+    group <- g <- c(rep(0, m-1), rep(g, each=m))
     group.multiplier <- rep(1,J)
   }
   std <- .Call("standardize", X)
@@ -29,18 +54,18 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
   center <- std[[2]]
   scale <- std[[3]]
   nz <- which(scale > 1e-6)
-  zg <- setdiff(unique(group), unique(group[nz]))
+  zg <- setdiff(unique(g), unique(g[nz]))
   if (length(zg)) {
     J  <- J - length(zg)
     group.multiplier <- group.multiplier[-zg]
   }
   XX <- XX[ ,nz, drop=FALSE]
-  group.orig <- group
-  group <- group[nz]
-  K <- as.numeric(table(group))  
+  g <- g[nz]
+  K <- as.numeric(table(g))  
   yy <- as.numeric(if (family=="gaussian") y - mean(y) else y)
+  if (nrow(XX) != length(yy)) stop("X and y do not have the same number of observations")
   if (missing(lambda)) {
-    lambda <- setupLambda.gBridge(XX, yy, group, family, alpha, lambda.min, lambda.max, nlambda, gamma, group.multiplier)
+    lambda <- setupLambda.gBridge(XX, yy, g, family, alpha, lambda.min, lambda.max, nlambda, gamma, group.multiplier)
   } else {
     nlambda <- length(lambda)
   }
@@ -48,8 +73,8 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
   ## Fit
   n <- length(yy)
   p <- ncol(XX)
-  K0 <- as.integer(if (min(group)==0) K[1] else 0)
-  K1 <- as.integer(if (min(group)==0) cumsum(K) else c(0, cumsum(K)))
+  K0 <- as.integer(if (min(g)==0) K[1] else 0)
+  K1 <- as.integer(if (min(g)==0) cumsum(K) else c(0, cumsum(K)))
   if (family=="gaussian") {
     fit <- .Call("lcdfit_gaussian", XX, yy, "gBridge", K1, K0, lambda, alpha, eps, delta, gamma, 0, as.integer(max.iter), as.double(group.multiplier), as.integer(p), as.integer(J), as.integer(TRUE))
     b <- rbind(mean(y), matrix(fit[[1]], nrow=p))
@@ -92,7 +117,7 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
   if (multi) {
     beta[2:m,] <- sweep(beta[2:m,], 2, beta[1,], FUN="+")
     beta <- array(beta, dim=c(m, nrow(beta)/m, ncol(beta)))
-    group.orig <- group.orig[-(1:(m-1))]
+    group <- group[-(1:(m-1))]
     dimnames(beta) <- list(response.names, varnames, round(lambda,digits=4))
   } else {
     dimnames(beta) <- list(varnames, round(lambda,digits=4))
@@ -100,7 +125,7 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
   
   structure(list(beta = beta,
                  family = family,
-                 group = group.orig,
+                 group = group,
                  lambda = lambda,
                  alpha = alpha,
                  loss = loss,

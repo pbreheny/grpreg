@@ -9,17 +9,25 @@ setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, nlambda
   } else fit <- glm(y~1, family=family)
 
   ## Determine lambda.max
-  r <- if (family=="gaussian") fit$residuals else residuals(fit, "working")*fit$weights
+  if (family=="gaussian") {
+    r <- fit$residuals
+  } else {
+    w <- fit$weights
+    if (max(w) < 1e-4) stop("Unpenalized portion of model is already saturated; exiting...")
+    r <- residuals(fit, "working")*w
+  }
   if (strtrim(penalty,2)=="gr") {
     zmax <- .Call("maxgrad", X, r, K1, as.double(group.multiplier)) / n
   } else {
     zmax <- .Call("maxprod", X, r, K1, as.double(group.multiplier)) / n
   }
   lambda.max <- zmax/alpha
-
+  
   if (lambda.min==0) {
     lambda <- c(exp(seq(log(lambda.max), log(.001*lambda.max), length=nlambda-1)), 0)
-  } else lambda <- exp(seq(log(lambda.max), log(lambda.min*lambda.max), length=nlambda))
+  } else {
+    lambda <- exp(seq(log(lambda.max), log(lambda.min*lambda.max), length=nlambda))
+  }
   lambda
 }
 

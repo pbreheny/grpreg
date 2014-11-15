@@ -6,14 +6,14 @@
   grpreg object according to the AIC, BIC, or GCV criteria.}
 \usage{
 select(obj,\dots)
-\method{select}{grpreg}(obj, criterion=c("BIC","AIC","GCV"),
-df.method=c("default","active"), smooth=FALSE, \dots)
+\method{select}{grpreg}(obj, criterion=c("BIC", "AIC", "GCV", "AICc",
+"EBIC"), df.method=c("default","active"), smooth=FALSE, \dots)
 }
 \arguments{
   \item{obj}{A fitted grpreg object.}
   \item{criterion}{The criterion by which to select the regularization
-    parameter.  One of \code{"AIC"}, \code{"BIC"}, or \code{"GCV"};
-    default is \code{"BIC"}.} 
+    parameter.  One of \code{"AIC"}, \code{"BIC"}, \code{"GCV"},
+    \code{"AICc"}, or \code{"EBIC"}; default is \code{"BIC"}.} 
   \item{df.method}{How should effective model parameters be calculated?
     One of: \code{"active"}, which counts the number of nonzero
     coefficients; or \code{"default"}, which uses the calculated
@@ -22,11 +22,15 @@ df.method=c("default","active"), smooth=FALSE, \dots)
     selecting the optimal value.}
   \item{\dots}{For S3 method compatibility.}}
 \details{
-  The criteria are defined as follows, where \code{L} is the log
-  likelihood and \code{n} is the sample size: \cr
-  \deqn{AIC = 2*L + 2*df} \cr
-  \deqn{BIC = 2*L + log(n)*df} \cr
-  \deqn{GCV= 2*L/((1-df/n)^2)}}
+  The criteria are defined as follows, where \eqn{\ell}{L} is the log
+  likelihood, \eqn{\nu}{df} is the degrees of freedom, and \eqn{n}{n} is
+  the sample size: \cr
+  \deqn{AIC = 2L + 2df}{AIC = 2*L + 2*df}
+  \deqn{BIC = 2*L + log(n)*df}{BIC = 2*L + log(n)*df}
+  \deqn{GCV = 2*L/((1-df/n)^2)}{GCV= 2*L/((1-df/n)^2)}
+  \deqn{AICc = AIC + 2*df*(df+1)/(n-df-1)}{AICc = AIC + 2*df*(df+1)/(n-df-1)}
+  \deqn{EBIC = BIC + 2*log(p choose df)}{EBIC = BIC + 2*log(p choose df)}
+}
 \value{
   A list containing:
   \item{lambda}{The selected value of the regularization parameter,

@@ -5,24 +5,19 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, trace=FALSE) 
   if (is.matrix(y) && ncol(y) > 1) {
     multi <- TRUE
     m <- ncol(y)
-    p <- ncol(X)
-    n <- nrow(X)
-    y <- as.numeric(t(y))
-    A <- matrix(0, m*n, m*p)
-    for (i in 1:m) {
-      A[m*(1:n)-2,m*(1:p)-2] <- X
-      A[m*(1:n)-1,m*(1:p)-1] <- X
-      A[m*(1:n),m*(1:p)] <- X
-    }
-    xnames <- colnames(X)
-    X <- cbind(matrix(as.numeric(diag(m)),m*n,m,byrow=TRUE),A)
+    response.names <- if (is.null(colnames(y))) paste("Y",1:m,sep="") else colnames(y)
+    y <- multiY(y)
+    X <- multiX(X, m)
   }
-  g <- if (multi) c(rep(0,m), fit$group) else fit$group
+  g <- if (multi) c(rep(0,m-1), fit$group) else fit$group
   E <- matrix(NA, nrow=length(y), ncol=length(fit$lambda))
   if (fit$family=="binomial") PE <- E
   
   n <- length(y)
-  if (fit$family=="binomial") {
+  if (multi) {
+    nn <- n/m
+    cv.ind <- rep(ceiling(sample(1:nn)/nn*nfolds), each=m)
+  } else if (fit$family=="binomial" & (min(table(y)) > nfolds)) {
     ind1 <- which(y==1)
     ind0 <- which(y==0)
     n1 <- length(ind1)
@@ -33,7 +28,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, trace=FALSE) 
     cv.ind[y==1] <- cv.ind1
     cv.ind[y==0] <- cv.ind0    
   } else {
-    cv.ind <- ceiling(sample(1:n)/n*nfolds)    
+    cv.ind <- ceiling(sample(1:n)/n*nfolds)
   }
 
   for (i in 1:nfolds) {
@@ -44,7 +39,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, trace=FALSE) 
     y2 <- y[cv.ind==i]
 
     fit.i <- grpreg(X1, y1, g, lambda=fit$lambda, warn=FALSE, ...)
-    yhat <- predict(fit.i, X2, type="response")
+    yhat <- matrix(predict(fit.i, X2, type="response"), length(y2))
     E[cv.ind==i, 1:length(fit.i$lambda)] <- loss.grpreg(y2, yhat, fit$family)
     if (fit$family=="binomial") PE[cv.ind==i, 1:length(fit.i$lambda)] <- (yhat < 0.5) == y2
   }

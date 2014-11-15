@@ -22,15 +22,17 @@ plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE, ...) {
     xlab <- expression(log(lambda))
   } else xlab <- expression(lambda)
   
-  ylab <- if (norm) expression("||"*hat(beta)*"||") else expression(hat(beta))
-  plot.args <- list(x=l, y=1:length(l), ylim=range(Y), xlab=xlab, ylab=ylab, type="n", xlim=rev(range(l)), las=1)
+  plot.args <- list(x=l, y=1:length(l), ylim=range(Y), xlab=xlab, ylab="", type="n", xlim=rev(range(l)), las=1)
   new.args <- list(...)
   if (length(new.args)) {
     new.plot.args <- new.args[names(new.args) %in% c(names(par()), names(formals(plot.default)))]
     plot.args[names(new.plot.args)] <- new.plot.args
   }
   do.call("plot", plot.args)
-  
+  if (plot.args$ylab=="") {
+    ylab <- if (norm) expression("||"*hat(beta)*"||") else expression(hat(beta))
+    mtext(ylab, 2, 3.5, las=1, adj=0)
+  }
   abline(h=0,lwd=0.5,col="gray")
 
   cols <- hcl(h=seq(15,375,len=max(4,n.g+1)),l=60,c=150,alpha=alpha)
@@ -39,11 +41,13 @@ plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE, ...) {
   if (length(new.args)) line.args[names(new.args)] <- new.args
   line.args$x <- l
   line.args$y <- t(Y)
-  line.args$col <- rep(line.args$col, table(g))
+  line.args$col <- line.args$col[g]
+  line.args$lty <- rep(line.args$lty, length.out=max(g))
+  line.args$lty <- line.args$lty[g]
   do.call("matlines",line.args)
   
   if(!missing(legend.loc)) {
-    legend.args <- list(col=cols, lwd=line.args$lwd, lty=line.args$lty, legend=unique(g))
+    legend.args <- list(col=cols, lwd=line.args$lwd, lty=line.args$lty, legend=names(x$group.multiplier))
     if (length(new.args)) {
       new.legend.args <- new.args[names(new.args) %in% names(formals(legend))]
       legend.args[names(new.legend.args)] <- new.legend.args

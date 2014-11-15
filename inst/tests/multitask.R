@@ -1,4 +1,5 @@
 ## Tests concerning seemingly unrelated regressions/multitask learning
+##source("~/dev/.grpreg.setup.R")
 
 #####################################
 .test = "multitask learning works" ##
@@ -38,7 +39,6 @@ Y <- cbind(rnorm(n, mean=X%*%b, sd=1),
            10+rnorm(n, mean=X%*%b, sd=1))
 colnames(X) <- LETTERS[1:10]
 
-par(mfcol=c(3,2))
 fit <- grpreg(X, Y)
 coef(fit, which=1:2)
 coef(fit, lambda=1)
@@ -50,8 +50,8 @@ predict(fit, lambda=1, type="groups")
 predict(fit, which=c(30,60), type="groups")
 predict(fit, lambda=1, type="norm")
 predict(fit, which=c(30,60), type="norm")
-predict(fit, X, lambda=1)
-predict(fit, X, which=c(30,60))
+head(predict(fit, X, lambda=1))
+predict(fit, X, which=c(30,60))[1:10,,]
 
 n <- 200
 X <- matrix(rnorm(n*p),ncol=p)
@@ -63,9 +63,9 @@ predict(fit, lambda=0.1, type="nvars")
 predict(fit, lambda=0.1, type="ngroups")
 predict(fit, lambda=0.1, type="groups")
 predict(fit, lambda=0.1, type="norm")
-predict(fit, X, lambda=0.1)
-predict(fit, X, lambda=0.1, type="response")
-predict(fit, X, lambda=0.1, type="class")
+head(predict(fit, X, lambda=0.1))
+head(predict(fit, X, lambda=0.1, type="response"))
+head(predict(fit, X, lambda=0.1, type="class"))
 
 ############################################################
 .test = "multitask learning reproduces linear regression" ##

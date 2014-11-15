@@ -7,9 +7,9 @@
 \description{Similar to other predict methods, this function returns
   predictions from a fitted \code{"grpreg"} object.}
 \usage{
-\method{predict}{grpreg}(object, X, lambda,
-which=1:length(object$lambda), type=c("link", "response", "class",
-"coefficients", "vars", "groups", "nvars", "ngroups", "norm"), ...) 
+\method{predict}{grpreg}(object, X, type=c("link", "response", "class",
+"coefficients", "vars", "groups", "nvars", "ngroups", "norm"), lambda,
+which=1:length(object$lambda), ...) 
 \method{coef}{grpreg}(object, lambda, which=1:length(object$lambda),
 drop=TRUE, ...)
 \method{predict}{cv.grpreg}(object, X, lambda=object$lambda.min,

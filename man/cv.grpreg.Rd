@@ -35,7 +35,8 @@ cv.grpreg(X, y, group=1:ncol(X), ..., nfolds=10, seed, trace=FALSE)
   As in \code{grpreg}, seemingly unrelated regressions/multitask
   learning can be carried out by setting \code{y} to be a matrix, in
   which case groups are set up automatically (see \code{\link{grpreg}}
-  for details).  As mentioned in the details there, it is recommended to
+  for details), and cross-validation is carried out with respect to rows
+  of \code{y}.  As mentioned in the details there, it is recommended to
   standardize the responses prior to fitting.
 }
 \value{

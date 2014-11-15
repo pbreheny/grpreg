@@ -8,7 +8,7 @@
 grpreg(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD",
 "gel", "cMCP", "gBridge", "gLasso", "gMCP"), family=c("gaussian",
 "binomial", "poisson"), nlambda=100, lambda, lambda.min={if (nrow(X) >
-ncol(X)) 1e-4 else .05},  alpha=1, eps=.005, max.iter=1000, dfmax=p,
+ncol(X)) 1e-4 else .05},  alpha=1, eps=.001, max.iter=1000, dfmax=p,
 gmax=J, gamma=3, tau=1/3, group.multiplier={if
 (strtrim(penalty,2)=="gr") sqrt(table(group[group!=0])) else rep(1,J)},
 warn=TRUE, ...) 
@@ -18,11 +18,12 @@ warn=TRUE, ...)
     standardizes the data and includes an intercept by default.}
   \item{y}{The response vector, or a matrix in the case of multitask
     learning (see details).}
-  \item{group}{A vector of consecutive integers describing the grouping
-    of the coefficients.  Integers for penalized groups must run from 1
-    to the number of penalized groups (see example below).  If there are
+  \item{group}{A vector of describing the grouping of the coefficients.
+    For greatest efficiency and least ambiguity (see details), it is
+    best if \code{group} is a vector of consecutive integers, although
+    unordered group and named groups are also allowed.  If there are
     coefficients to be included in the model without being penalized,
-    assign them to group 0.}
+    assign them to group 0 (or \code{"0"}).}
   \item{penalty}{The penalty to be applied to the model.  For group
     selection, one of \code{grLasso}, \code{grMCP}, or \code{grSCAD}.
     For bi-level selection, one of \code{gel} or \code{cMCP}.  See
@@ -44,8 +45,8 @@ warn=TRUE, ...)
     the regularization parameter of the ridge penalty is
     \code{lambda*(1-alpha)}.  Default is 1: no ridge penalty.}
   \item{eps}{Convergence threshhold.  The algorithm iterates until the
-    relative change in any coefficient is less than \code{eps}.  Default
-    is \code{.005}.  See details.}
+    change (on the standardized scale) in any coefficient is less than
+    \code{eps}.  Default is \code{.001}.  See details.}
   \item{max.iter}{Maximum number of iterations.  Default is 1000.  See
     details.}
   \item{dfmax}{Limit on the number of parameters allowed to be nonzero.
@@ -60,8 +61,9 @@ warn=TRUE, ...)
   \item{group.multiplier}{A vector of values representing multiplicative
     factors by which each group's penalty is to be multiplied.
     Often, this is a function (such as the square root) of the number of
-    predictors in each group.  The default is a vector of 1's (i.e., no
-    correction for group size).}
+    predictors in each group.  The default is to use the square root of
+    group size for the group selection methods, and a vector of 1's
+    (i.e., no adjustment for group size) for bi-level selection.}
   \item{warn}{Should the function give a warning if it fails to
     converge?  Default is TRUE.  See details.}
   \item{...}{Arguments passed to other functions (such as gBridge).}
@@ -129,6 +131,16 @@ warn=TRUE, ...)
   \code{n.lambda} or \code{lambda.min} in addition to increasing
   \code{max.iter}.
 
+  Although \code{grpreg} allows groups to be unordered and given
+  arbitary names, it is recommended that you specify groups as
+  consecutive integers.  The first reason is efficiency: if groups are
+  out of order, \code{X} must be reordered prior to fitting, then this
+  process reversed to return coefficients according to the original
+  order of \code{X}.  This is inefficient if \code{X} is very large.
+  The second reason is ambiguity with respect to other arguments such as
+  \code{group.multiplier}.  With consecutive integers, \code{group=3}
+  unambiguously denotes the third element of \code{group.multiplier}.
+
   Seemingly unrelated regressions/multitask learning can be carried out
   using \code{grpreg} by passing a matrix to \code{y}.  In this case,
   \code{X} will be used in separate regressions for each column of
@@ -159,6 +171,8 @@ warn=TRUE, ...)
     Breheny and Huang (2009).}
   \item{iter}{A vector of length \code{nlambda} containing the number
     of iterations until convergence at each value of \code{lambda}.}
+  \item{group.multiplier}{A named vector containing the multiplicative
+    constant applied to each group's penalty.}
 }
 \references{
   \itemize{
