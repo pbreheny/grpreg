@@ -6,6 +6,7 @@
            groups may now be out of order, and may be named rather
            than only consecutive integers
 	*  Fixed bug for multitask learning when number of outcomes = 2
+           (thank you to Aluma Dembo for pointing this out)
 	*  Cross-validation for multitask learning now respects the
            multivariate structure of the response matrix
 	*  summary.cv.grpreg now describes multitask learning models

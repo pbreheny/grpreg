@@ -25,6 +25,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
       tryCatch(names(group.multiplier) <- setdiff(levels(gf), "0"), finally="Length of group.multiplier must equal number of penalized groups")
     } else {
       g <- as.numeric(gf)
+      J <- max(g)
       tryCatch(names(group.multiplier) <- levels(gf), finally="Length of group.multiplier must equal number of penalized groups")
     }
     g.ord <- order(g)
