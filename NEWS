@@ -1,6 +1,10 @@
 *   Minor change
 **  Major change
 
+2.8-1
+	*  Fixed bug for predict.grpreg(fit, type="nvars") or 
+	   type="ngroups" when scalar lambda value is passed
+
 2.8-0
 	** More flexible interface through the 'group' argument:
            groups may now be out of order, and may be named rather

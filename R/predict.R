@@ -11,11 +11,21 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
     if (type=="groups") return(drop(apply(beta[-1, , drop=FALSE]!=0, 2, function(x) unique(object$group[x]))))
     if (type=="nvars") {
       v <- drop(apply(beta[-1, , drop=FALSE]!=0, 2, FUN=which))
-      return(sapply(v, length))
+      if (class(v)=="list") {
+        res <- sapply(v, length)
+      } else {
+        res <- length(v)
+      }
+      return(res)
     }
     if (type=="ngroups") {
       g <- drop(apply(beta[-1, , drop=FALSE]!=0, 2, function(x) unique(object$group[x])))
-      return(sapply(g, length))
+      if (class(g)=="list") {
+        res <- sapply(g, length)
+      } else {
+        res <- length(g)
+      }
+      return(res)
     }
     if (type=="norm") return(drop(apply(beta[-1, , drop=FALSE], 2, function(x) tapply(x, object$group, function(x){sqrt(sum(x^2))}))))
     if (missing(X) | is.null(X)) stop("Must supply X")
