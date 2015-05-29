@@ -66,17 +66,21 @@
     \item Breheny, P. and Huang, J. (2009) Penalized methods for
     bi-level variable selection.  \emph{Statistics and its interface},
     \strong{2}: 369-380.
+    \url{myweb.uiowa.edu/pbreheny/publications/Breheny2009.pdf}
     
     \item Huang J., Breheny, P. and Ma, S. (2012). A selective
     review of group selection in high dimensional
     models. \emph{Statistical Science}, \strong{27}: 481-499.
-
-    \item Breheny, P. and Huang, J. (to appear) Group descent algorithms
-    for nonconvex penalized linear and logistic regression models with
-    grouped predictors.  \emph{Statistics and Computing}, to appear.
+    \url{myweb.uiowa.edu/pbreheny/publications/Huang2012.pdf}
     
-    \item Breheny, P. The group exponential lasso for bi-level
-    variable selection. In submission.
+    \item Breheny, P. and Huang, J. (2015) Group descent algorithms for
+    nonconvex penalized linear and logistic regression models with grouped
+    predictors.  \emph{Statistics and Computing}, 25: 173-187.
+    \url{www.springerlink.com/openurl.asp?genre=article&id=doi:10.1007/s11222-013-9424-2}
+    
+    \item Breheny, P. (to appear) The group exponential lasso for bi-level
+    variable selection. Biometrics.
+    \url{http://dx.doi.org/10.1111/biom.12300}
   }
 }
 \author{Patrick Breheny <patrick-breheny@uiowa.edu>}

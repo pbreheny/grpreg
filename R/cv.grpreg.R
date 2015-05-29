@@ -1,4 +1,4 @@
-cv.grpreg <- function(X, y, group=1:ncol(X), lambda, ..., nfolds=10, seed, trace=FALSE) {
+cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, trace=FALSE) {
   if (!missing(seed)) set.seed(seed)
   fit <- grpreg(X=X, y=y, group=group, ...)
   multi <- FALSE
@@ -38,7 +38,11 @@ cv.grpreg <- function(X, y, group=1:ncol(X), lambda, ..., nfolds=10, seed, trace
     X2 <- X[cv.ind==i, , drop=FALSE]
     y2 <- y[cv.ind==i]
 
-    fit.i <- grpreg(X1, y1, g, lambda=fit$lambda, warn=FALSE, ...)
+    args <- list(..., X=X1, y=y1, group=g)
+    args$lambda <- fit$lambda
+    args$warn <- FALSE
+    fit.i <- do.call('grpreg', args)
+
     yhat <- matrix(predict(fit.i, X2, type="response"), length(y2))
     E[cv.ind==i, 1:length(fit.i$lambda)] <- loss.grpreg(y2, yhat, fit$family)
     if (fit$family=="binomial") PE[cv.ind==i, 1:length(fit.i$lambda)] <- (yhat < 0.5) == y2
@@ -46,7 +50,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), lambda, ..., nfolds=10, seed, trace
 
   ## Eliminate saturated lambda values, if any
   ind <- which(apply(is.finite(E), 2, all))
-  E <- E[,ind,drop=FALSE]
+  E <- E[, ind, drop=FALSE]
   lambda <- fit$lambda[ind]
 
   ## Return
