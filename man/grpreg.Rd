@@ -186,14 +186,14 @@ warn=TRUE, ...)
     models. \emph{Statistical Science}, \strong{27}: 481-499.
     \url{myweb.uiowa.edu/pbreheny/publications/Huang2012.pdf}
     
-    \item Breheny, P. and Huang, J. (to appear) Group descent algorithms for
+    \item Breheny, P. and Huang, J. (2015) Group descent algorithms for
     nonconvex penalized linear and logistic regression models with grouped
-    predictors.  \emph{Statistics and Computing}, to appear.
+    predictors.  \emph{Statistics and Computing}, 25: 173-187.
     \url{www.springerlink.com/openurl.asp?genre=article&id=doi:10.1007/s11222-013-9424-2}
     
-    \item Breheny, P. The group exponential lasso for bi-level
-    variable selection. In submission.
-    \url{myweb.uiowa.edu/pbreheny/publications/grpexp.pdf}
+    \item Breheny, P. (to appear) The group exponential lasso for bi-level
+    variable selection. Biometrics.
+    \url{http://dx.doi.org/10.1111/biom.12300}
   }
 }
 
