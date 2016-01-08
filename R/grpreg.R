@@ -12,7 +12,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   if (penalty=="gBridge") stop("gBridge has been divorced from the grpreg function; use the gBridge() function instead")
   if (alpha > 1 | alpha <= 0) stop("alpha must be in (0,1]")
   if (length(group)!=ncol(X)) stop("group does not match X")
-  
+
   ## Reorder groups, if necessary
   xnames <- if (is.null(colnames(X))) paste("V",1:ncol(X),sep="") else colnames(X)
   if (any(order(group) != 1:length(group)) | !is.numeric(group)) {
@@ -38,7 +38,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
     J <- max(g)
     if (length(group.multiplier)!=max(g)) stop("Length of group.multiplier must equal number of penalized groups")
   }
-  
+
   ## Set up XX, yy, lambda
   multi <- FALSE
   if (is.matrix(y) && ncol(y) > 1) {
@@ -110,7 +110,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
     df <- fit[[4]]
     loss <- fit[[5]]
   }
-  
+
   ## Eliminate saturated lambda values, if any
   ind <- !is.na(iter)
   b <- b[, ind, drop=FALSE]
@@ -131,7 +131,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   } else {
     beta[nz+1,] <- b[-1,]
   }
-  
+
   ## Names
   varnames <- c("(Intercept)", xnames)
   if (multi) {
@@ -142,7 +142,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   } else {
     dimnames(beta) <- list(varnames, round(lambda,digits=4))
   }
-  
+
   val <- structure(list(beta=beta,
                         family=family,
                         group=group,
