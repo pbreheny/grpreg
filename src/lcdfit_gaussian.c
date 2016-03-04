@@ -170,6 +170,7 @@ SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
 
   // Path
   for (int l=lstart; l<L; l++) {
+    R_CheckUserInterrupt();
     if (l != 0) {
       for (int j=0; j<p; j++) a[j] = b[(l-1)*p+j];
 

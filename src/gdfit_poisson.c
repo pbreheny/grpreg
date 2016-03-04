@@ -117,6 +117,7 @@ SEXP gdfit_poisson(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lam
 
   // Path
   for (int l=lstart; l<L; l++) {
+    R_CheckUserInterrupt();
     if (l != 0) {
       a0 = b0[l-1];
       for (int j=0; j<p; j++) a[j] = b[(l-1)*p+j];

@@ -1,10 +1,11 @@
 Package: grpreg
 Title: Regularization Paths for Regression Models with Grouped Covariates
-Version: 2.8-1
-Date: 2015-05-29
+Version: 3.0-0
+Date: 2016-02-13
 Author: Patrick Breheny
 Maintainer: Patrick Breheny <patrick-breheny@uiowa.edu>
 Depends: R (>= 2.13.0), Matrix
+Suggests: grpregOverlap
 Description: Efficient algorithms for fitting the regularization path of
  linear or logistic regression models with grouped penalties.  This
  includes group selection methods such as group lasso, group MCP, and

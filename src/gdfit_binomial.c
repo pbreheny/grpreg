@@ -118,6 +118,7 @@ SEXP gdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP la
   // Path
   double pi;
   for (int l=lstart; l<L; l++) {
+    R_CheckUserInterrupt();
     if (l != 0) {
       a0 = b0[l-1];
       for (int j=0; j<p; j++) a[j] = b[(l-1)*p+j];
