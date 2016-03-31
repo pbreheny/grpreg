@@ -23,5 +23,7 @@ stuff
 
 stuff
 
-more stuff
+Does mathJax work?
+
+$$ \int_0^\infty x^{-2}dx $$
 
