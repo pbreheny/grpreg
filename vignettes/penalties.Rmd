@@ -1,0 +1,24 @@
+---
+title: "Penalties available in grpreg"
+author: "Patrick Breheny"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Penalties available in grpreg}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+# Introduction
+
+This vignette summarizes the penalties available in grpreg and describes how
+specifying various options in the code corresponds to different mathematical
+forms of the penalty.
+
+## Group selection
+
+stuff
+
+## Bi-level selection
+
+stuff
