@@ -15,15 +15,53 @@ This vignette summarizes the penalties available in grpreg and describes how
 specifying various options in the code corresponds to different mathematical
 forms of the penalty.
 
+The following notation will be used:
+
+* $\beta$ denotes the entire vector of regression coefficients
+* $\beta_j$ denotes the vector of regression coefficients corresponding to the $j$th group
+* $\beta_{jk}$ denotes $k$th regression coefficient in the $j$th group
+* $\lVert \beta_j \rVert$ denotes the Euclidean ($L_2$) norm of $\beta_j$
+
 ## Group selection
 
-stuff
+```{r eval = FALSE}
+grpreg(X, y, group, penalty="grLasso")
+```
+
+$$ P(\beta) = \lambda \sum_j \lVert \beta_j \rVert $$
+
+```{r eval = FALSE}
+grpreg(X, y, group, penalty="grMCP")
+```
+
+$$ P(\beta) = \sum_j \textrm{MCP}_{\lambda, \gamma}(\lVert \beta_j \rVert) $$
+
+where $\textrm{MCP}_{\lambda, \gamma}(\cdot)$ denotes the MCP penalty with regularization parameter $\lambda$ and tuning parameter $\gamma$.
+
+```{r eval = FALSE}
+grpreg(X, y, group, penalty="grSCAD")
+```
+
+$$ P(\beta) = \sum_j \textrm{SCAD}_{\lambda, \gamma}(\lVert \beta_j \rVert) $$
+
+where $\textrm{SCAD}_{\lambda, \gamma}(\cdot)$ denotes the SCAD penalty with regularization parameter $\lambda$ and tuning parameter $\gamma$.
+
+If you use any of the above penalties, please cite 
+
+> Breheny P and Huang J (2015). Group descent algorithms for nonconvex penalized linear and logistic regression models with grouped predictors. *Statistics and Computing*, **25**: 173-187. [[pdf](http://myweb.uiowa.edu/pbreheny/publications/group-computing.pdf)]
+
+The article goes into more mathematical details, discusses issues of standardization in the group sense, and provides references.
 
 ## Bi-level selection
 
-stuff
+```{r eval = FALSE}
+grpreg(X, y, group, penalty="gel")
+```
 
-Does mathJax work?
+$$ P(\beta) = \sum_j \textrm{ExP}_{\lambda, \tau}(\lVert \beta_j \rVert) $$
 
-$$ \int_0^\infty x^{-2}dx $$
+where $\textrm{ExP}(\cdot)$ denotes the SCAD penalty with regularization parameter $\lambda$ and tuning parameter $\gamma$.
+
+
+## Specifying $\alpha$
 
