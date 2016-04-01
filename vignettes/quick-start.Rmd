@@ -1,0 +1,12 @@
+---
+title: "Quick start guide for grpreg"
+author: "Patrick Breheny"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Quick start guide for grpreg}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+This vignette provides a brief guide to the basic usage of `grpreg`.
+

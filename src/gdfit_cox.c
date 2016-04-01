@@ -48,7 +48,7 @@ void gd_cox(double *b, double *x, double *r, double *eta, int g, int *K1, int n,
   Free(z);
 }
 
-SEXP gdfit_binomial(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_) {
+SEXP gdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_) {
 
   // Lengths/dimensions
   int n = length(y_);
