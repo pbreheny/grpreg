@@ -18,9 +18,16 @@ orthogonalize <- function(X, group) {
   attr(XX, "group") <- group[nz]
   XX
 }
-unorthogonalize <- function(b, XX, group) {
+unorthogonalize <- function(b, XX, group, intercept=TRUE) {
   ind <- !sapply(attr(XX, "T"), is.null)
   T <- bdiag(attr(XX, "T")[ind])
-  ind0 <- c(1, 1+which(group==0))
-  rbind(b[ind0,,drop=FALSE], as.matrix(T %*% b[-ind0,,drop=FALSE]))
+  if (intercept) {
+    ind0 <- c(1, 1+which(group==0))
+    val <- rbind(b[ind0,,drop=FALSE], as.matrix(T %*% b[-ind0,,drop=FALSE]))
+  } else if (sum(group==0)) {
+    ind0 <- which(group==0)
+    val <- rbind(b[ind0,,drop=FALSE], as.matrix(T %*% b[-ind0,,drop=FALSE]))
+  } else {
+    val <- as.matrix(T %*% b)
+  }
 }

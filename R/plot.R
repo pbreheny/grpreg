@@ -6,7 +6,13 @@ plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE, ...) {
     Y <- Y[nonzero,]
     g <- 1:nrow(Y)
   } else {
-    beta <- if (length(dim(x$beta))==3) matrix(x$beta[,-1,,drop=FALSE], ncol=dim(x$beta)[3]) else x$beta[-1,,drop=FALSE]
+    if (length(dim(x$beta))==3) {
+      beta <- matrix(x$beta[,-1,,drop=FALSE], ncol=dim(x$beta)[3])
+    } else if (class(fit)[1]=="grpsurv") {
+      beta <- x$beta
+    } else {
+      beta <- x$beta[-1,,drop=FALSE]
+    }
     penalized <- which(x$group!=0)
     nonzero <- which(apply(abs(beta),1,sum)!=0)
     ind <- intersect(penalized, nonzero)

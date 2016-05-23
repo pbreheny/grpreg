@@ -7,23 +7,27 @@
 int checkConvergence(double *beta, double *beta_old, double eps, int l, int J);
 double crossprod(double *x, double *y, int n, int j);
 double sum(double *x, int n);
+double wsqsum(double *X, double *w, int n, int j);
 double norm(double *x, int p);
 double S(double z, double l);
 double F(double z, double l1, double l2, double gamma);
 double Fs(double z, double l1, double l2, double gamma);
 double MCP(double theta, double l, double a);
 double dMCP(double theta, double l, double a);
-SEXP cleanupCox(double *a, int *e, double *eta, double *haz, double *rsk, SEXP beta, SEXP Dev, SEXP iter, SEXP residuals, SEXP weights, SEXP df);
+SEXP cleanupCox(double *a, int *e, double *eta, double *haz, double *rsk,
+		SEXP beta, SEXP Dev, SEXP iter, SEXP residuals, SEXP weights,
+		SEXP df);
 
 // Group descent update -- cox
-void gd_cox(double *b, double *x, double *r, double *eta, int g, int *K1, int n, int l, int p, const char *penalty, double lam1, double lam2, double gamma, SEXP df, double *a) {
+void gd_cox(double *b, double *x, double *r, double *eta, double v, int g,
+	    int *K1, int n, int l, int p, const char *penalty, double lam1,
+	    double lam2, double gamma, SEXP df, double *a) {
 
   // Calculate z
   int K = K1[g+1] - K1[g];
   double *z = Calloc(K, double);
   for (int j=K1[g]; j<K1[g+1]; j++) z[j-K1[g]] = crossprod(x, r, n, j)/n + a[j];
   double z_norm = norm(z,K);
-  double v = 0.25;
 
   // Update b
   double len;
@@ -59,6 +63,7 @@ SEXP gdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEX
   // Pointers
   double *X = REAL(X_);
   double *y = REAL(y_);
+  double *d = REAL(d_);
   const char *penalty = CHAR(STRING_ELT(penalty_, 0));
   int *K1 = INTEGER(K1_);
   int K0 = INTEGER(K0_)[0];
@@ -74,53 +79,50 @@ SEXP gdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEX
   int user = INTEGER(user_)[0];
 
   // Outcome
-  SEXP res, beta0, beta, iter, df, Dev;
-  PROTECT(beta0 = allocVector(REALSXP, L));
-  for (int i=0; i<L; i++) REAL(beta0)[i] = 0;
+  SEXP res, beta, Loss, iter, df, residuals, weights;
   PROTECT(beta = allocVector(REALSXP, L*p));
   for (int j=0; j<(L*p); j++) REAL(beta)[j] = 0;
+  PROTECT(Loss = allocVector(REALSXP, L));
   PROTECT(iter = allocVector(INTSXP, L));
   for (int i=0; i<L; i++) INTEGER(iter)[i] = 0;
   PROTECT(df = allocVector(REALSXP, L));
   for (int i=0; i<L; i++) REAL(df)[i] = 0;
-  PROTECT(Dev = allocVector(REALSXP, L));
-  for (int i=0; i<L; i++) REAL(Dev)[i] = 0;
-  double *b0 = REAL(beta0);
+  PROTECT(residuals = allocVector(REALSXP, n));
+  PROTECT(weights = allocVector(REALSXP, n));
   double *b = REAL(beta);
+  double *r = REAL(residuals);
+  double *h = REAL(weights);
 
   // Intermediate quantities
-  double a0 = 0; // Beta0 from previous iteration
-  double *r = Calloc(n, double);
-  for (int i=0; i<n; i++) r[i] = y[i];
-  double *eta = Calloc(n, double);
-  double *a = Calloc(p, double);
+  double *a = Calloc(p, double);  // Beta from previous iteration
   for (int j=0; j<p; j++) a[j] = 0;
+  double *haz = Calloc(n, double);
+  double *rsk = Calloc(n, double);  
+  double *eta = Calloc(n, double);
   int *e = Calloc(J, int);
   for (int g=0; g<J; g++) e[g] = 0;
   int converged, lstart, ng, nv, violations;
-  double shift, l1, l2;
+  double shift, l1, l2, exp_eta, nullDev, v, s;
+  //double xwr, xwx, mu, u, v, shift, si, s, w; ?
 
   // Initialization
-  double ybar = sum(y, n)/n;
-  a0 = b0[0] = log(ybar/(1-ybar));
-  double nullDev = 0;
-  for (int i=0; i<n; i++) nullDev += - y[i]*log(ybar) - (1-y[i])*log(1-ybar);
-  for (int i=0; i<n; i++) eta[i] = a0;
-
   // If lam[0]=lam_max, skip lam[0] -- closed form sol'n available
+  rsk[n-1] = 1;
+  for (int i=n-2; i>=0; i--) rsk[i] = rsk[i+1] + 1;
+  nullDev = 0;
+  for (int i=0; i<n; i++) nullDev -= d[i]*log(rsk[i]);
   if (user) {
     lstart = 0;
   } else {
     lstart = 1;
-    REAL(Dev)[0] = nullDev;
+    REAL(Loss)[0] = nullDev;
   }
 
   // Path
-  double pi;
   for (int l=lstart; l<L; l++) {
     R_CheckUserInterrupt();
     if (l != 0) {
-      a0 = b0[l-1];
+      // Assign a
       for (int j=0; j<p; j++) a[j] = b[(l-1)*p+j];
 
       // Check dfmax, gmax
@@ -134,46 +136,57 @@ SEXP gdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEX
       }
       if (ng > gmax | nv > dfmax) {
 	for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
-	res = cleanupB(a, r, e, eta, beta0, beta, iter, df, Dev);
+	res = cleanupCox(a, e, eta, haz, rsk, beta, Loss, iter, residuals,
+			 weights, df);
 	return(res);
       }
     }
 
     while (INTEGER(iter)[l] < max_iter) {
       while (INTEGER(iter)[l] < max_iter) {
-	converged = 0;
 	INTEGER(iter)[l]++;
-
-	// Approximate L
-	REAL(Dev)[l] = 0;
+	REAL(Loss)[l] = 0;
+	REAL(df)[l] = 0;
+	
+	// Calculate haz, risk
+	for (int i=0; i<n; i++) haz[i] = exp(eta[i]);
+	rsk[n-1] = haz[n-1];
+	for (int i=n-2; i>=0; i--) {
+	  rsk[i] = rsk[i+1] + haz[i];
+	}
 	for (int i=0; i<n; i++) {
-	  if (eta[i] > 10) {
-	    pi = 1;
-	  } else if (eta[i] < -10) {
-	    pi = 0;
-	  } else {
-	    pi = exp(eta[i])/(1+exp(eta[i]));
-	  }
-	  r[i] = (y[i] - pi) / 0.25;
-	  REAL(Dev)[l] += - y[i]*log(pi) - (1-y[i])*log(1-pi);
+	  REAL(Loss)[l] += d[i]*eta[i] - d[i]*log(rsk[i]);
+	}
+	  
+	// Approximate L
+	h[0] = d[0]/rsk[0];
+	v = 1;
+	for (int i=1; i<n; i++) {
+	  h[i] = h[i-1] + d[i]/rsk[i];
+	}
+	for (int i=0; i<n; i++) {
+	  h[i] = h[i]*haz[i];
+	  //Rprintf("%.2f ", h[i]);
+	  //if (h[i] > v1) v1 = h[i];
+	  //v += h[i];
+	}
+	//Rprintf("\n");
+	//v = v/n;
+	//Rprintf("v: %f\n", v);
+	for (int i=0; i<n; i++) {
+	  s = d[i] - h[i];
+	  if (h[i]==0) r[i]=0;
+	  else r[i] = s/v;
 	}
 
 	// Check for saturation
-	if (REAL(Dev)[l]/nullDev < .01) {
+	if (REAL(Loss)[l]/nullDev < .01) {
 	  if (warn) warning("Model saturated; exiting...");
 	  for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
-	  res = cleanupB(a, r, e, eta, beta0, beta, iter, df, Dev);
+	  res = cleanupCox(a, e, eta, haz, rsk, beta, Loss, iter, residuals,
+			   weights, df);
 	  return(res);
 	}
-
-	// Update intercept
-	shift = sum(r, n)/n;
-	b0[l] = shift + a0;
-	for (int i=0; i<n; i++) {
-	  r[i] -= shift;
-	  eta[i] += shift;
-	}
-	REAL(df)[l] = 1;
 
 	// Update unpenalized covariates
 	for (int j=0; j<K0; j++) {
@@ -191,16 +204,14 @@ SEXP gdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEX
 	for (int g=0; g<J; g++) {
 	  l1 = lam[l] * m[g] * alpha;
 	  l2 = lam[l] * m[g] * (1-alpha);
-	  if (e[g]) gd_binomial(b, X, r, eta, g, K1, n, l, p, penalty, l1, l2, gamma, df, a);
+	  if (e[g]) gd_cox(b, X, r, eta, v, g, K1, n, l, p, penalty, l1, l2,
+			   gamma, df, a);
 	}
 
 	// Check convergence
-	if (checkConvergence(b, a, eps, l, p)) {
-	  converged  = 1;
-	  break;
-	}
-	a0 = b0[l];
+	converged = checkConvergence(b, a, eps, l, p);
 	for (int j=0; j<p; j++) a[j] = b[l*p+j];
+	if (converged) break;
       }
 
       // Scan for violations
@@ -209,7 +220,7 @@ SEXP gdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEX
 	if (e[g]==0) {
 	  l1 = lam[l] * m[g] * alpha;
 	  l2 = lam[l] * m[g] * (1-alpha);
-	  gd_binomial(b, X, r, eta, g, K1, n, l, p, penalty, l1, l2, gamma, df, a);
+	  gd_cox(b, X, r, eta, v, g, K1, n, l, p, penalty, l1, l2, gamma, df, a);
 	  if (b[l*p+K1[g]] != 0) {
 	    e[g] = 1;
 	    violations++;
@@ -218,10 +229,9 @@ SEXP gdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEX
       }
 
       if (violations==0) break;
-      a0 = b0[l];
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }
   }
-  res = cleanupB(a, r, e, eta, beta0, beta, iter, df, Dev);
+  res = cleanupCox(a, e, eta, haz, rsk, beta, Loss, iter, residuals, weights, df);
   return(res);
 }

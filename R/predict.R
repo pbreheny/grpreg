@@ -6,11 +6,17 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
   type <- match.arg(type)
   beta <- coef.grpreg(object, lambda=lambda, which=which, drop=FALSE)
   if (type=="coefficients") return(beta)
+  if (class(object)[1]=='ncvreg') {
+    alpha <- beta[1,]
+    beta <- beta[-1,,drop=FALSE]
+  } else {
+    beta <- beta
+  }
   if (length(dim(object$beta)) == 2) {
-    if (type=="vars") return(drop(apply(beta[-1, , drop=FALSE]!=0, 2, FUN=which)))
-    if (type=="groups") return(drop(apply(beta[-1, , drop=FALSE]!=0, 2, function(x) unique(object$group[x]))))
+    if (type=="vars") return(drop(apply(beta!=0, 2, FUN=which)))
+    if (type=="groups") return(drop(apply(beta!=0, 2, function(x) unique(object$group[x]))))
     if (type=="nvars") {
-      v <- drop(apply(beta[-1, , drop=FALSE]!=0, 2, FUN=which))
+      v <- drop(apply(beta!=0, 2, FUN=which))
       if (class(v)=="list") {
         res <- sapply(v, length)
       } else {
@@ -19,7 +25,7 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
       return(res)
     }
     if (type=="ngroups") {
-      g <- drop(apply(beta[-1, , drop=FALSE]!=0, 2, function(x) unique(object$group[x])))
+      g <- drop(apply(beta!=0, 2, function(x) unique(object$group[x])))
       if (class(g)=="list") {
         res <- sapply(g, length)
       } else {
@@ -27,9 +33,9 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
       }
       return(res)
     }
-    if (type=="norm") return(drop(apply(beta[-1, , drop=FALSE], 2, function(x) tapply(x, object$group, function(x){sqrt(sum(x^2))}))))
+    if (type=="norm") return(drop(apply(beta, 2, function(x) tapply(x, object$group, function(x){sqrt(sum(x^2))}))))
     if (missing(X) | is.null(X)) stop("Must supply X")
-    eta <- sweep(X %*% beta[-1,,drop=FALSE], 2, beta[1,], "+")
+    eta <- sweep(X %*% beta, 2, alpha, "+")
     if (object$family=="gaussian" & type=="class") stop("type='class' is not applicable for family='gaussian'")
     if (object$family=="gaussian" | type=="link") return(drop(eta))
     resp <- switch(object$family,

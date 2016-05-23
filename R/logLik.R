@@ -1,5 +1,4 @@
-logLik.grpreg <- function(object, df.method=c("default","active"), REML=FALSE, ...)
-{
+logLik.grpreg <- function(object, df.method=c("default","active"), REML=FALSE, ...) {
   df.method <- match.arg(df.method)
   n <- as.numeric(object$n)
   df <- if (df.method=="active") apply(coef(object)!=0, 2, sum) else object$df
@@ -21,4 +20,14 @@ logLik.grpreg <- function(object, df.method=c("default","active"), REML=FALSE, .
   attr(val,"nobs") <- n
   class(val) <- "logLik"
   return(val)    
+}
+logLik.grpsurv <- function(object, df.method=c("default","active"), ...) {
+  df.method <- match.arg(df.method)
+  n <- as.numeric(object$n)
+  df <- if (df.method=="active") apply(coef(object)!=0, 2, sum) else object$df
+  val <- -1*object$loss
+  attr(val,"df") <- df
+  attr(val,"nobs") <- n
+  class(val) <- "logLik"
+  val
 }

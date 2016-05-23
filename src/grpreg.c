@@ -59,7 +59,7 @@ SEXP cleanupCox(double *a, int *e, double *eta, double *haz, double *rsk, SEXP b
   SET_VECTOR_ELT(res, 3, Dev);
   SET_VECTOR_ELT(res, 4, residuals);
   SET_VECTOR_ELT(res, 5, weights);
-  UNPROTECT(6);
+  UNPROTECT(7);
   return(res);
 }
 
@@ -169,11 +169,11 @@ static R_CallMethodDef callMethods[] = {
   {"gdfit_gaussian", (DL_FUNC) &gdfit_gaussian, 14},
   {"gdfit_binomial", (DL_FUNC) &gdfit_binomial, 15},
   {"gdfit_poisson", (DL_FUNC) &gdfit_poisson, 15},
-  {"gdfit_cox", (DL_FUNC) &gdfit_poisson, 16},
+  {"gdfit_cox", (DL_FUNC) &gdfit_cox, 16},
   {"lcdfit_gaussian", (DL_FUNC) &lcdfit_gaussian, 16},
   {"lcdfit_binomial", (DL_FUNC) &lcdfit_binomial, 17},
   {"lcdfit_poisson", (DL_FUNC) &lcdfit_poisson, 17},
-  {"lcdfit_cox", (DL_FUNC) &lcdfit_poisson, 18},
+  {"lcdfit_cox", (DL_FUNC) &lcdfit_cox, 18},
   {"standardize", (DL_FUNC) &standardize, 1},
   {"maxprod", (DL_FUNC) &maxprod, 4},
   {NULL, NULL, 0}

@@ -14,7 +14,18 @@ summary.cv.grpreg <- function(object, ...) {
   } else {
     p <- d[1] - 1
   }
-  val <- list(penalty=object$fit$penalty, model=model, n=object$fit$n, p=p, min=object$min, lambda=object$lambda, cve=object$cve, r.squared=rsq, snr=snr, nvars=nvars, ngroups=ngroups, d=d)
+  val <- list(penalty=object$fit$penalty,
+              model=model,
+              n=object$fit$n,
+              p=p,
+              min=object$min,
+              lambda=object$lambda,
+              cve=object$cve,
+              r.squared=rsq,
+              snr=snr,
+              nvars=nvars,
+              ngroups=ngroups,
+              d=d)
   if (object$fit$family=="gaussian") val$sigma <- sqrt(object$cve)
   if (object$fit$family=="binomial") val$pe <- object$pe
   structure(val, class="summary.cv.grpreg")
