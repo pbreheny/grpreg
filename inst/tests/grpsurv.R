@@ -22,6 +22,10 @@ fit <- grpsurv(X, y, g, lambda.min=0, penalty="grSCAD")
 stopifnot(equal(coef(fit)[,100], coef(fit.mle)))
 fit <- grpsurv(X, y, g, lambda.min=0, penalty="grMCP")
 stopifnot(equal(coef(fit)[,100], coef(fit.mle)))
+fit <- grpsurv(X, y, g, lambda.min=0, penalty="gel")
+stopifnot(equal(coef(fit)[,100], coef(fit.mle)))
+fit <- grpsurv(X, y, g, lambda.min=0, penalty="cMCP")
+stopifnot(equal(coef(fit)[,100], coef(fit.mle)))
 
 # Predict
 p <- predict(fit, X, 'vars')

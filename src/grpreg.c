@@ -92,6 +92,22 @@ double crossprod(double *x, double *y, int n, int j) {
   return(val);
 }
 
+// Weighted cross product of y with jth column of x
+double wcrossprod(double *X, double *y, double *w, int n, int j) {
+  int nn = n*j;
+  double val=0;
+  for (int i=0;i<n;i++) val += X[nn+i]*y[i]*w[i];
+  return(val);
+}
+
+// Weighted sum of squares of jth column of X
+double wsqsum(double *X, double *w, int n, int j) {
+  int nn = n*j;
+  double val=0;
+  for (int i=0;i<n;i++) val += w[i] * pow(X[nn+i], 2);
+  return(val);
+}
+
 // Sum of x
 double sum(double *x, int n) {
   double val = 0;

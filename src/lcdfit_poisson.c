@@ -24,13 +24,13 @@ void gLCD_poisson(double *b, const char *penalty, double *x, double *r, double v
 
   // Make initial local approximation
   double sG = 0; // Sum of inner penalties for group
-  if (strcmp(penalty, "gel")==0) for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + fabs(a[j]);
+  if (strcmp(penalty, "gel")==0) for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + fabs(a[j])/v;
   if (strcmp(penalty, "cMCP")==0) {
     lam1 = sqrt(lam1);
-    for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + MCP(a[j], lam1, gamma);
+    for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + MCP(a[j]/v, lam1, gamma);
   }
   if (strcmp(penalty, "gBridge")==0) {
-    for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + fabs(a[j]);
+    for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + fabs(a[j]/v);
     if (sG==0) return;
     if (sG < delta) {
       for (int j=K1[g]; j<K1[g+1]; j++) {
@@ -49,7 +49,7 @@ void gLCD_poisson(double *b, const char *penalty, double *x, double *r, double v
       double ljk=0;
       if (lam1 != 0) {
 	if (strcmp(penalty, "cMCP")==0) ljk = dMCP(sG, lam1, (K*gamma*pow(lam1,2))/(2*lam1)) * dMCP(b[l*p+j], lam1, gamma);
-	if (strcmp(penalty, "gel")==0) ljk = lam1*exp(-tau*v/lam1*sG);
+	if (strcmp(penalty, "gel")==0) ljk = lam1*exp(-tau/lam1*sG);
 	if (strcmp(penalty, "gBridge")==0) ljk = lam1 * gamma * pow(sG, gamma-1);
       }
       b[l*p+j] = S(v*u, ljk) / (v*(1+lam2));
@@ -89,7 +89,7 @@ int gLCD_pCheck(double *b, const char *penalty, double *x, double *r, double v, 
     if (e[j]==0) {
 
       // Compare
-      double u = crossprod(x, r, n, j)/n + a[j];
+      double u = crossprod(x, r, n, j)/n;
       double ljk=0;
       if (lam1 != 0) {
 	if (strcmp(penalty, "cMCP")==0) ljk = dMCP(sG, lam1, (K*gamma*pow(lam1,2))/(2*lam1)) * dMCP(b[l*p+j], lam1, gamma);
@@ -97,7 +97,7 @@ int gLCD_pCheck(double *b, const char *penalty, double *x, double *r, double v, 
       }
 
       // Update if necessary
-      if (v*fabs(u) > ljk) {
+      if (fabs(v*u) > ljk) {
 	e[j] = 1;
 	violations++;
 	b[l*p+j] = S(v*u, ljk) / (v*(1+lam2));

@@ -6,7 +6,7 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
   type <- match.arg(type)
   beta <- coef.grpreg(object, lambda=lambda, which=which, drop=FALSE)
   if (type=="coefficients") return(beta)
-  if (class(object)[1]=='ncvreg') {
+  if (class(object)[1]=='grpreg') {
     alpha <- beta[1,]
     beta <- beta[-1,,drop=FALSE]
   } else {
@@ -86,7 +86,7 @@ coef.grpreg <- function(object, lambda, which=1:length(object$lambda), drop=TRUE
     w <- ind %% 1
     if (length(dim(object$beta)) == 3) {
       beta <- (1-w)*object$beta[,,l,drop=FALSE] + w*object$beta[,,r,drop=FALSE]
-      dimnames(beta)[[3]] <- round(lambda,4)      
+      dimnames(beta)[[3]] <- round(lambda,4)
     } else {
       beta <- (1-w)*object$beta[,l,drop=FALSE] + w*object$beta[,r,drop=FALSE]
       colnames(beta) <- round(lambda,4)

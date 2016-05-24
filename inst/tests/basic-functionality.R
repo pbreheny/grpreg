@@ -119,7 +119,7 @@ check(grLasso, reg, tolerance=.01, check.attributes=FALSE)
 grMCP <- coef(fit <- grpreg(X, y, group, penalty="grMCP", family="binomial", gamma=2))[,100]
 plot(fit, main=fit$penalty)
 check(grMCP, reg, tolerance=.01, check.attributes=FALSE)
-grSCAD <- coef(fit <- grpreg(X, y, group, penalty="grSCAD", family="binomial", gamma=2))[,100]
+grSCAD <- coef(fit <- grpreg(X, y, group, penalty="grSCAD", family="binomial", gamma=2.1))[,100]
 plot(fit, main=fit$penalty)
 check(grSCAD, reg, tolerance=.01, check.attributes=FALSE)
 check(predict(fit, X)[,100], predict(fit.mle), tolerance=.001, check.attributes=FALSE)
@@ -151,7 +151,7 @@ check(grLasso, reg, tolerance=.01, check.attributes=FALSE)
 grMCP <- coef(fit <- grpreg(X, y, group, penalty="grMCP", family="poisson", gamma=2))[,100]
 plot(fit, main=fit$penalty)
 check(grMCP, reg, tolerance=.01, check.attributes=FALSE)
-grSCAD <- coef(fit <- grpreg(X, y, group, penalty="grSCAD", family="poisson", gamma=2))[,100]
+grSCAD <- coef(fit <- grpreg(X, y, group, penalty="grSCAD", family="poisson", gamma=2.1))[,100]
 plot(fit, main=fit$penalty)
 check(grSCAD, reg, tolerance=.01, check.attributes=FALSE)
 check(predict(fit, X)[,100], predict(fit.mle), tolerance=.001, check.attributes=FALSE)

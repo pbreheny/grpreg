@@ -50,7 +50,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
     g <- group
     J <- max(g)
     if (length(group.multiplier)!=max(g)) stop("Length of group.multiplier must equal number of penalized groups")
-    names(group.multiplier) <- paste0("G", unique(g))
+    names(group.multiplier) <- paste0("G", unique(g[g!=0]))
   }
   if (storage.mode(group.multiplier) != "double") storage.mode(group.multiplier) <- "double"
 

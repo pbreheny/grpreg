@@ -51,7 +51,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
     g <- group
     J <- max(g)
     if (length(group.multiplier)!=max(g)) stop("Length of group.multiplier must equal number of penalized groups")
-    names(group.multiplier) <- paste0("G", unique(g))
+    names(group.multiplier) <- paste0("G", unique(g[g!=0]))
   }
   if (storage.mode(group.multiplier) != "double") storage.mode(group.multiplier) <- "double"
 
@@ -90,8 +90,13 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   p <- ncol(XX)
   K0 <- as.integer(if (min(g)==0) K[1] else 0)
   K1 <- as.integer(if (min(g)==0) cumsum(K) else c(0, cumsum(K)))
-  res <- .Call("gdfit_cox", XX, yy, Delta, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter),
-               as.double(gamma), group.multiplier, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+  if (strtrim(penalty,2)=="gr") {
+    res <- .Call("gdfit_cox", XX, yy, Delta, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter),
+                 as.double(gamma), group.multiplier, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+  } else {
+    res <- .Call("lcdfit_cox", XX, yy, Delta, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter),
+                 as.double(group.multiplier), as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+  }
   b <- matrix(res[[1]], p, nlambda)
   iter <- res[[2]]
   df <- res[[3]]

@@ -6,14 +6,10 @@
 #include <R_ext/Applic.h>
 int checkConvergence(double *beta, double *beta_old, double eps, int l, int J);
 double crossprod(double *x, double *y, int n, int j);
-double sum(double *x, int n);
-double wsqsum(double *X, double *w, int n, int j);
 double norm(double *x, int p);
 double S(double z, double l);
 double F(double z, double l1, double l2, double gamma);
 double Fs(double z, double l1, double l2, double gamma);
-double MCP(double theta, double l, double a);
-double dMCP(double theta, double l, double a);
 SEXP cleanupCox(double *a, int *e, double *eta, double *haz, double *rsk,
 		SEXP beta, SEXP Dev, SEXP iter, SEXP residuals, SEXP weights,
 		SEXP df);
@@ -102,7 +98,7 @@ SEXP gdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEX
   int *e = Calloc(J, int);
   for (int g=0; g<J; g++) e[g] = 0;
   int converged, lstart, ng, nv, violations;
-  double shift, l1, l2, exp_eta, nullDev, v, s;
+  double shift, l1, l2, nullDev, v, s;
   //double xwr, xwx, mu, u, v, shift, si, s, w; ?
 
   // Initialization
