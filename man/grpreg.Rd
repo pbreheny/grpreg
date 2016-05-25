@@ -202,36 +202,38 @@ warn=TRUE, ...)
   \code{\link[=plot.grpreg]{plot}} and
   \code{\link[=select.grpreg]{select}} methods.}
 \examples{
+# Birthweight data
+data(Birthwt)
+X <- Birthwt$X
+group <- Birthwt$group
+
 ## Linear regression
-data(birthwt.grpreg)
-X <- as.matrix(birthwt.grpreg[,-1:-2])
-y <- birthwt.grpreg$bwt
-group <- c(1,1,1,2,2,2,3,3,4,5,5,6,7,8,8,8)
-fit <- grpreg(X,y,group,penalty="grLasso")
+y <- Birthwt$bwt
+fit <- grpreg(X, y, group, penalty="grLasso")
 plot(fit)
-fit <- grpreg(X,y,group,penalty="grMCP")
+fit <- grpreg(X, y, group, penalty="grMCP")
 plot(fit)
-fit <- grpreg(X,y,group,penalty="grSCAD")
+fit <- grpreg(X, y, group, penalty="grSCAD")
 plot(fit)
-fit <- grpreg(X,y,group,penalty="gel")
+fit <- grpreg(X, y, group, penalty="gel")
 plot(fit)
-fit <- grpreg(X,y,group,penalty="cMCP")
+fit <- grpreg(X, y, group, penalty="cMCP")
 plot(fit)
-select(fit,"AIC")
+select(fit, "AIC")
 
 ## Logistic regression
-y <- birthwt.grpreg$low
-fit <- grpreg(X,y,group,penalty="grLasso", family="binomial")
+y <- Birthwt$low
+fit <- grpreg(X, y, group, penalty="grLasso", family="binomial")
 plot(fit)
-fit <- grpreg(X,y,group,penalty="grMCP", family="binomial")
+fit <- grpreg(X, y, group, penalty="grMCP", family="binomial")
 plot(fit)
-fit <- grpreg(X,y,group,penalty="grSCAD", family="binomial")
+fit <- grpreg(X, y, group, penalty="grSCAD", family="binomial")
 plot(fit)
-fit <- grpreg(X,y,group,penalty="gel", family="binomial")
+fit <- grpreg(X, y, group, penalty="gel", family="binomial")
 plot(fit)
-fit <- grpreg(X,y,group,penalty="cMCP", family="binomial")
+fit <- grpreg(X, y, group, penalty="cMCP", family="binomial")
 plot(fit)
-select(fit,"BIC")
+select(fit, "BIC")
 
 ## Multitask learning
 ## Simulated example
@@ -246,4 +248,3 @@ fit <- grpreg(X, y)
 fit$group
 plot(fit)
 }
-\keyword{models}

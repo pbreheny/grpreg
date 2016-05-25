@@ -1,10 +1,11 @@
-cv.grpsurv <- function(X, y, ..., nfolds=10, seed, returnY=FALSE, trace=FALSE) {
+cv.grpsurv <- function(X, y, group, ..., nfolds=10, seed, returnY=FALSE, trace=FALSE) {
   if (!missing(seed)) set.seed(seed)
 
   # Complete data fit
   fit.args <- list(...)
   fit.args$X <- X
   fit.args$y <- y
+  fit.args$group <- group
   fit.args$returnX <- TRUE
   fit <- do.call("grpsurv", fit.args)
 
@@ -22,6 +23,7 @@ cv.grpsurv <- function(X, y, ..., nfolds=10, seed, returnY=FALSE, trace=FALSE) {
 
   cv.args <- list(...)
   cv.args$lambda <- fit$lambda
+  cv.args$group <- attr(X, "group")
   cv.args$warn <- FALSE
   cv.args$group.multiplier <- fit$group.multiplier
 

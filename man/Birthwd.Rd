@@ -1,15 +1,13 @@
-\name{birthwt.grpreg}
-\alias{birthwt.grpreg}
-\title{
-Risk Factors Associated with Low Infant Birth Weight
-}
+\name{Birthwt}
+\alias{Birthwt}
+\title{Risk Factors Associated with Low Infant Birth Weight}
 \description{
-The \code{birthwt.grpreg} data frame has 189 rows and 18 columns.
-The data were collected at Baystate Medical Center, Springfield, Mass
-during 1986.  This data frame is a reparameterization of the
-\code{birthwt} data frame from the \code{MASS} package.}
+  The \code{Birthwt} data frame has 189 rows and 18 columns.
+  The data were collected at Baystate Medical Center, Springfield, Mass
+  during 1986.  This data frame is a reparameterization of the
+  \code{birthwt} data frame from the \code{MASS} package.}
 \usage{
-data(birthwt.grpreg)
+data(Birthwt)
 }
 \format{
   This data frame contains the following columns:
@@ -44,9 +42,9 @@ data(birthwt.grpreg)
       Regression.} New York: Wiley}
 }
 \examples{
-data(birthwt.grpreg)
-hist(birthwt.grpreg$bwt, xlab="Child's birth weight", main="")
-table(birthwt.grpreg$low)
+data(Birthwt)
+hist(Birthwt$bwt, xlab="Child's birth weight", main="")
+table(Birthwt$low)
 ## See examples in ?birthwt (MASS package)
 ##   for more about the data set
 ## See examples in grpreg for use of this data set

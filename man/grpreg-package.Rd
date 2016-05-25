@@ -50,7 +50,7 @@
 
   The following data sets are documented in the help pages:
   \itemize{
-    \item \code{\link{birthwt.grpreg}}
+    \item \code{\link{Birthwt}}
     }
 }
 \references{

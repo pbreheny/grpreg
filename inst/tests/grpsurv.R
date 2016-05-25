@@ -58,3 +58,23 @@ loss.grpsurv(y, eta)
 cvfit <- cv.grpsurv(X, y, g, lambda.min=0)
 plot(cvfit)
 summary(cvfit)
+
+#############################################################
+.test = "cox survival predictions agree with Kaplan-Meier" ##
+#############################################################
+n <- 50
+p <- 5
+X <- matrix(rnorm(n*p), ncol=p)
+b <- c(2, -2, rep(0, p-2))
+g <- c(1,3,3,2,2)
+y <- Surv(rexp(n, exp(X%*%b)), rbinom(n, 1, 0.75))
+
+fit <- grpsurv(X, y, g)
+fit <- grpsurv(X, y, g, penalty="gel")
+S <- predict(fit, X[1,], which=1, type='survival')
+km <- survfit(y~1)
+par(op)
+plot(km, conf.int=FALSE, mark.time=FALSE, xlim=c(0,10), lwd=10, col="gray")
+lines(fit$time, S(fit$time), type="s", col="slateblue", lwd=2)
+median(km)
+predict(fit, X[1,], which=1, type='median')

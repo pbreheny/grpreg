@@ -69,20 +69,19 @@ gamma=0.5, group.multiplier=rep(1,J), warn=TRUE)
 \author{Patrick Breheny <patrick-breheny@uiowa.edu>}
 \seealso{\code{\link{grpreg}}}
 \examples{
+data(Birthwt)
+X <- Birthwt$X
+group <- Birthwt$group
+
 ## Linear regression
-data(birthwt.grpreg)
-X <- as.matrix(birthwt.grpreg[,-1:-2])
-y <- birthwt.grpreg$bwt
-group <- c(1,1,1,2,2,2,3,3,4,5,5,6,7,8,8,8)
+y <- Birthwt$bwt
 fit <- gBridge(X, y, group)
 plot(fit)
 select(fit)
 
 ## Logistic regression
-y <- birthwt.grpreg$low
+y <- Birthwt$low
 fit <- gBridge(X, y, group, family="binomial")
 plot(fit)
 select(fit)
 }
-\keyword{models}
-

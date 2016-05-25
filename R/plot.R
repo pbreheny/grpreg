@@ -8,7 +8,7 @@ plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE, ...) {
   } else {
     if (length(dim(x$beta))==3) {
       beta <- matrix(x$beta[,-1,,drop=FALSE], ncol=dim(x$beta)[3])
-    } else if (class(fit)[1]=="grpsurv") {
+    } else if (class(x)[1]=="grpsurv") {
       beta <- x$beta
     } else {
       beta <- x$beta[-1,,drop=FALSE]

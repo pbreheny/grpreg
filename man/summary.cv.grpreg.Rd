@@ -40,16 +40,18 @@
 \author{Patrick Breheny <patrick-breheny@uiowa.edu>}
 \seealso{\code{\link{grpreg}}, \code{\link{cv.grpreg}}, \code{\link{plot.cv.grpreg}}}
 \examples{
-## Linear regression
-data(birthwt.grpreg)
-X <- as.matrix(birthwt.grpreg[,-1:-2])
-y <- birthwt.grpreg$bwt
-group <- c(1,1,1,2,2,2,3,3,4,5,5,6,7,8,8,8)
+# Birthweight data
+data(Birthwt)
+X <- Birthwt$X
+group <- Birthwt$group
+
+# Linear regression
+y <- Birthwt$bwt
 cvfit <- cv.grpreg(X, y, group)
 summary(cvfit)
 
-## Logistic regression
-y <- birthwt.grpreg$low
+# Logistic regression
+y <- Birthwt$low
 cvfit <- cv.grpreg(X, y, group, family="binomial")
 summary(cvfit)
 }

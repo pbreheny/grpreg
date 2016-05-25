@@ -5,7 +5,8 @@
   object, along with standard error bars.}
 \usage{
 \method{plot}{cv.grpreg}(x, log.l=TRUE, type=c("cve", "rsq", "scale",
-"snr", "pred", "all"), selected=TRUE, ...)} 
+"snr", "pred", "all"),  selected=TRUE, vertical.line=TRUE, col="red",
+...)}
 \arguments{
   \item{x}{A \code{cv.grpreg} object.}
   \item{log.l}{Should horizontal axis be on the log scale?  Default is
@@ -22,6 +23,9 @@
     the plot denoting the number of groups in the model (i.e., that
     contain a nonzero regression coefficient) at that value of
     \code{lambda}.}  
+  \item{vertical.line}{If \code{TRUE} (the default), draws a vertical
+    line at the value where cross-validaton error is minimized.}
+  \item{col}{Controls the color of the dots (CV estimates).}
   \item{\dots}{Other graphical parameters to \code{plot}}
 }
 \details{
@@ -33,21 +37,22 @@
 \author{Patrick Breheny <patrick-breheny@uiowa.edu>}
 \seealso{\code{\link{grpreg}}, \code{\link{cv.grpreg}}}
 \examples{
-## Linear regression
-data(birthwt.grpreg)
-X <- as.matrix(birthwt.grpreg[,-1:-2])
-y <- birthwt.grpreg$bwt
-group <- c(1,1,1,2,2,2,3,3,4,5,5,6,7,8,8,8)
+# Birthweight data
+data(Birthwt)
+X <- Birthwt$X
+group <- Birthwt$group
+
+# Linear regression
+y <- Birthwt$bwt
 cvfit <- cv.grpreg(X, y, group)
 plot(cvfit)
 par(mfrow=c(2,2))
 plot(cvfit, type="all")
 
 ## Logistic regression
-y <- birthwt.grpreg$low
+y <- Birthwt$low
 cvfit <- cv.grpreg(X, y, group, family="binomial")
 plot(cvfit)
 par(mfrow=c(2,2))
 plot(cvfit, type="all")
 }
-\keyword{graphics}

@@ -21,12 +21,17 @@
 \author{Patrick Breheny <patrick-breheny@uiowa.edu>}
 \seealso{\code{grpreg}}
 \examples{
-data(birthwt.grpreg)
-X <- as.matrix(birthwt.grpreg[,-1:-2])
-y <- birthwt.grpreg$bwt
-group <- c(1,1,1,2,2,2,3,3,4,5,5,6,7,8,8,8)
+# Fit model to birthweight data
+data(Birthwt)
+X <- Birthwt$X
+y <- Birthwt$bwt
+group <- Birthwt$group
 fit <- grpreg(X, y, group, penalty="grLasso")
+
+# Plot (basic)
 plot(fit)
+
+# Plot (various options)
 plot(fit, norm=TRUE)
 myColors <- c("black", "red", "green", "blue", "yellow", "purple",
 "orange", "brown")
@@ -36,4 +41,3 @@ labs <- c("Mother's Age", "Mother's weight", "Race", "Smoking",
 plot(fit, legend.loc="topleft", lwd=6, alpha=0.5, legend=labs)
 plot(fit, norm=TRUE, legend.loc="topleft", lwd=6, alpha=0.5, legend=labs)
 }
-\keyword{graphics}

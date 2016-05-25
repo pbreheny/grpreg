@@ -6,7 +6,9 @@ setupLambdaCox <- function(X, y, Delta, group, penalty, alpha, lambda.min, nlamb
   K <- table(group)
   K1 <- as.integer(if (min(group)==0) cumsum(K) else c(0, cumsum(K)))
   if (K1[1]!=0) {
-    nullFit <- coxph(Surv(y, Delta) ~ X[, group==0, drop=FALSE])
+    SURV <- get("Surv", asNamespace("survival"))
+    COXPH <- get("coxph", asNamespace("survival"))
+    nullFit <- COXPH(SURV(y, Delta) ~ X[, group==0, drop=FALSE])
     eta <- nullFit$linear.predictors
     rsk <- rev(cumsum(rev(exp(eta))))
     s <- Delta - exp(eta)*cumsum(Delta/rsk)

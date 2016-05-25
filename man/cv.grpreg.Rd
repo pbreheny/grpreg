@@ -60,10 +60,10 @@ cv.grpreg(X, y, group=1:ncol(X), ..., nfolds=10, seed, trace=FALSE)
 \seealso{\code{\link{grpreg}}, \code{\link{plot.cv.grpreg}},
   \code{\link{summary.cv.grpreg}}, \code{\link{predict.cv.grpreg}}}
 \examples{
-data(birthwt.grpreg)
-X <- as.matrix(birthwt.grpreg[,-1:-2])
-y <- birthwt.grpreg$bwt
-group <- c(1,1,1,2,2,2,3,3,4,5,5,6,7,8,8,8)
+data(Birthwt)
+X <- Birthwt$X
+y <- Birthwt$bwt
+group <- Birthwt$group
 
 cvfit <- cv.grpreg(X, y, group)
 plot(cvfit)

@@ -101,6 +101,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   iter <- res[[2]]
   df <- res[[3]]
   loss <- -1*res[[4]]
+  Eta <- matrix(res[[5]], n, nlambda)
 
   ## Eliminate saturated lambda values, if any
   ind <- !is.na(iter)
@@ -113,7 +114,6 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   ## Unstandardize
   if (strtrim(penalty,2)=="gr") b <- unorthogonalize(b, XX, g, intercept=FALSE)
   b <- b/scale[nz]
-  offset <- -crossprod(center[nz], b)
   beta <- matrix(0, nrow=ncol(X), ncol=length(lambda))
   if (reorder.groups) {
     beta[nz,] <- b
@@ -138,7 +138,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
                         iter = iter,
                         group.multiplier = group.multiplier),
                    class = c("grpsurv", "grpreg"))
-  val$W <- exp(sweep(XX %*% b, 2, offset, "-"))
+  val$W <- exp(Eta)
   val$time <- yy
   val$fail <- Delta
   if (returnX) {

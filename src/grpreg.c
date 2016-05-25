@@ -45,21 +45,22 @@ SEXP cleanupB(double *a, double *r, int *e, double *eta, SEXP beta0, SEXP beta, 
   return(res);
 }
 // Memory handling and output formatting, Cox
-SEXP cleanupCox(double *a, int *e, double *eta, double *haz, double *rsk, SEXP beta, SEXP Dev, SEXP iter, SEXP residuals, SEXP weights, SEXP df) {
+SEXP cleanupCox(double *h, double *a, double *r, int *e, double *eta, double *haz, double *rsk, SEXP beta, SEXP Dev, SEXP iter, SEXP Eta, SEXP df) {
+  Free(h);
   Free(a);
+  Free(r);
   Free(e);
   Free(eta);
   Free(haz);
   Free(rsk);
   SEXP res;
-  PROTECT(res = allocVector(VECSXP, 6));
+  PROTECT(res = allocVector(VECSXP, 5));
   SET_VECTOR_ELT(res, 0, beta);
   SET_VECTOR_ELT(res, 1, iter);
   SET_VECTOR_ELT(res, 2, df);
   SET_VECTOR_ELT(res, 3, Dev);
-  SET_VECTOR_ELT(res, 4, residuals);
-  SET_VECTOR_ELT(res, 5, weights);
-  UNPROTECT(7);
+  SET_VECTOR_ELT(res, 4, Eta);
+  UNPROTECT(6);
   return(res);
 }
 

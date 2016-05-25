@@ -45,10 +45,10 @@ select(obj,\dots)
 \author{Patrick Breheny <patrick-breheny@uiowa.edu>}
 \seealso{\code{grpreg}}
 \examples{
-data(birthwt.grpreg)
-X <- as.matrix(birthwt.grpreg[,-1:-2])
-y <- birthwt.grpreg$bwt
-group <- c(1,1,1,2,2,2,3,3,4,5,5,6,7,8,8,8)
+data(Birthwt)
+X <- Birthwt$X
+y <- Birthwt$bwt
+group <- Birthwt$group
 fit <- grpreg(X, y, group, penalty="grLasso")
 select(fit)
 select(fit,crit="AIC",df="active")

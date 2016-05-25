@@ -10,9 +10,8 @@ double norm(double *x, int p);
 double S(double z, double l);
 double F(double z, double l1, double l2, double gamma);
 double Fs(double z, double l1, double l2, double gamma);
-SEXP cleanupCox(double *a, int *e, double *eta, double *haz, double *rsk,
-		SEXP beta, SEXP Dev, SEXP iter, SEXP residuals, SEXP weights,
-		SEXP df);
+SEXP cleanupCox(double *h, double *a, double *r, int *e, double *eta, double *haz,
+		double *rsk, SEXP beta, SEXP Dev, SEXP iter, SEXP Eta, SEXP df);
 
 // Group descent update -- cox
 void gd_cox(double *b, double *x, double *r, double *eta, double v, int g,
@@ -75,23 +74,24 @@ SEXP gdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEX
   int user = INTEGER(user_)[0];
 
   // Outcome
-  SEXP res, beta, Loss, iter, df, residuals, weights;
+  SEXP res, beta, Loss, iter, df, Eta;
   PROTECT(beta = allocVector(REALSXP, L*p));
   for (int j=0; j<(L*p); j++) REAL(beta)[j] = 0;
-  PROTECT(Loss = allocVector(REALSXP, L));
   PROTECT(iter = allocVector(INTSXP, L));
   for (int i=0; i<L; i++) INTEGER(iter)[i] = 0;
   PROTECT(df = allocVector(REALSXP, L));
   for (int i=0; i<L; i++) REAL(df)[i] = 0;
-  PROTECT(residuals = allocVector(REALSXP, n));
-  PROTECT(weights = allocVector(REALSXP, n));
+  PROTECT(Loss = allocVector(REALSXP, L));
+  PROTECT(Eta = allocVector(REALSXP, L*n));
+  for (int i=0; i<(L*n); i++) REAL(Eta)[i] = 0;
   double *b = REAL(beta);
-  double *r = REAL(residuals);
-  double *h = REAL(weights);
+  double *ETA = REAL(Eta);
 
   // Intermediate quantities
   double *a = Calloc(p, double);  // Beta from previous iteration
   for (int j=0; j<p; j++) a[j] = 0;
+  double *r = Calloc(n, double);
+  double *h = Calloc(n, double);  
   double *haz = Calloc(n, double);
   double *rsk = Calloc(n, double);  
   double *eta = Calloc(n, double);
@@ -99,7 +99,6 @@ SEXP gdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEX
   for (int g=0; g<J; g++) e[g] = 0;
   int converged, lstart, ng, nv, violations;
   double shift, l1, l2, nullDev, v, s;
-  //double xwr, xwx, mu, u, v, shift, si, s, w; ?
 
   // Initialization
   // If lam[0]=lam_max, skip lam[0] -- closed form sol'n available
@@ -132,8 +131,7 @@ SEXP gdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEX
       }
       if (ng > gmax | nv > dfmax) {
 	for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
-	res = cleanupCox(a, e, eta, haz, rsk, beta, Loss, iter, residuals,
-			 weights, df);
+	res = cleanupCox(h, a, r, e, eta, haz, rsk, beta, Loss, iter, Eta, df);
 	return(res);
       }
     }
@@ -162,14 +160,6 @@ SEXP gdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEX
 	}
 	for (int i=0; i<n; i++) {
 	  h[i] = h[i]*haz[i];
-	  //Rprintf("%.2f ", h[i]);
-	  //if (h[i] > v1) v1 = h[i];
-	  //v += h[i];
-	}
-	//Rprintf("\n");
-	//v = v/n;
-	//Rprintf("v: %f\n", v);
-	for (int i=0; i<n; i++) {
 	  s = d[i] - h[i];
 	  if (h[i]==0) r[i]=0;
 	  else r[i] = s/v;
@@ -179,8 +169,7 @@ SEXP gdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEX
 	if (REAL(Loss)[l]/nullDev < .01) {
 	  if (warn) warning("Model saturated; exiting...");
 	  for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
-	  res = cleanupCox(a, e, eta, haz, rsk, beta, Loss, iter, residuals,
-			   weights, df);
+	  res = cleanupCox(h, a, r, e, eta, haz, rsk, beta, Loss, iter, Eta, df);
 	  return(res);
 	}
 
@@ -224,10 +213,13 @@ SEXP gdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEX
 	}
       }
 
-      if (violations==0) break;
+      if (violations==0) {
+	for (int i=0; i<n; i++) ETA[l*n+i] = eta[i];
+	break;
+      }
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }
   }
-  res = cleanupCox(a, e, eta, haz, rsk, beta, Loss, iter, residuals, weights, df);
+  res = cleanupCox(h, a, r, e, eta, haz, rsk, beta, Loss, iter, Eta, df);
   return(res);
 }
