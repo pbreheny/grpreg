@@ -5,7 +5,9 @@
   The \code{Birthwt} data frame has 189 rows and 18 columns.
   The data were collected at Baystate Medical Center, Springfield, Mass
   during 1986.  This data frame is a reparameterization of the
-  \code{birthwt} data frame from the \code{MASS} package.}
+  \code{birthwt} data frame from the \code{MASS} package.
+  \code{\link{NEED TO FIX}}
+}
 \usage{
 data(Birthwt)
 }

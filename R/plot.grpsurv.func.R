@@ -8,7 +8,7 @@ plot.grpsurv.func <- function(x, alpha=1, ...) {
     n <- 1
   }
 
-  plot.args <- list(x=1, y=1, xlim=range(time), ylim=range(Y), xlab='Time', ylab='Pr(Survival)', type="n", las=1)
+  plot.args <- list(x=1, y=1, xlim=range(time), ylim=range(Y), xlab='Time', ylab='Pr(Survival)', type="n", las=1, bty="n")
   new.args <- list(...)
   if (length(new.args)) plot.args[names(new.args)] <- new.args
   do.call("plot", plot.args)

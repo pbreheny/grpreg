@@ -4,7 +4,7 @@
 \description{Produces a plot of the coefficient paths for a fitted \code{grpreg} object.}
 \usage{
 \method{plot}{grpreg}(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE,
-...) 
+...)
 }
 \arguments{
   \item{x}{Fitted \code{"grpreg"} model.}
@@ -31,13 +31,18 @@ fit <- grpreg(X, y, group, penalty="grLasso")
 # Plot (basic)
 plot(fit)
 
-# Plot (various options)
-plot(fit, norm=TRUE)
+# Plot group norms, with labels in right margin
+par(mar=c(4, 4, 1, 6))
+plot(fit, norm=TRUE, bty="n")
+ypos <- predict(fit, type="norm", which=100)
+text(-0.02, ypos, names(ypos), xpd=NA)
+
+# Plot (miscellaneous options)
 myColors <- c("black", "red", "green", "blue", "yellow", "purple",
 "orange", "brown")
 plot(fit, legend.loc="topleft", col=myColors)
-labs <- c("Mother's Age", "Mother's weight", "Race", "Smoking",
-"# Premature", "Hypertension", "Uterine irritability", "# Phys. visits")
+labs <- c("Mother's Age", "# Phys. visits", "Hypertension", "Mother's weight",
+          "# Premature", "Race", "Smoking", "Uterine irritability")
 plot(fit, legend.loc="topleft", lwd=6, alpha=0.5, legend=labs)
 plot(fit, norm=TRUE, legend.loc="topleft", lwd=6, alpha=0.5, legend=labs)
 }

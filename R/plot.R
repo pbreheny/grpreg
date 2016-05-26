@@ -1,4 +1,4 @@
-plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE, ...) {
+plot.grpreg <- function(x, alpha=1, legend.loc, label=FALSE, log.l=FALSE, norm=FALSE, ...) {
   if (norm) {
     Y <- predict(x, type="norm")
     if (any(x$group==0)) Y <- Y[-1,]
@@ -22,13 +22,13 @@ plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE, ...) {
   p <- nrow(Y)
   l <- x$lambda
   n.g <- max(g)
-  
+
   if (log.l) {
     l <- log(l)
     xlab <- expression(log(lambda))
   } else xlab <- expression(lambda)
-  
-  plot.args <- list(x=l, y=1:length(l), ylim=range(Y), xlab=xlab, ylab="", type="n", xlim=rev(range(l)), las=1)
+
+  plot.args <- list(x=l, y=1:length(l), ylim=range(Y), xlab=xlab, ylab="", type="n", xlim=rev(range(l)), las=1, bty="n")
   new.args <- list(...)
   if (length(new.args)) {
     new.plot.args <- new.args[names(new.args) %in% c(names(par()), names(formals(plot.default)))]
@@ -51,7 +51,7 @@ plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE, ...) {
   line.args$lty <- rep(line.args$lty, length.out=max(g))
   line.args$lty <- line.args$lty[g]
   do.call("matlines",line.args)
-  
+
   if(!missing(legend.loc)) {
     legend.args <- list(col=cols, lwd=line.args$lwd, lty=line.args$lty, legend=names(x$group.multiplier))
     if (length(new.args)) {
@@ -60,5 +60,9 @@ plot.grpreg <- function(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE, ...) {
     }
     legend.args$x <- legend.loc
     do.call("legend",legend.args)
+  }
+  if (label) {
+    ypos <- predict(x, type="norm", which=length(x$lambda))
+    text(-0.02, ypos, names(ypos), xpd=NA)
   }
 }

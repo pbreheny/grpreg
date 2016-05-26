@@ -11,7 +11,7 @@ grpreg(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD",
 ncol(X)) 1e-4 else .05},  alpha=1, eps=.001, max.iter=1000, dfmax=p,
 gmax=J, gamma=3, tau=1/3, group.multiplier={if
 (strtrim(penalty,2)=="gr") sqrt(table(group[group!=0])) else rep(1,J)},
-warn=TRUE, ...) 
+warn=TRUE, ...)
 }
 \arguments{
   \item{X}{The design matrix, without an intercept.  \code{grpreg}
@@ -33,11 +33,11 @@ warn=TRUE, ...)
   \item{nlambda}{The number of \code{lambda} values.  Default is 100.}
   \item{lambda}{A user supplied sequence of \code{lambda} values.
     Typically, this is left unspecified, and the function automatically
-    computes a grid of lambda values that ranges uniformly on the log 
+    computes a grid of lambda values that ranges uniformly on the log
     scale over the relevant range of lambda values.}
   \item{lambda.min}{The smallest value for \code{lambda}, as a fraction
     of \code{lambda.max}.  Default is .0001 if the number of observations
-    is larger than the number of covariates and .05 otherwise.} 
+    is larger than the number of covariates and .05 otherwise.}
   \item{alpha}{\code{grpreg} allows for both a group penalty and an L2
     (ridge) penalty; \code{alpha} controls the proportional weight of
     the regularization parameters of these two penalties.  The group
@@ -110,11 +110,11 @@ warn=TRUE, ...)
   generalized linear model for the log-odds of an event.  For logistic
   regression models, some care is taken to avoid model saturation; the
   algorithm  may exit early in this setting.
-  
+
   For the bi-level selection methods, a locally approximated coordinate
   descent algorithm is employed.  For the group selection methods, group
   descent algorithms are employed.
-  
+
   The algorithms employed by \code{grpreg} are stable and generally
   converge quite rapidly to values close to the solution.  However,
   especially when p is large compared with n, \code{grpreg} may fail to
@@ -180,19 +180,19 @@ warn=TRUE, ...)
     bi-level variable selection.  \emph{Statistics and its interface},
     \strong{2}: 369-380.
     \url{myweb.uiowa.edu/pbreheny/publications/Breheny2009.pdf}
-    
+
     \item Huang J., Breheny, P. and Ma, S. (2012). A selective
     review of group selection in high dimensional
     models. \emph{Statistical Science}, \strong{27}: 481-499.
     \url{myweb.uiowa.edu/pbreheny/publications/Huang2012.pdf}
-    
+
     \item Breheny, P. and Huang, J. (2015) Group descent algorithms for
     nonconvex penalized linear and logistic regression models with grouped
-    predictors.  \emph{Statistics and Computing}, 25: 173-187.
+    predictors.  \emph{Statistics and Computing}, \strong{25}: 173-187.
     \url{www.springerlink.com/openurl.asp?genre=article&id=doi:10.1007/s11222-013-9424-2}
-    
-    \item Breheny, P. (to appear) The group exponential lasso for bi-level
-    variable selection. Biometrics.
+
+    \item Breheny, P. (2015) The group exponential lasso for bi-level
+    variable selection. \emph{Biometrics}, \strong{71}: 731-740.
     \url{http://dx.doi.org/10.1111/biom.12300}
   }
 }

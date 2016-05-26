@@ -8,7 +8,7 @@
 gBridge(X, y, group=1:ncol(X), family=c("gaussian", "binomial",
 "poisson"), nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) .001
 else .05}, lambda.max, alpha=1, eps=.001, delta=1e-7, max.iter=1000,
-gamma=0.5, group.multiplier=rep(1,J), warn=TRUE) 
+gamma=0.5, group.multiplier=rep(1,J), warn=TRUE)
 }
 \arguments{
   \item{X}{The design matrix, as in \code{grpreg}.}
@@ -17,11 +17,11 @@ gamma=0.5, group.multiplier=rep(1,J), warn=TRUE)
   \item{family}{Either "gaussian" or "binomial", depending on the
     response.}
   \item{nlambda}{The number of \code{lambda} values, as in
-    \code{grpreg}.} 
+    \code{grpreg}.}
   \item{lambda}{A user supplied sequence of \code{lambda} values, as in
-    \code{grpreg}.} 
+    \code{grpreg}.}
   \item{lambda.min}{The smallest value for \code{lambda}, as in
-    \code{grpreg}.} 
+    \code{grpreg}.}
   \item{lambda.max}{The maximum value for \code{lambda}.  Unlike the
     penalties in \code{grpreg}, it is not possible to solve for
     \code{lambda.max} directly with group bridge models.  Thus, it must
@@ -47,7 +47,7 @@ gamma=0.5, group.multiplier=rep(1,J), warn=TRUE)
 \details{
   This method fits the group bridge method of Huang et al. (2009).
   Unlike the penalties in \code{grpreg}, the group bridge is not
-  differentiable at zero; because of this, a number of changes must be 
+  differentiable at zero; because of this, a number of changes must be
   made to the algorithm, which is why it has its own function.  Most
   notably, the method is unable to start at \code{lambda.max}; it must
   start at \code{lambda.max} and proceed in the opposite direction.
@@ -61,7 +61,7 @@ gamma=0.5, group.multiplier=rep(1,J), warn=TRUE)
   \itemize{
     \item Huang, J., Ma, S., Xie, H., and Zhang, C. (2009) A group bridge
     approach for variable selection.  \emph{Biometrika}, \strong{96}:
-    339-355. 
+    339-355.
     \item Breheny, P. and Huang, J. (2009) Penalized methods for
     bi-level variable selection.  \emph{Statistics and its interface},
     \strong{2}: 369-380.
