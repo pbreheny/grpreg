@@ -2,9 +2,11 @@ require(grpreg)
 runTests <- function() {
   path <- system.file(package="grpreg")
   files <- list.files(paste0(path, "/tests"))
-  for (f in files) {
-    source(paste0(path, '/tests/', f))
-  }      
+  if (!("test.R" %in% files)) {
+    for (f in files) {
+      source(paste0(path, '/tests/', f))
+    }
+  }
 }
 check <- function(x, y, check.attributes=FALSE, ...) {
   if (missing(y)) {

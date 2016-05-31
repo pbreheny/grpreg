@@ -1,3 +1,5 @@
+set.seed(1)
+
 .test = "logLik is correct"
 n <- 50
 group <- rep(0:4,5:1)
@@ -7,25 +9,25 @@ y <- rnorm(n)
 yy <- runif(n) > .5
 fit.mle <- lm(y~X)
 fit <- grpreg(X, y, group, penalty="grLasso", lambda.min=0)
-check(logLik(fit)[100], logLik(fit.mle)[1], check.attributes=FALSE, tol=.001)
-check(AIC(fit)[100], AIC(fit.mle), check.attributes=FALSE, tol=.001)
+check(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
+check(AIC(fit)[100], AIC(fit.mle), tol=.001)
 fit <- grpreg(X, y, group, penalty="gel", lambda.min=0)
-check(logLik(fit)[100], logLik(fit.mle)[1], check.attributes=FALSE, tol=.001)
-check(AIC(fit)[100], AIC(fit.mle), check.attributes=FALSE, tol=.001)
+check(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
+check(AIC(fit)[100], AIC(fit.mle), tol=.001)
 fit.mle <- glm(yy~X, family="binomial")
 fit <- grpreg(X, yy, group, penalty="grLasso", lambda.min=0, family="binomial")
-check(logLik(fit)[100], logLik(fit.mle)[1], check.attributes=FALSE, tol=.001)
-check(AIC(fit)[100], AIC(fit.mle), check.attributes=FALSE, tol=.001)
+check(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
+check(AIC(fit)[100], AIC(fit.mle), tol=.001)
 fit <- grpreg(X, yy, group, penalty="gMCP", lambda.min=0, family="binomial")
-check(logLik(fit)[100], logLik(fit.mle)[1], check.attributes=FALSE, tol=.001)
-check(AIC(fit)[100], AIC(fit.mle), check.attributes=FALSE, tol=.001)
+check(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
+check(AIC(fit)[100], AIC(fit.mle), tol=.001)
 fit.mle <- glm(yy~X, family="poisson")
 fit <- grpreg(X, yy, group, penalty="grLasso", lambda.min=0, family="poisson")
-check(logLik(fit)[100], logLik(fit.mle)[1], check.attributes=FALSE, tol=.001)
-check(AIC(fit)[100], AIC(fit.mle), check.attributes=FALSE, tol=.001)
+check(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
+check(AIC(fit)[100], AIC(fit.mle), tol=.001)
 fit <- grpreg(X, yy, group, penalty="gMCP", lambda.min=0, family="poisson")
-check(logLik(fit)[100], logLik(fit.mle)[1], check.attributes=FALSE, tol=.001)
-check(AIC(fit)[100], AIC(fit.mle), check.attributes=FALSE, tol=.001)
+check(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
+check(AIC(fit)[100], AIC(fit.mle), tol=.001)
 
 .test = "grpreg handles constant columns"
 n <- 50
@@ -75,7 +77,7 @@ fit1 <- grpreg(X, y, group, penalty="grLasso")
 fit2 <- grpreg(X[,ind], y, group[ind], penalty="grLasso")
 b1 <- coef(fit1)[-1,][ind,]
 b2 <- coef(fit2)[-1,]
-check(b1, b2, tol=0.001, check.attributes=FALSE)
+check(b1, b2, tol=0.001)
 
 .test = "grpreg named groups"
 n <- 50
@@ -88,7 +90,7 @@ y <- rnorm(n)
 yy <- y > 0
 fit1 <- grpreg(X, y, group1, penalty="grLasso")
 fit2 <- grpreg(X, y, group2, penalty="grLasso")
-check(coef(fit1), coef(fit2), tol=0.001, check.attributes=FALSE)
+check(coef(fit1), coef(fit2), tol=0.001)
 
 .test = "group.multiplier works"
 n <- 50
@@ -155,8 +157,8 @@ X <- matrix(rnorm(n*p),ncol=p)
 y <- rnorm(n)
 cvfit <- cv.grpreg(X, y, group, returnY=TRUE)
 cve <- apply(cvfit$Y - y, 2, crossprod)/n
-check(cve, cvfit$cve, check.attributes=FALSE, tol= .001)
+check(cve, cvfit$cve, tol= .001)
 y <- rnorm(n) > 0
 cvfit <- cv.grpreg(X, y, group, family='binomial', returnY=TRUE, lambda.min=0.5)
 pe <- apply((cvfit$Y>0.5)!=y, 2, mean)
-check(pe, cvfit$pe, check.attributes=FALSE, tol= .001)
+check(pe, cvfit$pe, tol= .001)
