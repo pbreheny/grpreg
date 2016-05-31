@@ -23,10 +23,10 @@ unorthogonalize <- function(b, XX, group, intercept=TRUE) {
   T <- bdiag(attr(XX, "T")[ind])
   if (intercept) {
     ind0 <- c(1, 1+which(group==0))
-    val <- rbind(b[ind0,,drop=FALSE], as.matrix(T %*% b[-ind0,,drop=FALSE]))
+    val <- Matrix::as.matrix(rbind(b[ind0,,drop=FALSE], T %*% b[-ind0,,drop=FALSE]))
   } else if (sum(group==0)) {
     ind0 <- which(group==0)
-    val <- rbind(b[ind0,,drop=FALSE], as.matrix(T %*% b[-ind0,,drop=FALSE]))
+    val <- Matrix::as.matrix(rbind(b[ind0,,drop=FALSE], T %*% b[-ind0,,drop=FALSE]))
   } else {
     val <- as.matrix(T %*% b)
   }

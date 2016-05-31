@@ -1,13 +1,16 @@
+n <- 20
+p <- 5
+l <- 5
+group <- c(1,1,2,2,2)
+zgroup <- rep(0:1, 2:3)
+
 .test = "standardize() standardizes correctly"
-X <- matrix(rnorm(500),ncol=10)
+X <- matrix(rnorm(n*p),ncol=p)
 XX <- .Call("standardize", X)[[1]]
-check(apply(XX,2,mean), rep(0,10))
-check(apply(XX,2,crossprod), rep(50,10))
+check(apply(XX,2,mean), rep(0,5))
+check(apply(XX,2,crossprod), rep(20,5))
 
 .test = "unstandardize() unstandardizes correctly"
-n <- 50
-p <- 10
-l <- 5
 X <- matrix(rnorm(n*p),ncol=p)
 std <- .Call("standardize", X)
 XX <- std[[1]]
@@ -18,10 +21,7 @@ b <- grpreg:::unstandardize(bb, center, scale)
 check(cbind(1,XX) %*% bb, cbind(1,X) %*% b)
 
 .test = "orthogonalize() orthogonalizes correctly"
-n <- 50
-p <- 10
 X <- matrix(rnorm(n*p),ncol=p)
-group <- c(1,1,2,2,2,3,3,3,3,4)
 XX <- grpreg:::orthogonalize(X, group)
 for (j in 1:group[p]) {
   ind <- which(group==j)
@@ -29,33 +29,30 @@ for (j in 1:group[p]) {
 }
 
 .test = "unorthogonalize() unorthogonalizes correctly"
-n <- 50
-p <- 10
-l <- 5
-group <- c(1,1,2,2,2,3,3,3,3,4)
 X <- matrix(rnorm(n*p), ncol=p)
 XX <- grpreg:::orthogonalize(X, group)
 bb <- matrix(rnorm(l*(p+1)), nrow=p+1)
 b <- grpreg:::unorthogonalize(bb, XX, attr(XX, "group"))
 check(cbind(1,XX) %*% bb, cbind(1,X) %*% b)
 
+.test = "unorthogonalize() unorthogonalizes correctly w/o intercept"
+X <- matrix(rnorm(n*p), ncol=p)
+XX <- grpreg:::orthogonalize(X, zgroup)
+bb <- matrix(rnorm(l*(p)), nrow=p)
+b <- grpreg:::unorthogonalize(bb, XX, attr(XX, "group"), intercept=FALSE)
+check(XX %*% bb, X %*% b)
+
 .test = "orthogonalize() orthogonalizes correctly w/ 0's present"
-n <- 50
-p <- 10
 X <- matrix(rnorm(n*p),ncol=p)
-group <- rep(0:3,4:1)
-XX <- grpreg:::orthogonalize(X, group)
-for (j in 1:group[p]) {
-  ind <- which(group==j)
+XX <- grpreg:::orthogonalize(X, zgroup)
+for (j in 1:zgroup[p]) {
+  ind <- which(zgroup==j)
   check(crossprod(XX[,ind])/n, diag(length(ind)))
 }
 
 .test = "orthogonalize() orthogonalizes correctly w/o full rank"
-n <- 50
-p <- 10
 X <- matrix(rnorm(n*p),ncol=p)
-group <- rep(0:3,4:1)
-X[,7] <- X[,6]
+X[,5] <- X[,4]
 XX <- grpreg:::orthogonalize(X, group)
 for (j in 1:group[p]) {
   ind <- which(attr(XX, "group")==j)

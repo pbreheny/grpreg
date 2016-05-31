@@ -8,8 +8,8 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
     if (class(tmp)[1] == "try-error") stop("X must be a matrix or able to be coerced to a matrix")
   }
   if (storage.mode(X)=="integer") storage.mode(X) <- "double"
+  if (family=="binomial" & !identical(sort(unique(y)), 0:1)) y <- (y==max(y))
   if (storage.mode(y)!="double") storage.mode(y) <- "double"
-  if (family=="binomial" & !identical(sort(unique(y)), 0:1)) y <- as.numeric(y==max(y))
 
   ## Error checking
   if (alpha > 1 | alpha <= 0) stop("alpha must be in (0,1]")

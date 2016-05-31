@@ -1,15 +1,18 @@
 require(grpreg)
-test <- function(name) {
-  filename <- system.file(paste0("tests/", name, ".R"), package = "grpreg")
-  source(filename)
+runTests <- function() {
+  path <- system.file(package="grpreg")
+  files <- list.files(paste0(path, "/tests"))
+  for (f in files) {
+    source(paste0(path, '/tests/', f))
+  }      
 }
-check <- function(x, y, ...) {
+check <- function(x, y, check.attributes=FALSE, ...) {
   if (missing(y)) {
     xname <- gsub("()", "", match.call()[2])
     if (x==TRUE) return(TRUE)
     message <- paste0("Problem in ", .test, "\n", xname, " FALSE")
   }
-  checkResult <- all.equal(x, y, ...)
+  checkResult <- all.equal(x, y, check.attributes=check.attributes, ...)
   if (class(checkResult)[1]=="logical") return(TRUE)
   xname <- gsub("()", "", match.call()[2])
   yname <- gsub("()", "", match.call()[3])
@@ -17,4 +20,5 @@ check <- function(x, y, ...) {
   stop(message, call.=FALSE)
 }
 
-test("standardization-orthogonalization")
+set.seed(1)
+runTests()

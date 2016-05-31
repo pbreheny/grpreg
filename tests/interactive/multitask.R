@@ -1,12 +1,8 @@
-## Tests concerning seemingly unrelated regressions/multitask learning
-##source("~/dev/.grpreg.setup.R")
+n <- 20
+p <- 5
 
-#####################################
-.test = "multitask learning works" ##
-#####################################
-n <- 50
-p <- 10
-X <- matrix(rnorm(n*p),ncol=p)
+.test = "multitask learning works"
+X <- matrix(rnorm(n*p), ncol=p)
 b <- c(-3, 3, -1, 1, rep(0, 6))
 Y <- cbind(rnorm(n, mean=X%*%b, sd=1),
            5+rnorm(n, mean=X%*%b, sd=1),
@@ -27,9 +23,9 @@ fit <- grpreg(X, Y, penalty="grLasso", family="binomial", lambda.min=0.1); plot(
 fit <- grpreg(X, Y, penalty="cMCP", family="binomial", lambda.min=0.2); plot(fit)
 fit <- gBridge(X, Y, family="binomial", lambda.min=0.2); plot(fit)
 
-#####################################################
-.test = "coef/predict work for multitask learning" ##
-#####################################################
+
+.test = "coef/predict work for multitask learning"
+
 n <- 50
 p <- 10
 X <- matrix(rnorm(n*p),ncol=p)
@@ -67,9 +63,9 @@ head(predict(fit, X, lambda=0.1))
 head(predict(fit, X, lambda=0.1, type="response"))
 head(predict(fit, X, lambda=0.1, type="class"))
 
-############################################################
-.test = "multitask learning reproduces linear regression" ##
-############################################################
+
+.test = "multitask learning reproduces linear regression"
+
 n <- 50
 p <- 10
 X <- matrix(rnorm(n*p),ncol=p)
@@ -101,9 +97,9 @@ check(t(grSCAD), reg, tolerance=.01, check.attributes=FALSE)
 p <- predict(fit, X, which=100)
 check(p, predict(fit.mle), tolerance=.01, check.attributes=FALSE)
 
-##############################################################
-.test = "multitask learning reproduces logistic regression" ##
-##############################################################
+
+.test = "multitask learning reproduces logistic regression"
+
 n <- 200
 p <- 10
 X <- matrix(rnorm(n*p),ncol=p)
@@ -125,9 +121,9 @@ check(p, predict(fit.mle), tolerance=.01, check.attributes=FALSE)
 p <- predict(fit, X, which=1, type="response")[,3]
 check(p, predict(fit.mle, type="response"), tolerance=.01, check.attributes=FALSE)
 
-##########################################################
-.test = "cross-validation for multitask learning works" ##
-##########################################################
+
+.test = "cross-validation for multitask learning works"
+
 n <- 50
 p <- 10
 X <- matrix(rnorm(n*p),ncol=p)
