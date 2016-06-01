@@ -1,6 +1,19 @@
 *   Minor change
 **  Major change
 
+3.0-0
+	** Added methods for survival analysis (Cox modeling): grpsurv,
+	   cv.grpsurv, AUC, predict.grpsurv
+	*  Added vignettes (a quick-start guide and a detailed description of
+	   available penalties)
+	*  Added option to return fitted values from cross-validation folds
+           (returnY=TRUE) to cv.grpreg and cv.grpsurv
+	*  Reformatted (and renamed) example data set 'Birthwt'; added example
+	   data set 'Lung' for survival
+	*  Added user interrupt checking
+	*  Greatly expanded suite of tests; various bugs identified and fixed
+	   as a result
+
 2.8-1
 	*  Fixed bug for predict.grpreg(fit, type="nvars") or 
 	   type="ngroups" when scalar lambda value is passed

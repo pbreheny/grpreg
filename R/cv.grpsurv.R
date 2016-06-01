@@ -1,4 +1,4 @@
-cv.grpsurv <- function(X, y, group, ..., nfolds=10, seed, returnY=FALSE, trace=FALSE) {
+cv.grpsurv <- function(X, y, group, ..., nfolds=10, seed, cv.ind, returnY=FALSE, trace=FALSE) {
   if (!missing(seed)) set.seed(seed)
 
   # Complete data fit
@@ -18,7 +18,7 @@ cv.grpsurv <- function(X, y, group, ..., nfolds=10, seed, returnY=FALSE, trace=F
   # Set up folds
   n <- nrow(X)
   if (!missing(seed)) set.seed(seed)
-  cv.ind <- ceiling(sample(1:n)/n*nfolds)
+  if (missing(cv.ind)) cv.ind <- ceiling(sample(1:n)/n*nfolds)
   Y <- matrix(NA, nrow=n, ncol=length(fit$lambda))
 
   cv.args <- list(...)

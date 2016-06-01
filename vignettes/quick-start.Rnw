@@ -67,6 +67,19 @@ cvfit <- cv.grpreg(X, y, group, penalty="grLasso")
 plot(cvfit)
 @
 
+The coefficients corresponding to the value of $\lambda$ that minimizes the cross-validation error can be obtained via {\tt coef}:
+
+<<>>=
+coef(cvfit)
+@
+
+Predicted values can be obtained via {\tt predict}, which has a number of options:
+
+<<>>=
+predict(cvfit, X=head(X))
+predict(cvfit, type="ngroups")
+@
+
 Note that the original fit (to the full data set) is returned as \verb|cvfit$fit|; it is not necessary to call both \verb|grpreg| and {\tt cv.grpreg} to analyze a data set.  Several other penalties are available, as are methods for logstic regression and Cox proportional hazards regression.
 
 \end{document}

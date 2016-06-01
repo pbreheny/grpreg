@@ -54,4 +54,9 @@ summary(cvfit)
 y <- Birthwt$low
 cvfit <- cv.grpreg(X, y, group, family="binomial")
 summary(cvfit)
+
+# Cox regression
+data(Lung)
+cvfit <- with(Lung, cv.grpsurv(X, y, group))
+summary(cvfit)
 }

@@ -9,21 +9,21 @@ grpreg(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD",
 "gel", "cMCP", "gBridge", "gLasso", "gMCP"), family=c("gaussian",
 "binomial", "poisson"), nlambda=100, lambda, lambda.min={if (nrow(X) >
 ncol(X)) 1e-4 else .05},  alpha=1, eps=.001, max.iter=1000, dfmax=p,
-gmax=J, gamma=3, tau=1/3, group.multiplier={if
-(strtrim(penalty,2)=="gr") sqrt(table(group[group!=0])) else rep(1,J)},
-warn=TRUE, ...)
+gmax=J, gamma=ifelse(penalty=="grSCAD", 4, 3), tau=1/3,
+group.multiplier={if (strtrim(penalty,2)=="gr")
+sqrt(table(group[group!=0])) else rep(1,J)}, warn=TRUE, ...)
 }
 \arguments{
   \item{X}{The design matrix, without an intercept.  \code{grpreg}
     standardizes the data and includes an intercept by default.}
   \item{y}{The response vector, or a matrix in the case of multitask
     learning (see details).}
-  \item{group}{A vector of describing the grouping of the coefficients.
+  \item{group}{A vector describing the grouping of the coefficients.
     For greatest efficiency and least ambiguity (see details), it is
-    best if \code{group} is a vector of consecutive integers, although
-    unordered group and named groups are also allowed.  If there are
-    coefficients to be included in the model without being penalized,
-    assign them to group 0 (or \code{"0"}).}
+    best if \code{group} is a factor or vector of consecutive integers,
+    although unordered groups and character vectors are also allowed.
+    If there are coefficients to be included in the model without being
+    penalized, assign them to group 0 (or \code{"0"}).}
   \item{penalty}{The penalty to be applied to the model.  For group
     selection, one of \code{grLasso}, \code{grMCP}, or \code{grSCAD}.
     For bi-level selection, one of \code{gel} or \code{cMCP}.  See
@@ -55,7 +55,8 @@ warn=TRUE, ...)
   \item{gmax}{Limit on the number of groups allowed to have nonzero
     elements.  If this limit is exceeded, the algorithm will exit early
     from the regularization path.}
-  \item{gamma}{Tuning parameter of the MCP penalty; defaults to 3.}
+  \item{gamma}{Tuning parameter of the group or composite MCP/SCAD
+    penalty (see details).  Default is 3 for MCP and 4 for SCAD.}
   \item{tau}{Tuning parameter for the group exponential lasso; defaults
     to 1/3.}
   \item{group.multiplier}{A vector of values representing multiplicative

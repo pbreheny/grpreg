@@ -62,7 +62,7 @@ plot.grpreg <- function(x, alpha=1, legend.loc, label=FALSE, log.l=FALSE, norm=F
     do.call("legend",legend.args)
   }
   if (label) {
-    ypos <- predict(x, type="norm", which=length(x$lambda))
-    text(-0.02, ypos, names(ypos), xpd=NA)
+    ypos <- Y[,ncol(Y)]
+    text(-0.001, ypos, names(ypos), xpd=NA, adj=c(0,NA))
   }
 }

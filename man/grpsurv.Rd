@@ -1,0 +1,162 @@
+\name{grpsurv}
+\alias{grpsurv}
+\title{Fit an group penalized survival model}
+\description{Fit regularization paths for Cox models with grouped
+  penalties over a grid of values for the regularization parameter
+  lambda.}
+\usage{
+grpsurv(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD",
+"gel", "cMCP", "gBridge", "gLasso", "gMCP"),
+gamma=ifelse(penalty=="grSCAD", 4, 3), alpha=1, nlambda=100, lambda,
+lambda.min={if (nrow(X) > ncol(X)) 0.001 else .05}, eps=.001,
+max.iter=1000, dfmax=p, gmax=J, tau=1/3, group.multiplier={if
+(strtrim(penalty,2)=="gr") sqrt(table(group[group!=0])) else rep(1,J)},
+warn=TRUE, returnX=FALSE, ...)
+}
+\arguments{
+  \item{X}{The design matrix.}
+  \item{y}{The time-to-event outcome, as a two-column matrix or
+    \code{\link[survival]{Surv}} object.  The first column should be
+    time on study (follow up time); the second column should be a binary
+    variable with 1 indicating that the event has occurred and 0
+    indicating (right) censoring.}
+  \item{group}{A vector describing the grouping of the coefficients.
+    For greatest efficiency and least ambiguity (see details), it is
+    best if \code{group} is a factor or vector of consecutive integers,
+    although unordered groups and character vectors are also allowed.
+    If there are coefficients to be included in the model without being
+    penalized, assign them to group 0 (or \code{"0"}).}
+  \item{penalty}{The penalty to be applied to the model.  For group
+    selection, one of \code{grLasso}, \code{grMCP}, or \code{grSCAD}.
+    For bi-level selection, one of \code{gel} or \code{cMCP}.  See
+    below for details.}
+  \item{gamma}{Tuning parameter of the group or composite MCP/SCAD
+    penalty (see details).  Default is 3 for MCP and 4 for SCAD.}
+  \item{alpha}{\code{grpsurv} allows for both a group penalty and an L2
+    (ridge) penalty; \code{alpha} controls the proportional weight of
+    the regularization parameters of these two penalties.  The group
+    penalties' regularization parameter is \code{lambda*alpha}, while
+    the regularization parameter of the ridge penalty is
+    \code{lambda*(1-alpha)}.  Default is 1: no ridge penalty.}
+  \item{nlambda}{The number of lambda values.  Default is 100.}
+  \item{lambda.min}{The smallest value for lambda, as a fraction of
+    lambda.max.  Default is .001 if the number of observations is larger
+    than the number of covariates and .05 otherwise.}
+  \item{lambda}{A user-specified sequence of lambda values.  By default,
+    a sequence of values of length \code{nlambda} is computed
+    automatically, equally spaced on the log scale.}
+  \item{eps}{Convergence threshhold.  The algorithm iterates until the
+    relative change in any coefficient is less than \code{eps}.  Default
+    is \code{.001}.}
+  \item{max.iter}{Maximum number of iterations.  Default is 1000.}
+  \item{dfmax}{Limit on the number of parameters allowed to be nonzero.
+    If this limit is exceeded, the algorithm will exit early from the
+    regularization path.}
+  \item{gmax}{Limit on the number of groups allowed to have nonzero
+    elements.  If this limit is exceeded, the algorithm will exit early
+    from the regularization path.}
+  \item{tau}{Tuning parameter for the group exponential lasso; defaults
+    to 1/3.}
+  \item{group.multiplier}{A vector of values representing multiplicative
+    factors by which each group's penalty is to be multiplied.
+    Often, this is a function (such as the square root) of the number of
+    predictors in each group.  The default is to use the square root of
+    group size for the group selection methods, and a vector of 1's
+    (i.e., no adjustment for group size) for bi-level selection.}
+  \item{warn}{Return warning messages for failures to converge and model
+    saturation?  Default is TRUE.}
+  \item{returnX}{Return the standardized design matrix?  Default is
+    FALSE.}
+  \item{...}{Not used.}
+}
+\details{
+  The sequence of models indexed by the regularization parameter
+  \code{lambda} is fit using a coordinate descent algorithm.  In order
+  to accomplish this, the second derivative (Hessian) of the Cox partial
+  log-likelihood is diagonalized (see references for details).  The
+  objective function is defined to be
+  \deqn{-\frac{1}{n}L(\beta|X,y) + \textrm{penalty},}{-(1/n) L(beta|X,y)
+    + penalty(beta),}
+  where L is the partial log-likelihood from the Cox regression
+  model.
+
+  Presently, ties are not handled by \code{grpsurv} in a particularly
+  sophisticated manner.  This will be improved upon in a future release
+  of \code{grpreg}.}
+\value{
+  An object with S3 class \code{"grpsurv"} containing:
+  \item{beta}{The fitted matrix of coefficients.  The number of rows is
+    equal to the number of coefficients, and the number of columns is
+    equal to \code{nlambda}.}
+  \item{group}{Same as above.}
+  \item{lambda}{The sequence of \code{lambda} values in the path.}
+  \item{penalty}{Same as above.}
+  \item{gamma}{Same as above.}
+  \item{alpha}{Same as above.}
+  \item{loss}{The negative partial log-likelihood of the fitted model at
+    each value of \code{lambda}.}
+  \item{n}{The number of observations.}
+  \item{df}{A vector of length \code{nlambda} containing estimates of
+    effective number of model parameters all the points along the
+    regularization path.  For details on how this is calculated, see
+    Breheny and Huang (2009).}
+  \item{iter}{A vector of length \code{nlambda} containing the number
+    of iterations until convergence at each value of \code{lambda}.}
+  \item{group.multiplier}{A named vector containing the multiplicative
+    constant applied to each group's penalty.}
+
+For Cox models, the following objects are also returned (and are necessary to
+estimate baseline survival conditonal on the estimated regression coefficients),
+all of which are ordered by time on study.  I.e., the ith row of \code{W} does
+not correspond to the ith row of \code{X}):
+
+  \item{W}{Matrix of \code{exp(beta)} values for each subject over all
+    \code{lambda} values.}
+  \item{time}{Times on study.}
+  \item{fail}{Failure event indicator.}
+}
+\references{
+  \itemize{
+    \item Breheny, P. and Huang, J. (2009) Penalized methods for
+    bi-level variable selection.  \emph{Statistics and its interface},
+    \strong{2}: 369-380.
+    \url{myweb.uiowa.edu/pbreheny/publications/Breheny2009.pdf}
+
+    \item Huang J., Breheny, P. and Ma, S. (2012). A selective
+    review of group selection in high dimensional
+    models. \emph{Statistical Science}, \strong{27}: 481-499.
+    \url{myweb.uiowa.edu/pbreheny/publications/Huang2012.pdf}
+
+    \item Breheny, P. and Huang, J. (2015) Group descent algorithms for
+    nonconvex penalized linear and logistic regression models with grouped
+    predictors.  \emph{Statistics and Computing}, \strong{25}: 173-187.
+    \url{www.springerlink.com/openurl.asp?genre=article&id=doi:10.1007/s11222-013-9424-2}
+
+    \item Breheny, P. (2015) The group exponential lasso for bi-level
+    variable selection. \emph{Biometrics}, \strong{71}: 731-740.
+    \url{http://dx.doi.org/10.1111/biom.12300}
+
+    \item Simon N, Friedman JH, Hastie T, and Tibshirani R. (2011)
+    Regularization Paths for Cox's Proportional Hazards Model via
+    Coordinate Descent.  \emph{Journal of Statistical Software},
+    \strong{39}: 1-13.
+    \url{http://www.jstatsoft.org/v39/i05}
+  }
+}
+\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
+\seealso{\code{\link{plot.grpreg}},
+  \code{\link{predict.grpsurv}},
+  \code{\link{cv.grpsurv}},
+}
+\examples{
+data(Lung)
+X <- Lung$X
+y <- Lung$y
+group <- Lung$group
+
+fit <- grpsurv(X, y, group)
+plot(fit)
+
+S <- predict(fit, X, type='survival', lambda=0.05)
+plot(S, xlim=c(0,200))
+}

@@ -5,7 +5,8 @@
   models with grouped covariates over a grid of values for the
   regularization parameter lambda.}
 \usage{
-cv.grpreg(X, y, group=1:ncol(X), ..., nfolds=10, seed, trace=FALSE)
+cv.grpreg(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind,
+returnY=FALSE, trace=FALSE)
 }
 \arguments{
   \item{X}{The design matrix, as in \code{grpreg}.}
@@ -15,6 +16,13 @@ cv.grpreg(X, y, group=1:ncol(X), ..., nfolds=10, seed, trace=FALSE)
   \item{nfolds}{The number of cross-validation folds.  Default is 10.}
   \item{seed}{You may set the seed of the random number generator in
     order to obtain reproducible results.}
+  \item{cv.ind}{Which fold each observation belongs to.  By default the
+    observations are randomly assigned by \code{cv.grpreg}.}
+  \item{returnY}{Should \code{cv.grpreg} return the fitted values from
+    the cross-validation folds?  Default is FALSE; if TRUE, this will
+    return a matrix in which the element for row i, column j is the
+    fitted value for observation i from the fold in which observation i
+    was excluded from the fit, at the jth value of lambda.}
   \item{trace}{If set to TRUE, cv.grpreg will inform the user of its
     progress by announcing the beginning of each CV fold.  Default is
     FALSE.}

@@ -3,14 +3,17 @@
 \title{Plot coefficients from a "grpreg" object}
 \description{Produces a plot of the coefficient paths for a fitted \code{grpreg} object.}
 \usage{
-\method{plot}{grpreg}(x, alpha=1, legend.loc, log.l=FALSE, norm=FALSE,
-...)
+\method{plot}{grpreg}(x, alpha=1, legend.loc, label=FALSE, log.l=FALSE,
+norm=FALSE, ...)
 }
 \arguments{
   \item{x}{Fitted \code{"grpreg"} model.}
   \item{alpha}{Controls alpha-blending.  Default is alpha=1.}
   \item{legend.loc}{Where should the legend go?  If left unspecified, no
-    legend is drawn.  See \code{legend} for details.}
+    legend is drawn.  See \code{\link[graphics]{legend}} for details.}
+  \item{label}{If TRUE, annotates the plot with text labels in the right
+    margin describing which variable/group the corresponding line
+    belongs to.}
   \item{log.l}{Should horizontal axis be on the log scale?  Default is
     FALSE.}
   \item{norm}{If \code{TRUE}, plot the norm of each group, rather than
@@ -32,10 +35,7 @@ fit <- grpreg(X, y, group, penalty="grLasso")
 plot(fit)
 
 # Plot group norms, with labels in right margin
-par(mar=c(4, 4, 1, 6))
-plot(fit, norm=TRUE, bty="n")
-ypos <- predict(fit, type="norm", which=100)
-text(-0.02, ypos, names(ypos), xpd=NA)
+plot(fit, norm=TRUE, label=TRUE)
 
 # Plot (miscellaneous options)
 myColors <- c("black", "red", "green", "blue", "yellow", "purple",

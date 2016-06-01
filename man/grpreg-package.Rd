@@ -3,7 +3,7 @@
 \docType{package}
 \title{Regularization paths for regression models with grouped covariates}
 \description{
-  This package fits regularization paths for linear or logistic
+  This package fits regularization paths for linear, logistic, and Cox
   regression models with grouped penalties, such as the group lasso,
   group MCP, group SCAD, and group bridge.  The algorithms are based on
   the idea of either locally approximated coordinate descent or group
@@ -20,7 +20,7 @@
     \item \code{cMCP}: A hierarchical penalty which places an outer MCP
     penalty on a sum of inner MCP penalties for each group (Breheny &
     Huang, 2009)
-    \item \code{gel}: Group exponential lasso
+    \item \code{gel}: Group exponential lasso (Breheny, 2015)
     \item \code{gBridge}: A penalty which places a bridge penalty on the
     L1-norm of each group (Huang et al., 2009)}
   The \code{cMCP}, \code{gel}, and \code{gBridge} penalties carry out bi-level
@@ -29,29 +29,12 @@
   important groups as well as important members of those groups).  The
   \code{grLasso}, \code{grMCP}, and \code{grSCAD} penalties carry out
   group selection, meaning that within a group, coefficients will either
-  all be zero or all nonzero.
+  all be zero or all nonzero.  A variety of supporting methods for
+  selecting lambda and plotting the paths are provided also.
 
-  A variety of supporting methods for selecting lambda and plotting the
-  paths are provided also.
-
-  See further details at \code{\link{grpreg}} and \code{\link{gBridge}}.
-
-  The following functions are documented in the help pages:
-  \itemize{
-    \item \code{\link{grpreg}}
-    \item \code{\link{gBridge}}
-    \item \code{\link{cv.grpreg}}
-    \item \code{\link{logLik.grpreg}}
-    \item \code{\link{plot.grpreg}}
-    \item \code{\link{plot.cv.grpreg}}
-    \item \code{\link{predict.grpreg}}
-    \item \code{\link{select.grpreg}}
-  }
-
-  The following data sets are documented in the help pages:
-  \itemize{
-    \item \code{\link{Birthwt}}
-    }
+  See the "Quick start guide" for a brief overview of how the package
+  works, and "Penalties in grpreg" for a more detailed description of
+  the individual penalties availabe in the package.
 }
 \references{
   \itemize{
@@ -84,4 +67,7 @@
   }
 }
 \author{Patrick Breheny <patrick-breheny@uiowa.edu>}
-\examples{## See examples in grpreg}
+\examples{
+vignette("quick-start", "grpreg")
+vignette("penalties", "grpreg")
+}
