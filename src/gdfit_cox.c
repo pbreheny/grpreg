@@ -47,17 +47,16 @@ void gd_cox(double *b, double *x, double *r, double *eta, double v, int g,
   Free(z);
 }
 
-SEXP gdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_) {
+SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_) {
 
   // Lengths/dimensions
-  int n = length(y_);
+  int n = length(d_);
   int L = length(lambda);
   int J = length(K1_) - 1;
   int p = length(X_)/n;
 
   // Pointers
   double *X = REAL(X_);
-  double *y = REAL(y_);
   double *d = REAL(d_);
   const char *penalty = CHAR(STRING_ELT(penalty_, 0));
   int *K1 = INTEGER(K1_);

@@ -95,7 +95,6 @@ int gLCD_cCheck(double *b, const char *penalty, double *X, double *r, double *et
 
   // Make initial local approximation
   int K = K1[g+1] - K1[g];
-  double xwr, xwx, u;
   double *v = Calloc(K, double);
   for (int j=K1[g]; j<K1[g+1]; j++) {
     if (e[j]) {
@@ -133,20 +132,19 @@ int gLCD_cCheck(double *b, const char *penalty, double *X, double *r, double *et
   return(violations);
 }
 
-SEXP lcdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
+SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
 		SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_,
 		SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_,
 		SEXP gmax_, SEXP warn_, SEXP user_) {
 
   // Lengths/dimensions
-  int n = length(y_);
+  int n = length(d_);
   int L = length(lambda);
   int J = length(K1_) - 1;
   int p = length(X_)/n;
 
   // Pointers
   double *X = REAL(X_);
-  double *y = REAL(y_);
   double *d = REAL(d_);
   const char *penalty = CHAR(STRING_ELT(penalty_, 0));
   int *K1 = INTEGER(K1_);
@@ -186,7 +184,7 @@ SEXP lcdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
   double *haz = Calloc(n, double);
   double *rsk = Calloc(n, double);  
   double *eta = Calloc(n, double);
-  int *e = Calloc(J, int);
+  int *e = Calloc(p, int);
   for (int j=0; j<p; j++) e[j] = 0;
   int converged, lstart, ng, nv, violations;
   double shift, l1, l2, nullDev, u, v, s, xwr, xwx;
@@ -213,7 +211,6 @@ SEXP lcdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
       else r[i] = s;
     }
     for (int j=0; j<p; j++) {
-      double z=0;
       a[j] = crossprod(X, r, n, j)/n;
       e[j] = 1;
       for (int i=0; i<n; i++) eta[i] += a[j] * X[j*n+i];

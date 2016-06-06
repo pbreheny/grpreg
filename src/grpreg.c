@@ -7,11 +7,11 @@
 SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP user_);
 SEXP gdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
 SEXP gdfit_poisson(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
-SEXP gdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
+SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
 SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_, SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP user_);
 SEXP lcdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_, SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
 SEXP lcdfit_poisson(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_, SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
-SEXP lcdfit_cox(SEXP X_, SEXP y_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_, SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
+SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_, SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
 SEXP standardize(SEXP X_);
 SEXP maxprod(SEXP X_, SEXP y_, SEXP v_, SEXP m_);
 
@@ -186,11 +186,11 @@ static R_CallMethodDef callMethods[] = {
   {"gdfit_gaussian", (DL_FUNC) &gdfit_gaussian, 14},
   {"gdfit_binomial", (DL_FUNC) &gdfit_binomial, 15},
   {"gdfit_poisson", (DL_FUNC) &gdfit_poisson, 15},
-  {"gdfit_cox", (DL_FUNC) &gdfit_cox, 16},
+  {"gdfit_cox", (DL_FUNC) &gdfit_cox, 15},
   {"lcdfit_gaussian", (DL_FUNC) &lcdfit_gaussian, 16},
   {"lcdfit_binomial", (DL_FUNC) &lcdfit_binomial, 17},
   {"lcdfit_poisson", (DL_FUNC) &lcdfit_poisson, 17},
-  {"lcdfit_cox", (DL_FUNC) &lcdfit_cox, 18},
+  {"lcdfit_cox", (DL_FUNC) &lcdfit_cox, 17},
   {"standardize", (DL_FUNC) &standardize, 1},
   {"maxprod", (DL_FUNC) &maxprod, 4},
   {NULL, NULL, 0}

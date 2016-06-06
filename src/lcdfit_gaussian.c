@@ -199,7 +199,7 @@ SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
 
 	// Update unpenalized covariates
 	for (int j=0; j<K0; j++) {
-	  double shift = crossprod(X, r, n, j)/n;
+	  shift = crossprod(X, r, n, j)/n;
 	  b[l*p+j] = shift + a[j];
 	  for (int i=0; i<n; i++) r[i] -= shift * X[n*j+i];
 	  REAL(df)[l]++;

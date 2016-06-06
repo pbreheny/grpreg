@@ -1,6 +1,11 @@
 *   Minor change
 **  Major change
 
+3.0-1
+        *  Fixed memory allocation bug
+	*  Re-introduced 'birthwt.grpreg' for backwards compatibility, but this
+	   is deprecated.
+
 3.0-0
 	** Added methods for survival analysis (Cox modeling): grpsurv,
 	   cv.grpsurv, AUC, predict.grpsurv

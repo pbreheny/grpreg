@@ -91,10 +91,10 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   K0 <- as.integer(if (min(g)==0) K[1] else 0)
   K1 <- as.integer(if (min(g)==0) cumsum(K) else c(0, cumsum(K)))
   if (strtrim(penalty,2)=="gr") {
-    res <- .Call("gdfit_cox", XX, yy, Delta, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter),
+    res <- .Call("gdfit_cox", XX, Delta, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter),
                  as.double(gamma), group.multiplier, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
   } else {
-    res <- .Call("lcdfit_cox", XX, yy, Delta, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter),
+    res <- .Call("lcdfit_cox", XX, Delta, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter),
                  as.double(group.multiplier), as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
   }
   b <- matrix(res[[1]], p, nlambda)
