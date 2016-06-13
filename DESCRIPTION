@@ -13,4 +13,4 @@ Description: Efficient algorithms for fitting the regularization path of
  group SCAD as well as bi-level selection methods such as the group
  exponential lasso, the composite MCP, and the group bridge.
 BugReports: http://github.com/pbreheny/grpreg/issues
-License: GPL-2
+License: GPL-3

@@ -22,5 +22,4 @@ check <- function(x, y, check.attributes=FALSE, ...) {
   stop(message, call.=FALSE)
 }
 
-set.seed(1)
 runTests()
