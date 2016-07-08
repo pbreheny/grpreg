@@ -14,7 +14,7 @@ which=1:length(object$lambda), ...)
 drop=TRUE, ...)
 \method{predict}{cv.grpreg}(object, X, lambda=object$lambda.min,
 which=object$min, type=c("link", "response", "class", "coefficients",
-"vars", "groups", "", "nvars", "ngroups", "norm"), ...) 
+"vars", "groups", "nvars", "ngroups", "norm"), ...) 
 \method{coef}{cv.grpreg}(object, lambda=object$lambda.min,
 which=object$min, ...)
 }

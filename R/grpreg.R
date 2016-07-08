@@ -14,8 +14,13 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
     if (class(tmp)[1] == "try-error") stop("X must be a matrix or able to be coerced to a matrix")
   }
   if (storage.mode(X)=="integer") storage.mode(X) <- "double"
-  if (family=="binomial" & !identical(sort(unique(y)), 0:1)) y <- (y==max(y))
-  if (storage.mode(y)!="double") storage.mode(y) <- "double"
+  if (is.matrix(y)) {
+    for (j in 1:ncol(y)) {
+      y[,j] <- coerceY(y[,j], family)
+    }
+  } else {
+    y <- coerceY(y, family)
+  }
 
   ## Error checking
   if (gamma <= 1 & penalty %in% c("grMCP", "cMCP")) stop("gamma must be greater than 1 for the MC penalty")
@@ -30,21 +35,21 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   xnames <- if (is.null(colnames(X))) paste("V",1:ncol(X),sep="") else colnames(X)
   if (any(order(group) != 1:length(group)) | !is.numeric(group)) {
     reorder.groups <- TRUE
-    gf <- as.factor(group)
+    gf <- factor(group, levels=unique(group))
     if (any(levels(gf)=="0")) {
       gf <- relevel(gf, "0")
       g <- as.numeric(gf) - 1
-      J <- max(g)
-      tryCatch(names(group.multiplier) <- setdiff(levels(gf), "0"), finally="Length of group.multiplier must equal number of penalized groups")
     } else {
       g <- as.numeric(gf)
-      J <- max(g)
-      tryCatch(names(group.multiplier) <- levels(gf), finally="Length of group.multiplier must equal number of penalized groups")
     }
+    J <- max(g)
+    if (missing(group.multiplier) & strtrim(penalty,2)=="gr") group.multiplier <- sqrt(table(g[g!=0]))
+    tryCatch(names(group.multiplier) <- setdiff(levels(gf), "0"), finally="Length of group.multiplier must equal number of penalized groups")
     g.ord <- order(g)
     g.ord.inv <- match(1:length(g), g.ord)
     g <- g[g.ord]
     X <- X[,g.ord]
+    gm.ord <- match(levels(gf), sort(unique(group)))
   } else {
     reorder.groups <- FALSE
     g <- group
@@ -172,4 +177,13 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
                    class = "grpreg")
   if (family=="poisson") val$y <- y
   val
+}
+coerceY <- function(y, family) {
+  if (class(y) != "numeric") {
+    tmp <- try(y <- as.numeric(y), silent=TRUE)
+    if (class(tmp)[1] == "try-error") stop("y must numeric or able to be coerced to numeric")
+  }
+  if (family=="binomial" & length(table(y)) > 2) stop("Attemping to use family='binomial' with non-binary data")
+  if (family=="binomial" & !identical(sort(unique(y)), 0:1)) y <- as.numeric(y==max(y))
+  y
 }
