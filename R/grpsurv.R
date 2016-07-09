@@ -1,9 +1,8 @@
 grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD", "gel", "cMCP", "gBridge", "gLasso", "gMCP"),
                    gamma=ifelse(penalty=="grSCAD", 4, 3), alpha=1, nlambda=100, lambda,
                    lambda.min={if (nrow(X) > ncol(X)) 0.001 else .05}, eps=.001, max.iter=1000,
-                   dfmax=p, gmax=J, tau=1/3,
-                   group.multiplier={if (strtrim(penalty,2)=="gr") sqrt(table(group[group!=0])) else rep(1,J)},
-                   warn=TRUE, returnX=FALSE, ...) {
+                   dfmax=p, gmax=length(unique(group)), tau=1/3,
+                   group.multiplier, warn=TRUE, returnX=FALSE, ...) {
   # Coersion
   penalty <- match.arg(penalty)
   if (class(X) != "matrix") {
@@ -28,32 +27,9 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   if (length(group)!=ncol(X)) stop("group does not match X")
 
   # Reorder groups, if necessary
+  grp <- reorderGroups(group, group.multiplier, strtrim(penalty,2)=="gr")
   xnames <- if (is.null(colnames(X))) paste("V",1:ncol(X),sep="") else colnames(X)
-  if (any(order(group) != 1:length(group)) | !is.numeric(group)) {
-    reorder.groups <- TRUE
-    gf <- as.factor(group)
-    if (any(levels(gf)=="0")) {
-      gf <- relevel(gf, "0")
-      g <- as.numeric(gf) - 1
-      J <- max(g)
-      tryCatch(names(group.multiplier) <- setdiff(levels(gf), "0"), finally="Length of group.multiplier must equal number of penalized groups")
-    } else {
-      g <- as.numeric(gf)
-      J <- max(g)
-      tryCatch(names(group.multiplier) <- levels(gf), finally="Length of group.multiplier must equal number of penalized groups")
-    }
-    g.ord <- order(g)
-    g.ord.inv <- match(1:length(g), g.ord)
-    g <- g[g.ord]
-    X <- X[,g.ord]
-  } else {
-    reorder.groups <- FALSE
-    g <- group
-    J <- max(g)
-    if (length(group.multiplier)!=max(g)) stop("Length of group.multiplier must equal number of penalized groups")
-    names(group.multiplier) <- paste0("G", unique(g[g!=0]))
-  }
-  if (storage.mode(group.multiplier) != "double") storage.mode(group.multiplier) <- "double"
+  if (grp$reorder) X <- X[,grp$ord]
 
   # Set up XX, yy, lambda
   ind <- order(y[,1])
@@ -64,21 +40,18 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   center <- std[[2]]
   scale <- std[[3]]
   nz <- which(scale > 1e-6)
-  zg <- setdiff(unique(g), unique(g[nz]))
-  if (length(zg)) {
-    J  <- J - length(zg)
-    group.multiplier <- group.multiplier[-zg]
-  }
+  zg <- setdiff(unique(grp$g), unique(grp$g[nz]))
+  if (length(zg)) grp$m <- grp$m[-zg]
   XX <- XX[ ,nz, drop=FALSE]
-  g <- g[nz]
+  grp$g <- grp$g[nz]
   if (strtrim(penalty,2)=="gr") {
-    XX <- orthogonalize(XX, g)
-    g <- attr(XX, "group")
+    XX <- orthogonalize(XX, grp$g)
+    grp$g <- attr(XX, "group")
   }
-  K <- as.numeric(table(g))
+  K <- as.numeric(table(grp$g))
   if (nrow(XX) != length(yy)) stop("X and y do not have the same number of observations")
   if (missing(lambda)) {
-    lambda <- setupLambdaCox(XX, yy, Delta, g, penalty, alpha, lambda.min, nlambda, group.multiplier)
+    lambda <- setupLambdaCox(XX, yy, Delta, grp$g, penalty, alpha, lambda.min, nlambda, grp$m)
     user.lambda <- FALSE
   } else {
     nlambda <- length(lambda)
@@ -88,14 +61,14 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   ## Fit
   n <- length(yy)
   p <- ncol(XX)
-  K0 <- as.integer(if (min(g)==0) K[1] else 0)
-  K1 <- as.integer(if (min(g)==0) cumsum(K) else c(0, cumsum(K)))
+  K0 <- as.integer(if (min(grp$g)==0) K[1] else 0)
+  K1 <- as.integer(if (min(grp$g)==0) cumsum(K) else c(0, cumsum(K)))
   if (strtrim(penalty,2)=="gr") {
     res <- .Call("gdfit_cox", XX, Delta, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter),
-                 as.double(gamma), group.multiplier, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+                 as.double(gamma), grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
   } else {
     res <- .Call("lcdfit_cox", XX, Delta, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter),
-                 as.double(group.multiplier), as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+                 grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
   }
   b <- matrix(res[[1]], p, nlambda)
   iter <- res[[2]]
@@ -112,12 +85,12 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   if (warn & any(iter==max.iter)) warning("Algorithm failed to converge for some values of lambda")
 
   ## Unstandardize
-  if (strtrim(penalty,2)=="gr") b <- unorthogonalize(b, XX, g, intercept=FALSE)
+  if (strtrim(penalty,2)=="gr") b <- unorthogonalize(b, XX, grp$g, intercept=FALSE)
   b <- b/scale[nz]
   beta <- matrix(0, nrow=ncol(X), ncol=length(lambda))
-  if (reorder.groups) {
+  if (grp$reorder) {
     beta[nz,] <- b
-    beta <- beta[g.ord.inv,]
+    beta <- beta[grp$ord.inv,]
   } else {
     beta[nz,] <- b
   }
@@ -136,7 +109,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
                         n = n,
                         df = df,
                         iter = iter,
-                        group.multiplier = group.multiplier),
+                        group.multiplier = grp$m),
                    class = c("grpsurv", "grpreg"))
   val$W <- exp(Eta)
   val$time <- yy
