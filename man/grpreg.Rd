@@ -9,9 +9,8 @@ grpreg(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD",
 "gel", "cMCP", "gBridge", "gLasso", "gMCP"), family=c("gaussian",
 "binomial", "poisson"), nlambda=100, lambda, lambda.min={if (nrow(X) >
 ncol(X)) 1e-4 else .05},  alpha=1, eps=.001, max.iter=1000, dfmax=p,
-gmax=J, gamma=ifelse(penalty=="grSCAD", 4, 3), tau=1/3,
-group.multiplier={if (strtrim(penalty,2)=="gr")
-sqrt(table(group[group!=0])) else rep(1,J)}, warn=TRUE, ...)
+gmax=length(unique(group)), gamma=ifelse(penalty == "grSCAD", 4, 3),
+tau = 1/3, group.multiplier, warn=TRUE, ...)
 }
 \arguments{
   \item{X}{The design matrix, without an intercept.  \code{grpreg}
