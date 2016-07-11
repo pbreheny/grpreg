@@ -39,7 +39,7 @@ This is a design matrix derived from the original data set, in which several ter
 Birthwt$group
 @
 
-Here, groups are given as a vector of character strings; factors or unique integer codes are also allowed.  To fit a group lasso model to this data:
+Here, groups are given as a factor; unique integer codes (which are essentially unlabeled factors) and character vectors are also allowed\footnote{Character vectors are not an ideal choice, however, as the order of the groups is left unspecified, which can lead to ambiguity if you also try to set the {\tt group.multiplier} option.}.  To fit a group lasso model to this data:
 
 <<>>=
 X <- Birthwt$X
@@ -80,6 +80,6 @@ predict(cvfit, X=head(X))
 predict(cvfit, type="ngroups")
 @
 
-Note that the original fit (to the full data set) is returned as \verb|cvfit$fit|; it is not necessary to call both \verb|grpreg| and {\tt cv.grpreg} to analyze a data set.  Several other penalties are available, as are methods for logstic regression and Cox proportional hazards regression.
+Note that the original fit (to the full data set) is returned as \verb|cvfit$fit|; it is not necessary to call both \verb|grpreg| and {\tt cv.grpreg} to analyze a data set.  Several other penalties are available, as are methods for logistic regression and Cox proportional hazards regression.
 
 \end{document}
