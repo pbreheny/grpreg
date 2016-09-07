@@ -7,7 +7,10 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   family <- match.arg(family)
   penalty <- match.arg(penalty)
   if (penalty=="gLasso") penalty <- "grLasso"
-  if (penalty=="gMCP") penalty <- "cMCP"
+  if (penalty=="gMCP") {
+    writeLines(strwrap("penalty='gMCP' is deprecated and may not be supported in future versions.  Use penalty='cMCP' instead."))
+    penalty <- "cMCP"
+  }
   if (class(X) != "matrix") {
     tmp <- try(X <- model.matrix(~0+., data=X), silent=TRUE)
     if (class(tmp)[1] == "try-error") stop("X must be a matrix or able to be coerced to a matrix")
