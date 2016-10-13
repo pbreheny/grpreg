@@ -4,7 +4,7 @@ Version: 3.0-2
 Date: 2016-07-11
 Author: Patrick Breheny
 Maintainer: Patrick Breheny <patrick-breheny@uiowa.edu>
-Depends: R (>= 2.13.0), Matrix
+Depends: R (>= 3.1.0), Matrix
 Suggests: grpregOverlap, knitr, survival
 VignetteBuilder: knitr
 Description: Efficient algorithms for fitting the regularization path of
