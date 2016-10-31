@@ -1,6 +1,13 @@
-.Rproj.user
+# History files
 .Rhistory
-!data/*.RData
-src/*.o
-src/*.so
-src/*.dll
+.Rapp.history
+
+# Session Data files
+.RData
+
+# Example code in package build process
+*-Ex.R
+
+# Mac file
+.DS_Store
+.Rproj.user

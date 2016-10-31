@@ -1,0 +1,9 @@
+.git
+.gitignore
+.Rbuildignore
+.Rhistory
+.DS_Store
+test*
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.travis\.yml$
