@@ -1,4 +1,7 @@
-grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD", "gel", "cMCP", "gBridge", "gLasso", "gMCP"),
+grpreg <- function(X, y, group=1:ncol(X), 
+                   penalty=c("grLasso", "grMCP", "grSCAD", "gel", "cMCP", 
+                             "gBridge", "gLasso", "gMCP"),
+                   screen = c("None", "SSR", "SEDPP", "SSR-BEDPP"),
                    family=c("gaussian","binomial", "poisson"), nlambda=100, lambda,
                    lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05}, alpha=1, eps=.001, max.iter=1000,
                    dfmax=p, gmax=length(unique(group)), gamma=ifelse(penalty=="grSCAD", 4, 3),
@@ -6,7 +9,13 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   # Coersion
   family <- match.arg(family)
   penalty <- match.arg(penalty)
+  screen <- match.arg(screen)
+  
   if (penalty=="gLasso") penalty <- "grLasso"
+  if (penalty != "grLasso") { # scren rule only for group lasso
+    screen <- "None"
+  }
+
   if (penalty=="gMCP") {
     writeLines(strwrap("penalty='gMCP' is deprecated and may not be supported in future versions.  Use penalty='cMCP' instead."))
     penalty <- "cMCP"
@@ -83,8 +92,22 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
     user.lambda <- TRUE
   }
   if (family=="gaussian") {
-    if (strtrim(penalty,2)=="gr") fit <- .Call("gdfit_gaussian", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
-    else fit <- .Call("lcdfit_gaussian", XX, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+    if (penalty == "grMCP" || penalty == "grSCAD") {
+      fit <- .Call("gdfit_gaussian", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+    } else if (penalty == "grLasso") {
+      if (screen == 'None') {
+        fit <- .Call("gdfit_gaussian", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+      } else if (screen == 'SSR') {
+        fit <- .Call("gdfit_gaussian_ssr", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+      } else if (screen == "SEDPP") {
+        fit <- .Call("gdfit_gaussian_sedpp", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+      } else if (screen == 'SSR-BEDPP') {
+        fit <- .Call("gdfit_gaussian_ssr_bedpp", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+      }
+    } else {
+      fit <- .Call("lcdfit_gaussian", XX, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+    }
+    
     b <- rbind(mean(y), matrix(fit[[1]], nrow=p))
     iter <- fit[[2]]
     df <- fit[[3]] + 1 ## Intercept
