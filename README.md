@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/YaohuiZeng/grpreg.svg?branch=master)](https://travis-ci.org/YaohuiZeng/grpreg)
 ![version](http://www.r-pkg.org/badges/version/grpreg)
 ![downloads](http://cranlogs.r-pkg.org/badges/grpreg)
 [![codecov.io](https://codecov.io/github/pbreheny/grpreg/coverage.svg?branch=master)](https://codecov.io/github/pbreheny/grpreg?branch=master)
