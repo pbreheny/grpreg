@@ -4,6 +4,7 @@
 .Rhistory
 .DS_Store
 test*
+dev
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.travis\.yml$
