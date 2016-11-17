@@ -76,6 +76,7 @@ grpreg <- function(X, y, group=1:ncol(X),
   if (nrow(XX) != length(yy)) stop("X and y do not have the same number of observations")
   if (missing(lambda)) {
     lambda <- setupLambda(XX, yy, grp$g, family, penalty, alpha, lambda.min, nlambda, grp$m)
+    lam.max <- lambda[1]
     user.lambda <- FALSE
   } else {
     nlambda <- length(lambda)
@@ -87,10 +88,12 @@ grpreg <- function(X, y, group=1:ncol(X),
   p <- ncol(XX)
   K0 <- as.integer(if (min(grp$g)==0) K[1] else 0)
   K1 <- as.integer(if (min(grp$g)==0) cumsum(K) else c(0, cumsum(K)))
+  
   if (K0) {
     lambda[1] <- lambda[1] + 1e-5
     user.lambda <- TRUE
   }
+
   if (family=="gaussian") {
     if (penalty == "grMCP" || penalty == "grSCAD") {
       fit <- .Call("gdfit_gaussian", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
@@ -98,7 +101,8 @@ grpreg <- function(X, y, group=1:ncol(X),
       if (screen == 'None') {
         fit <- .Call("gdfit_gaussian", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
       } else if (screen == 'SSR') {
-        fit <- .Call("gdfit_gaussian_ssr", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+        fit <- .Call("gdfit_gaussian_ssr", XX, yy, penalty, K1, K0, lambda, lam.max, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+
       } else if (screen == "SEDPP") {
         fit <- .Call("gdfit_gaussian_sedpp", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
       } else if (screen == 'SSR-BEDPP') {
@@ -112,6 +116,9 @@ grpreg <- function(X, y, group=1:ncol(X),
     iter <- fit[[2]]
     df <- fit[[3]] + 1 ## Intercept
     loss <- fit[[4]]
+    
+    if (screen == 'SSR') rejections <- fit[[5]]
+    
   }
   if (family=="binomial") {
     if (strtrim(penalty,2)=="gr") fit <- .Call("gdfit_binomial", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
@@ -174,6 +181,7 @@ grpreg <- function(X, y, group=1:ncol(X),
                         iter = iter,
                         group.multiplier = grp$m),
                    class = "grpreg")
+  if (screen == 'SSR') val$rejections <- rejections
   if (family=="poisson") val$y <- y
   val
 }
