@@ -34,20 +34,6 @@ SEXP cleanupG_ssr(double *a, double *r, int *e, int *e2, double *xTr,
   return(res);
 }
 
-// Update X'r for screening
-void update_crossprod_screen(double *xTr, double *X, double *r, int *K1, int n, int l, int p, int J) {
-  int K = 0;
-  for (int g = 0; g < J; g++) {
-    K = K1[g+1] - K1[g];
-    double *z = Calloc(K, double);
-    for (int j = K1[g]; j < K1[g+1]; j++) {
-      z[j-K1[g]] = crossprod(X, r, n, j) / n;
-    }
-    xTr[g] = norm(z, K);
-    Free(z);
-  }
-}
-
 // sequential strong rule
 void ssr_glasso(int *e2, double *xTr, int *K1, double *lam, double lam_max, int l, int J) {
   int K = 0;
