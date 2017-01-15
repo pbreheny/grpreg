@@ -8,9 +8,9 @@
 grpreg(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD",
 "gel", "cMCP", "gBridge", "gLasso", "gMCP"), screen = c("None", "SSR", "SEDPP", "SSR-BEDPP"), 
 family=c("gaussian","binomial", "poisson"), nlambda=100, lambda, 
-lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05},  alpha=1, eps=.001, max.iter=1000, dfmax=p,
+lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05}, log.lambda = TRUE, alpha=1, eps=.001, max.iter=1000, dfmax=p,
 gmax=length(unique(group)), gamma=ifelse(penalty == "grSCAD", 4, 3),
-tau = 1/3, group.multiplier, warn=TRUE, ...)
+tau = 1/3, group.multiplier, warn=TRUE, return.time=TRUE, ...)
 }
 \arguments{
   \item{X}{The design matrix, without an intercept.  \code{grpreg}
@@ -29,8 +29,7 @@ tau = 1/3, group.multiplier, warn=TRUE, ...)
     below for details.}
   \item{screen}{The screening rule to be applied to discard groups of features.
   "SSR" is the sequential strong rule, "SEDPP" is the sequential EDPP rule, "SSR-BEDPP"
-  is the combination of sequential strong rule and the basic EDPP rule. "None" (default)
-  is no screen rule applied.}
+  is the combination of sequential strong rule and the basic EDPP (BEDPP) rule. "None" (default) is that no screen rule is applied.}
   \item{family}{Either "gaussian" or "binomial", depending on the
     response.}
   \item{nlambda}{The number of \code{lambda} values.  Default is 100.}
@@ -41,6 +40,8 @@ tau = 1/3, group.multiplier, warn=TRUE, ...)
   \item{lambda.min}{The smallest value for \code{lambda}, as a fraction
     of \code{lambda.max}.  Default is .0001 if the number of observations
     is larger than the number of covariates and .05 otherwise.}
+  \item{log.lambda}{Whether compute the grid values of lambda on log scale (default) 
+  or linear scale.}
   \item{alpha}{\code{grpreg} allows for both a group penalty and an L2
     (ridge) penalty; \code{alpha} controls the proportional weight of
     the regularization parameters of these two penalties.  The group
@@ -70,6 +71,7 @@ tau = 1/3, group.multiplier, warn=TRUE, ...)
     (i.e., no adjustment for group size) for bi-level selection.}
   \item{warn}{Should the function give a warning if it fails to
     converge?  Default is TRUE.  See details.}
+  \item{return.time}{Should return the computing time of solving the model? Default is TRUE.}
   \item{...}{Arguments passed to other functions (such as gBridge).}
 }
 \details{
