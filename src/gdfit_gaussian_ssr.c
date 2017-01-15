@@ -16,12 +16,13 @@ int sum_rejections(int *x, int n) {
   return(val);
 }
 
-SEXP cleanupG_ssr(double *a, double *r, int *e, int *e2, double *xTr,
+SEXP cleanupG_ssr(double *a, double *r, int *e, int *e2, int *K, double *xTr,
                   SEXP beta, SEXP iter, SEXP df, SEXP loss, SEXP rejections) {
   Free(a);
   Free(r);
   Free(e);
   Free(e2);
+  Free(K);
   Free(xTr);
   SEXP res;
   PROTECT(res = allocVector(VECSXP, 5));
@@ -35,37 +36,34 @@ SEXP cleanupG_ssr(double *a, double *r, int *e, int *e2, double *xTr,
 }
 
 // sequential strong rule
-void ssr_glasso(int *e2, double *xTr, int *K1, double *lam, double lam_max, int l, int J) {
-  int K = 0;
+void ssr_glasso(int *e2, double *xTr, int *K1, int *K, double *lam, double lam_max, int l, int J) {
   double cutoff;
+  // double TOLERANCE = 1e-8;
   for (int g = 0; g < J; g++) {
-    K = K1[g+1] - K1[g];
     if (l != 0) {
-      cutoff = sqrt(K) * (2 * lam[l] - lam[l-1]);
+      cutoff = sqrt(K[g]) * (2 * lam[l] - lam[l-1]);
     } else {
-      cutoff = sqrt(K) * (2 * lam[l] - lam_max);
+      cutoff = sqrt(K[g]) * (2 * lam[l] - lam_max);
     }
-    if (xTr[g] > cutoff) {
-      e2[g] = 1; // not reject
+    if (xTr[g] < cutoff) {
+      e2[g] = 0; // not reject
     } else {
-      e2[g] = 0; // reject
+      e2[g] = 1; // reject
     }
   }
 }
 
 // Scan for violations in strong set
-int check_strong_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, double lam, int n, int p, int J) {
+int check_strong_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, int *K, double lam, int n, int J) {
   int violations = 0;
-  int K = 0;
   for (int g = 0; g < J; g++) {
     if (e[g] == 0 && e2[g] == 1) {
-      K = K1[g+1] - K1[g];
-      double *z = Calloc(K, double);
+      double *z = Calloc(K[g], double);
       for (int j = K1[g]; j < K1[g+1]; j++) {
         z[j-K1[g]] = crossprod(X, r, n, j) / n;
       }
-      xTr[g] = norm(z, K);
-      if (norm(z, K) > lam * sqrt(K)) {
+      xTr[g] = norm(z, K[g]);
+      if (xTr[g] > lam * sqrt(K[g])) {
         e[g] = 1;
         violations++;
       }
@@ -76,18 +74,16 @@ int check_strong_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1
 }
 
 // Scan for violations in rest set
-int check_rest_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, double lam, int n, int p, int J) {
+int check_rest_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, int *K, double lam, int n, int J) {
   int violations = 0;
-  int K = 0;
   for (int g = 0; g < J; g++) {
     if (e2[g] == 0) {
-      K = K1[g+1] - K1[g];
-      double *z = Calloc(K, double);
+      double *z = Calloc(K[g], double);
       for (int j = K1[g]; j < K1[g+1]; j++) {
         z[j-K1[g]] = crossprod(X, r, n, j) / n;
       }
-      xTr[g] = norm(z, K);
-      if (xTr[g] > lam * sqrt(K)) {
+      xTr[g] = norm(z, K[g]);
+      if (xTr[g] > lam * sqrt(K[g])) {
         e[g] = e2[g] = 1;
         violations++;
       }
@@ -97,15 +93,15 @@ int check_rest_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, 
   return violations;
 }
 
+
 // Group descent update
 void gd_gaussian_ssr(double *b, double *x, double *r, int g, 
-                     int *K1, int n, int l, int p, const char *penalty, 
+                     int *K1, int *K, int n, int l, int p, const char *penalty, 
                      double lam1, double lam2, double gamma, SEXP df, double *a) {
   // Calculate z
-  int K = K1[g+1] - K1[g];
-  double *z = Calloc(K, double);
+  double *z = Calloc(K[g], double);
   for (int j=K1[g]; j<K1[g+1]; j++) z[j-K1[g]] = crossprod(x, r, n, j)/n + a[j];
-  double z_norm = norm(z,K);
+  double z_norm = norm(z, K[g]);
   // Update b
   double len = S(z_norm, lam1) / (1+lam2); // only for lasso penalty
   if (len != 0 | a[K1[g]] != 0) {
@@ -117,7 +113,7 @@ void gd_gaussian_ssr(double *b, double *x, double *r, int g,
     }
   }
   // Update df
-  if (len > 0) REAL(df)[l] += K * len / z_norm;
+  if (len > 0) REAL(df)[l] += K[g] * len / z_norm;
   Free(z);
 }
 
@@ -171,19 +167,20 @@ SEXP gdfit_gaussian_ssr(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
   for (int j=0; j<p; j++) a[j] = 0;
   int *e = Calloc(J, int); // ever-active set
   for (int g=0; g<J; g++) e[g] = 0;
-  int converged, lstart = 0, ng, nv, violations, K;
+  int *K = Calloc(J, int); // group size
+  int converged, lstart = 0, ng, nv, violations;
   double shift, l1, l2;
 
   // variables for screening
   int *e2 = Calloc(J, int); // strong set
   double *xTr = Calloc(J, double);
   for (int g=0; g<J; g++) {
-    K = K1[g+1] - K1[g];
-    double *z = Calloc(K, double);
+    K[g] = K1[g+1] - K1[g];
+    double *z = Calloc(K[g], double);
     for (int j = K1[g]; j < K1[g+1]; j++) {
       z[j-K1[g]] = crossprod(X, r, n, j) / n;
     }
-    xTr[g] = norm(z, K);
+    xTr[g] = norm(z, K[g]);
     Free(z);
   }
   
@@ -213,13 +210,13 @@ SEXP gdfit_gaussian_ssr(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
       }
       if (ng > gmax | nv > dfmax) {
         for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
-        res = cleanupG_ssr(a, r, e, e2, xTr, beta, iter, df, loss, rejections);
+        res = cleanupG_ssr(a, r, e, e2, K, xTr, beta, iter, df, loss, rejections);
         return(res);
       }
     }
 
     // screening
-    ssr_glasso(e2, xTr, K1, lam, lam_max, l, J);
+    ssr_glasso(e2, xTr, K1, K, lam, lam_max, l, J);
     INTEGER(rejections)[l] = J - sum_rejections(e2, J);
     
     while (INTEGER(iter)[l] < max_iter) {
@@ -242,7 +239,7 @@ SEXP gdfit_gaussian_ssr(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
             l1 = lam[l] * m[g] * alpha;
             l2 = lam[l] * m[g] * (1-alpha);
             if (e[g]) {
-              gd_gaussian_ssr(b, X, r, g, K1, n, l, p, penalty, l1, l2, gamma, df, a);
+              gd_gaussian_ssr(b, X, r, g, K1, K, n, l, p, penalty, l1, l2, gamma, df, a);
             }
           }
 
@@ -256,18 +253,18 @@ SEXP gdfit_gaussian_ssr(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
         }
        
         // Scan for violations in strong set
-        violations = check_strong_set(e2, e, xTr, X, r, K1, lam[l], n, p, J);
+        violations = check_strong_set(e2, e, xTr, X, r, K1, K, lam[l], n, J);
         if (violations == 0) break;
       }
 
       // Scan for violations in rest set
-      violations = check_rest_set(e2, e, xTr, X, r, K1, lam[l], n, p, J);
+      violations = check_rest_set(e2, e, xTr, X, r, K1, K, lam[l], n, J);
       if (violations == 0) {
         REAL(loss)[l] = gLoss(r, n);
         break;
       }
     }
   }
-  res = cleanupG_ssr(a, r, e, e2, xTr, beta, iter, df, loss, rejections);
+  res = cleanupG_ssr(a, r, e, e2, K, xTr, beta, iter, df, loss, rejections);
   return(res);
 }
