@@ -6,7 +6,7 @@
 \alias{unstandardize}
 \description{Internal grpreg functions}
 \usage{
-setupLambda(X, y, group, family, penalty, alpha, lambda.min, nlambda,
+setupLambda(X, y, group, family, penalty, alpha, lambda.min, log.lambda, nlambda,
 group.multiplier) 
 setupLambda.gBridge(X, y, group, family, alpha, lambda.min, lambda.max,
 nlambda, gamma, group.multiplier) 
