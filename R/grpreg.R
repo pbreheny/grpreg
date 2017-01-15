@@ -128,16 +128,26 @@ grpreg <- function(X, y, group=1:ncol(X),
   }
   
   if (family=="binomial") {
-    if (strtrim(penalty,2)=="gr") fit <- .Call("gdfit_binomial", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
-    else fit <- .Call("lcdfit_binomial", XX, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+    time <- system.time(
+      {
+        if (strtrim(penalty,2)=="gr") fit <- .Call("gdfit_binomial", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+        else fit <- .Call("lcdfit_binomial", XX, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+      }
+    )
+
     b <- rbind(fit[[1]], matrix(fit[[2]], nrow=p))
     iter <- fit[[3]]
     df <- fit[[4]]
     loss <- fit[[5]]
   }
   if (family=="poisson") {
-    if (strtrim(penalty,2)=="gr") fit <- .Call("gdfit_poisson", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
-    else fit <- .Call("lcdfit_poisson", XX, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+    time <- system.time(
+      {
+        if (strtrim(penalty,2)=="gr") fit <- .Call("gdfit_poisson", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+        else fit <- .Call("lcdfit_poisson", XX, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+      }
+    )
+
     b <- rbind(fit[[1]], matrix(fit[[2]], nrow=p))
     iter <- fit[[3]]
     df <- fit[[4]]
