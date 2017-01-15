@@ -11,6 +11,10 @@ double S(double z, double l);
 double gLoss(double *r, int n);
 int sum_rejections(int *x, int n);
 void update_crossprod_screen(double *xTr, double *X, double *r, int *K1, int n, int l, int p, int J);
+// Group descent update
+void gd_gaussian_ssr(double *b, double *x, double *r, int g, 
+                     int *K1, int *K, int n, int l, int p, const char *penalty, 
+                     double lam1, double lam2, double gamma, SEXP df, double *a);
 
 int check_edpp_set(int *e, int *e2, double *X, double *r, int *K1, double lam, 
                    int n, int l, int p, int J) {
@@ -32,18 +36,15 @@ int check_edpp_set(int *e, int *e2, double *X, double *r, int *K1, double lam,
   return violations;
 }
 
-// Group descent update
-void gd_gaussian_ssr(double *b, double *x, double *r, int g, 
-                     int *K1, int n, int l, int p, const char *penalty, 
-                     double lam1, double lam2, double gamma, SEXP df, double *a);
 
-SEXP cleanupG_sedpp(double *a, double *r, int *e, int *e2, double *xTr, 
+SEXP cleanupG_sedpp(double *a, double *r, int *e, int *e2, int *K, double *xTr, 
                     double *v1_bar_lam_max, double *v1_bar_lam_max_tmp,
                     SEXP beta, SEXP iter, SEXP df, SEXP loss, SEXP rejections) {
   Free(a);
   Free(r);
   Free(e);
   Free(e2);
+  Free(K);
   Free(xTr);
   Free(v1_bar_lam_max);
   Free(v1_bar_lam_max_tmp);
@@ -74,6 +75,7 @@ void update_pv2(double *pv2, double *v1, double *v2, int n) {
 // sequential EDPP rule
 void sedpp_glasso(int *e2, double *X, double *r, double *y, double *v1_bar_lam_max, 
                   int *K1, double *lam, double lam_max, int n, int p, int l, int J) {
+  double TOLERANCE = 1e-8;
   double *theta = Calloc(n, double);
   double *v1_bar = Calloc(n, double);
   double *v2_bar = Calloc(n, double);
@@ -110,10 +112,10 @@ void sedpp_glasso(int *e2, double *X, double *r, double *y, double *v1_bar_lam_m
     for (j = K1[g]; j < K1[g+1]; j++) {
       z[j-K1[g]] = crossprod(X, o, n, j);
     }
-    if (norm(z, K) < n * sqrt(K) - 0.5 * pv2_norm * sqrt(n)) {
-      e2[g] = 0; // reject
+    if (norm(z, K)  < n * sqrt(K) - 0.5 * pv2_norm * sqrt(n)) {
+      e2[g] = 0; // reject, not in EDPP set
     } else {
-      e2[g] = 1; // not reject; in EDPP set
+      e2[g] = 1; // not reject
     }
     Free(z);
   }
@@ -172,7 +174,8 @@ SEXP gdfit_gaussian_sedpp(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
   for (int j=0; j<p; j++) a[j] = 0;
   int *e = Calloc(J, int);
   for (int g=0; g<J; g++) e[g] = 0;
-  int converged, lstart = 0, ng, nv, violations, K;
+  int *K = Calloc(J, int); // group size
+  int converged, lstart = 0, ng, nv, violations;
   double shift, l1, l2;
 
   // variables for screening
@@ -181,24 +184,24 @@ SEXP gdfit_gaussian_sedpp(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
   double tmp = 0;
   double *xTr = Calloc(J, double);
   for (int g=0; g<J; g++) {
-    K = K1[g+1] - K1[g];
-    double *z = Calloc(K, double);
+    K[g] = K1[g+1] - K1[g];
+    double *z = Calloc(K[g], double);
     for (int j = K1[g]; j < K1[g+1]; j++) {
       z[j-K1[g]] = crossprod(X, r, n, j) / n;
     }
-    xTr[g] = norm(z, K);
-    if (xTr[g] / sqrt(K) > tmp) {
+    xTr[g] = norm(z, K[g]);
+    if (xTr[g] / sqrt(K[g]) > tmp) {
       tmp = xTr[g];
       g_star = g;
     }
     Free(z);
   }
-  
+ 
   // compute v1_bar at lam_max: = X* X*^T y
-  K = K1[g_star+1] - K1[g_star];
+  int K_star = K1[g_star+1] - K1[g_star];
   double *v1_bar_lam_max = Calloc(n, double);
   for (int i=0; i<n; i++) v1_bar_lam_max[i] = 0;
-  double *v1_bar_lam_max_tmp = Calloc(K, double);
+  double *v1_bar_lam_max_tmp = Calloc(K_star, double);
   for (int j = K1[g_star]; j < K1[g_star+1]; j++) {
     v1_bar_lam_max_tmp[j-K1[g_star]] = crossprod(X, y, n, j);
   }
@@ -234,7 +237,7 @@ SEXP gdfit_gaussian_sedpp(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
       }
       if (ng > gmax | nv > dfmax) {
         for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
-        res = cleanupG_sedpp(a, r, e, e2, xTr, v1_bar_lam_max, v1_bar_lam_max_tmp,
+        res = cleanupG_sedpp(a, r, e, e2, K, xTr, v1_bar_lam_max, v1_bar_lam_max_tmp,
                              beta, iter, df, loss, rejections);
         return(res);
       }
@@ -262,7 +265,7 @@ SEXP gdfit_gaussian_sedpp(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
           l1 = lam[l] * m[g] * alpha;
           l2 = lam[l] * m[g] * (1-alpha);
           if (e[g]) {
-            gd_gaussian_ssr(b, X, r, g, K1, n, l, p, penalty, l1, l2, gamma, df, a);
+            gd_gaussian_ssr(b, X, r, g, K1, K, n, l, p, penalty, l1, l2, gamma, df, a);
           }
         }
 
@@ -281,7 +284,7 @@ SEXP gdfit_gaussian_sedpp(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
     }
   }
   
-  res = cleanupG_sedpp(a, r, e, e2, xTr, v1_bar_lam_max, v1_bar_lam_max_tmp,
+  res = cleanupG_sedpp(a, r, e, e2, K, xTr, v1_bar_lam_max, v1_bar_lam_max_tmp,
                        beta, iter, df, loss, rejections);
   return(res);
 }
