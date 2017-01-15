@@ -1,4 +1,4 @@
-setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, nlambda, group.multiplier) {
+setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, log.lambda, nlambda, group.multiplier) {
   ## Fit to unpenalized covariates
   n <- length(y)
   K <- table(group)
@@ -23,10 +23,18 @@ setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, nlambda
   }
   lambda.max <- zmax/alpha
   
-  if (lambda.min==0) {
-    lambda <- c(exp(seq(log(lambda.max), log(.001*lambda.max), length=nlambda-1)), 0)
-  } else {
-    lambda <- exp(seq(log(lambda.max), log(lambda.min*lambda.max), length=nlambda))
+  if (log.lambda) { # lambda sequence on log-scale
+    if (lambda.min==0) {
+      lambda <- c(exp(seq(log(lambda.max), log(.001*lambda.max), length=nlambda-1)), 0)
+    } else { 
+      lambda <- exp(seq(log(lambda.max), log(lambda.min*lambda.max), length=nlambda))
+    }
+  } else { # lambda sequence on linear-scale
+    if (lambda.min==0) {
+      lambda <- c(seq(lambda.max, 0.001*lambda.max, length = nlambda-1), 0)
+    } else { 
+      lambda <- seq(lambda.max, lambda.min*lambda.max, length = nlambda)
+    }
   }
   lambda
 }
