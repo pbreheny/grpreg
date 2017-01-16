@@ -51,23 +51,23 @@ SEXP cleanupG_ssr_bedpp(double *a, double *r, int *e, int *e2, int *e3, int *e3_
 void bedpp_init(double *yTxxTv1, double *xTv1_sq, double *xTy_sq, double *xTr,
                 double *X, double *y, int *K1, int *K, int *g_star_ptr, 
                 int *K_star_ptr, int K1_len, int n, int J) {
-  
+
+  // compute Xj^T * y
   double tmp = 0;
   double *XTy = Calloc(K1_len, double);
-  // compute Xj^T * y
   for (int g=0; g<J; g++) {
     for (int j = K1[g]; j < K1[g+1]; j++) {
-      XTy[j-K1[0]] = crossprod(X, y, n, j); // Assuming K1 contains consecutive indices of penalized groups, need confirm
+      XTy[j-K1[0]] = crossprod(X, y, n, j); // K1 contains consecutive indices of penalized groups
       xTy_sq[g] += pow(XTy[j-K1[0]], 2);
     }
     xTr[g] = sqrt(xTy_sq[g]) / n;
     if (xTr[g] / sqrt(K[g]) > tmp) {
-      tmp = xTr[g];
+      tmp = xTr[g] / sqrt(K[g]);
       *g_star_ptr = g;
       *K_star_ptr = K[g];
     }
   }
-  
+
   // compute v1_bar at lam_max: = X* X*^T y
   double *v1_lam_max_tmp = Calloc(*K_star_ptr, double);
   double *v1_lam_max = Calloc(n, double); // tmp quantity for BEDPP: v1_bar at lam_max: = X_star * X_star^T * y
@@ -76,15 +76,14 @@ void bedpp_init(double *yTxxTv1, double *xTv1_sq, double *xTy_sq, double *xTr,
   }
   for (int i = 0; i < n; i++) {
     for (int j = K1[*g_star_ptr]; j < K1[*g_star_ptr+1]; j++) {
-      v1_lam_max[i] += X[i+n*j] * v1_lam_max_tmp[j];
+      v1_lam_max[i] += X[i+n*j] * v1_lam_max_tmp[j-K1[*g_star_ptr]];
     }
   }
+  
   // compute Xj^T * v1, then compute its norm_sq, then compute  y^T * Xj * Xj^T * v1
   double xTv1_tmp;
   for (int g = 0; g < J; g++) {
-    //double *xTv1_tmp = Calloc(K[g], double);
     for (int j = K1[g]; j < K1[g+1]; j++) {
-      //xTv1_tmp[j-K1[g]] = crossprod(X, v1_lam_max, n, j);
       xTv1_tmp = crossprod(X, v1_lam_max, n, j);
       xTv1_sq[g] += pow(xTv1_tmp, 2);
       yTxxTv1[g] += XTy[j-K1[0]] * xTv1_tmp; 
@@ -111,13 +110,6 @@ void bedpp_glasso(int *e3, double *yTxxTv1, double *xTv1_sq, double *xTy_sq,
     } else {
       e3[g] = 0; // reject
     }
-    /*
-    if (l < 5) {
-      if (g < 20) {
-        Rprintf("\tl = %d; g = %d: LHS = %f; RHS = %f\n", l, g, LHS, RHS);
-      }
-    }
-     */
   }
 }
 
@@ -254,7 +246,7 @@ SEXP gdfit_gaussian_ssr_bedpp(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0
   
   // pre-compute tmp quantities used for screening
   bedpp_init(yTxxTv1, xTv1_sq, xTy_sq, xTr, X, y, K1, K, g_star_ptr, K_star_ptr, K1_len, n, J);
-  
+
   // If lam[0]=lam_max, skip lam[0] -- closed form sol'n available
   if (user) {
     lstart = 0;

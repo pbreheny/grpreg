@@ -112,10 +112,10 @@ void sedpp_glasso(int *e2, double *X, double *r, double *y, double *v1_bar_lam_m
     for (j = K1[g]; j < K1[g+1]; j++) {
       z[j-K1[g]] = crossprod(X, o, n, j);
     }
-    if (norm(z, K)  < n * sqrt(K) - 0.5 * pv2_norm * sqrt(n)) {
-      e2[g] = 0; // reject, not in EDPP set
+    if (norm(z, K) + TOLERANCE > n * sqrt(K) - 0.5 * pv2_norm * sqrt(n)) {
+      e2[g] = 1; // not reject, in EDPP set
     } else {
-      e2[g] = 1; // not reject
+      e2[g] = 0; // reject
     }
     Free(z);
   }
@@ -191,12 +191,12 @@ SEXP gdfit_gaussian_sedpp(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
     }
     xTr[g] = norm(z, K[g]);
     if (xTr[g] / sqrt(K[g]) > tmp) {
-      tmp = xTr[g];
+      tmp = xTr[g] / sqrt(K[g]) ;
       g_star = g;
     }
     Free(z);
   }
- 
+
   // compute v1_bar at lam_max: = X* X*^T y
   int K_star = K1[g_star+1] - K1[g_star];
   double *v1_bar_lam_max = Calloc(n, double);
@@ -207,7 +207,7 @@ SEXP gdfit_gaussian_sedpp(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
   }
   for (int i = 0; i < n; i++) {
     for (int j = K1[g_star]; j < K1[g_star+1]; j++) {
-      v1_bar_lam_max[i] += X[i+n*j] * v1_bar_lam_max_tmp[j];
+      v1_bar_lam_max[i] += X[i+n*j] * v1_bar_lam_max_tmp[j-K1[g_star]];
     }
   }
 

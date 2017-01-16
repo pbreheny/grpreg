@@ -38,17 +38,17 @@ SEXP cleanupG_ssr(double *a, double *r, int *e, int *e2, int *K, double *xTr,
 // sequential strong rule
 void ssr_glasso(int *e2, double *xTr, int *K1, int *K, double *lam, double lam_max, int l, int J) {
   double cutoff;
-  // double TOLERANCE = 1e-8;
+  double TOLERANCE = 1e-8;
   for (int g = 0; g < J; g++) {
     if (l != 0) {
       cutoff = sqrt(K[g]) * (2 * lam[l] - lam[l-1]);
     } else {
       cutoff = sqrt(K[g]) * (2 * lam[l] - lam_max);
     }
-    if (xTr[g] < cutoff) {
-      e2[g] = 0; // not reject
+    if (xTr[g] + TOLERANCE > cutoff) {
+      e2[g] = 1; // not reject, in strong set
     } else {
-      e2[g] = 1; // reject
+      e2[g] = 0; // reject
     }
   }
 }
@@ -76,6 +76,7 @@ int check_strong_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1
 // Scan for violations in rest set
 int check_rest_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, int *K, double lam, int n, int J) {
   int violations = 0;
+  double TOLERANCE = 1e-8;
   for (int g = 0; g < J; g++) {
     if (e2[g] == 0) {
       double *z = Calloc(K[g], double);
@@ -83,7 +84,7 @@ int check_rest_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, 
         z[j-K1[g]] = crossprod(X, r, n, j) / n;
       }
       xTr[g] = norm(z, K[g]);
-      if (xTr[g] > lam * sqrt(K[g])) {
+      if (xTr[g] + TOLERANCE > lam * sqrt(K[g])) {
         e[g] = e2[g] = 1;
         violations++;
       }
