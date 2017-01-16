@@ -6,12 +6,13 @@
   linear and logistic regression models.}
 \usage{
 grpreg(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD",
-"gel", "cMCP", "gBridge", "gLasso", "gMCP"), screen = c("None", "SSR", "SEDPP", "SSR-BEDPP"), 
+"gel", "cMCP", "gBridge", "gLasso", "gMCP"), screen = c("None", "SSR", "SEDPP", "SSR-BEDPP", "No-Active"), 
 family=c("gaussian","binomial", "poisson"), nlambda=100, lambda, 
 lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05}, log.lambda = TRUE, alpha=1, eps=.001, max.iter=1000, dfmax=p,
 gmax=length(unique(group)), gamma=ifelse(penalty == "grSCAD", 4, 3),
 tau = 1/3, group.multiplier, warn=TRUE, return.time=TRUE, ...)
 }
+
 \arguments{
   \item{X}{The design matrix, without an intercept.  \code{grpreg}
     standardizes the data and includes an intercept by default.}
@@ -28,8 +29,10 @@ tau = 1/3, group.multiplier, warn=TRUE, return.time=TRUE, ...)
     For bi-level selection, one of \code{gel} or \code{cMCP}.  See
     below for details.}
   \item{screen}{The screening rule to be applied to discard groups of features.
-  "SSR" is the sequential strong rule, "SEDPP" is the sequential EDPP rule, "SSR-BEDPP"
-  is the combination of sequential strong rule and the basic EDPP (BEDPP) rule. "None" (default) is that no screen rule is applied.}
+  "SSR" is the sequential strong rule, "SEDPP" is the sequential EDPP rule, 
+  "SSR-BEDPP" is the combination of sequential strong rule and the basic EDPP (BEDPP) 
+  rule. "None" (default) is that no screen rule is applied (but with active 
+  cycling by default). "No-Active" is to turn off active cycling update. }
   \item{family}{Either "gaussian" or "binomial", depending on the
     response.}
   \item{nlambda}{The number of \code{lambda} values.  Default is 100.}

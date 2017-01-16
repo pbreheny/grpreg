@@ -1,7 +1,7 @@
 grpreg <- function(X, y, group=1:ncol(X), 
                    penalty=c("grLasso", "grMCP", "grSCAD", "gel", "cMCP", 
                              "gBridge", "gLasso", "gMCP"),
-                   screen = c("None", "SSR", "SEDPP", "SSR-BEDPP"),
+                   screen = c("None", "SSR", "SEDPP", "SSR-BEDPP", "No-Active"),
                    family=c("gaussian","binomial", "poisson"), nlambda=100, lambda,
                    lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05}, log.lambda = TRUE,
                    alpha=1, eps=.001, max.iter=1000,
@@ -111,7 +111,10 @@ grpreg <- function(X, y, group=1:ncol(X),
           
         } else if (screen == 'SSR-BEDPP') {
           fit <- .Call("gdfit_gaussian_ssr_bedpp", XX, yy, penalty, K1, K0, lambda, lam.max, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+        } else if (screen == 'No-Active') {
+          fit <- .Call("gdfit_gaussian_no_active", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
         }
+
       } else {
         fit <- .Call("lcdfit_gaussian", XX, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
       }
