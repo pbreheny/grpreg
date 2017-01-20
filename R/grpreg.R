@@ -1,12 +1,22 @@
-grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD", "gel", "cMCP", "gBridge", "gLasso", "gMCP"),
+grpreg <- function(X, y, group=1:ncol(X), 
+                   penalty=c("grLasso", "grMCP", "grSCAD", "gel", "cMCP", 
+                             "gBridge", "gLasso", "gMCP"),
+                   screen = c("None", "SSR", "SEDPP", "SSR-BEDPP", "No-Active"),
                    family=c("gaussian","binomial", "poisson"), nlambda=100, lambda,
-                   lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05}, alpha=1, eps=.001, max.iter=1000,
+                   lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05}, log.lambda = TRUE,
+                   alpha=1, eps=.001, max.iter=1000,
                    dfmax=p, gmax=length(unique(group)), gamma=ifelse(penalty=="grSCAD", 4, 3),
-                   tau=1/3, group.multiplier, warn=TRUE, ...) {
+                   tau=1/3, group.multiplier, warn=TRUE, return.time=TRUE, ...) {
   # Coersion
   family <- match.arg(family)
   penalty <- match.arg(penalty)
+  screen <- match.arg(screen)
+
   if (penalty=="gLasso") penalty <- "grLasso"
+  if (penalty != "grLasso") { # scren rule only for group lasso
+    screen <- "None"
+  }
+
   if (penalty=="gMCP") {
     writeLines(strwrap("penalty='gMCP' is deprecated and may not be supported in future versions.  Use penalty='cMCP' instead."))
     penalty <- "cMCP"
@@ -66,7 +76,8 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   yy <- as.numeric(if (family=="gaussian") y - mean(y) else y)
   if (nrow(XX) != length(yy)) stop("X and y do not have the same number of observations")
   if (missing(lambda)) {
-    lambda <- setupLambda(XX, yy, grp$g, family, penalty, alpha, lambda.min, nlambda, grp$m)
+    lambda <- setupLambda(XX, yy, grp$g, family, penalty, alpha, lambda.min, log.lambda, nlambda, grp$m)
+    lam.max <- lambda[1]
     user.lambda <- FALSE
   } else {
     nlambda <- length(lambda)
@@ -78,29 +89,68 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   p <- ncol(XX)
   K0 <- as.integer(if (min(grp$g)==0) K[1] else 0)
   K1 <- as.integer(if (min(grp$g)==0) cumsum(K) else c(0, cumsum(K)))
+  
   if (K0) {
     lambda[1] <- lambda[1] + 1e-5
     user.lambda <- TRUE
   }
+
   if (family=="gaussian") {
-    if (strtrim(penalty,2)=="gr") fit <- .Call("gdfit_gaussian", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
-    else fit <- .Call("lcdfit_gaussian", XX, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+    
+    time <- system.time(
+      if (penalty == "grMCP" || penalty == "grSCAD") {
+        fit <- .Call("gdfit_gaussian", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+      } else if (penalty == "grLasso") {
+        if (screen == 'None') {
+          fit <- .Call("gdfit_gaussian", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+        } else if (screen == 'SSR') {
+          fit <- .Call("gdfit_gaussian_ssr", XX, yy, penalty, K1, K0, lambda, lam.max, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+          
+        } else if (screen == "SEDPP") {
+          fit <- .Call("gdfit_gaussian_sedpp", XX, yy, penalty, K1, K0, lambda, lam.max, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+          
+        } else if (screen == 'SSR-BEDPP') {
+          fit <- .Call("gdfit_gaussian_ssr_bedpp", XX, yy, penalty, K1, K0, lambda, lam.max, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+        } else if (screen == 'No-Active') {
+          fit <- .Call("gdfit_gaussian_no_active", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+        }
+
+      } else {
+        fit <- .Call("lcdfit_gaussian", XX, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+      }
+    )
+
     b <- rbind(mean(y), matrix(fit[[1]], nrow=p))
     iter <- fit[[2]]
     df <- fit[[3]] + 1 ## Intercept
     loss <- fit[[4]]
+    
+    if (screen == 'SSR' || screen == 'SEDPP' || screen == "SSR-BEDPP") rejections <- fit[[5]]
+    if (screen == "SSR-BEDPP") safe_rejections <- fit[[6]]
+    
   }
+  
   if (family=="binomial") {
-    if (strtrim(penalty,2)=="gr") fit <- .Call("gdfit_binomial", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
-    else fit <- .Call("lcdfit_binomial", XX, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+    time <- system.time(
+      {
+        if (strtrim(penalty,2)=="gr") fit <- .Call("gdfit_binomial", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+        else fit <- .Call("lcdfit_binomial", XX, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+      }
+    )
+
     b <- rbind(fit[[1]], matrix(fit[[2]], nrow=p))
     iter <- fit[[3]]
     df <- fit[[4]]
     loss <- fit[[5]]
   }
   if (family=="poisson") {
-    if (strtrim(penalty,2)=="gr") fit <- .Call("gdfit_poisson", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
-    else fit <- .Call("lcdfit_poisson", XX, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+    time <- system.time(
+      {
+        if (strtrim(penalty,2)=="gr") fit <- .Call("gdfit_poisson", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+        else fit <- .Call("lcdfit_poisson", XX, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), grp$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+      }
+    )
+
     b <- rbind(fit[[1]], matrix(fit[[2]], nrow=p))
     iter <- fit[[3]]
     df <- fit[[4]]
@@ -151,9 +201,14 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
                         iter = iter,
                         group.multiplier = grp$m),
                    class = "grpreg")
+  if (screen == 'SSR' || screen == 'SEDPP' || screen == 'SSR-BEDPP') val$rejections <- rejections
+  if (screen == 'SSR-BEDPP') val$safe_rejections <- safe_rejections
   if (family=="poisson") val$y <- y
+  if (return.time) val$time <- as.numeric(time['elapsed'])
+  
   val
 }
+
 coerceY <- function(y, family) {
   if (class(y) != "numeric") {
     tmp <- try(y <- as.numeric(y), silent=TRUE)

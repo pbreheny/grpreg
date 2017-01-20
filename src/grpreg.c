@@ -5,6 +5,11 @@
 #include <R.h>
 #include <R_ext/Applic.h>
 SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP user_);
+SEXP gdfit_gaussian_ssr(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP lam_max_, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP user_);
+SEXP gdfit_gaussian_sedpp(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP lam_max_, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP user_);
+SEXP gdfit_gaussian_ssr_bedpp(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP lam_max_, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP user_);
+SEXP gdfit_gaussian_no_active(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP user_);
+
 SEXP gdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
 SEXP gdfit_poisson(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
 SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
@@ -184,6 +189,10 @@ double dMCP(double theta, double l, double a) {
 
 static R_CallMethodDef callMethods[] = {
   {"gdfit_gaussian", (DL_FUNC) &gdfit_gaussian, 14},
+  {"gdfit_gaussian_ssr", (DL_FUNC) &gdfit_gaussian_ssr, 15},
+  {"gdfit_gaussian_sedpp", (DL_FUNC) &gdfit_gaussian_sedpp, 15},
+  {"gdfit_gaussian_ssr_bedpp", (DL_FUNC) &gdfit_gaussian_ssr_bedpp, 15},
+  {"gdfit_gaussian_no_active", (DL_FUNC) &gdfit_gaussian_no_active, 14},
   {"gdfit_binomial", (DL_FUNC) &gdfit_binomial, 15},
   {"gdfit_poisson", (DL_FUNC) &gdfit_poisson, 15},
   {"gdfit_cox", (DL_FUNC) &gdfit_cox, 15},

@@ -1,8 +1,11 @@
 *   Minor change
 **  Major change
 
+3.1-0 (01/15/2017)
+  ** added new feature screening rules: SSR, SEDPP, SSR-BEDPP
+
 3.0-2
-        *  Fixed bug involving mismatch between group.multiplier and group if
+  *  Fixed bug involving mismatch between group.multiplier and group if
 	   group is given out of order.
 	*  'Lung' and 'Birthwt' data sets now use factor representation of
 	   group, as character vectors are inherently ambiguous with respect to
