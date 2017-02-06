@@ -1,7 +1,8 @@
 grpreg <- function(X, y, group=1:ncol(X), 
                    penalty=c("grLasso", "grMCP", "grSCAD", "gel", "cMCP", 
                              "gBridge", "gLasso", "gMCP"),
-                   screen = c("None", "SSR", "SEDPP", "SSR-BEDPP", "No-Active"),
+                   screen = c("None", "SSR", "SEDPP", "SSR-BEDPP", "No-Active",
+                              "SSR-No-Active", "SEDPP-No-Active", "SSR-BEDPP-No-Active"),
                    family=c("gaussian","binomial", "poisson"), nlambda=100, lambda,
                    lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05}, log.lambda = TRUE,
                    alpha=1, eps=.001, max.iter=1000,
@@ -103,16 +104,20 @@ grpreg <- function(X, y, group=1:ncol(X),
       } else if (penalty == "grLasso") {
         if (screen == 'None') {
           fit <- .Call("gdfit_gaussian", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
-        } else if (screen == 'SSR') {
-          fit <- .Call("gdfit_gaussian_ssr", XX, yy, penalty, K1, K0, lambda, lam.max, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
-          
-        } else if (screen == "SEDPP") {
-          fit <- .Call("gdfit_gaussian_sedpp", XX, yy, penalty, K1, K0, lambda, lam.max, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
-          
-        } else if (screen == 'SSR-BEDPP') {
-          fit <- .Call("gdfit_gaussian_ssr_bedpp", XX, yy, penalty, K1, K0, lambda, lam.max, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
         } else if (screen == 'No-Active') {
           fit <- .Call("gdfit_gaussian_no_active", XX, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+        } else if (screen == 'SSR') {
+          fit <- .Call("gdfit_gaussian_ssr", XX, yy, penalty, K1, K0, lambda, lam.max, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+        } else if (screen == "SSR-No-Active") {
+          fit <- .Call("gdfit_gaussian_ssr_no_active", XX, yy, penalty, K1, K0, lambda, lam.max, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+        }  else if (screen == "SEDPP") {
+          fit <- .Call("gdfit_gaussian_sedpp", XX, yy, penalty, K1, K0, lambda, lam.max, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+        } else if (screen == "SEDPP-No-Active") {
+          fit <- .Call("gdfit_gaussian_sedpp_no_active", XX, yy, penalty, K1, K0, lambda, lam.max, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+        } else if (screen == 'SSR-BEDPP') {
+          fit <- .Call("gdfit_gaussian_ssr_bedpp", XX, yy, penalty, K1, K0, lambda, lam.max, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
+        } else if (screen == "SSR-BEDPP-No-Active") {
+          fit <- .Call("gdfit_gaussian_ssr_bedpp_no_active", XX, yy, penalty, K1, K0, lambda, lam.max, alpha, eps, as.integer(max.iter), gamma, grp$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
         }
 
       } else {
@@ -125,9 +130,10 @@ grpreg <- function(X, y, group=1:ncol(X),
     df <- fit[[3]] + 1 ## Intercept
     loss <- fit[[4]]
     
-    if (screen == 'SSR' || screen == 'SEDPP' || screen == "SSR-BEDPP") rejections <- fit[[5]]
-    if (screen == "SSR-BEDPP") safe_rejections <- fit[[6]]
-    
+    if (screen %in% c("SSR", "SEDPP", "SSR-BEDPP", "SSR-No-Active", "SEDPP-No-Active", "SSR-BEDPP-No-Active")) {
+      rejections <- fit[[5]]
+    } 
+    if (screen %in% c("SSR-BEDPP", "SSR-BEDPP-No-Active")) safe_rejections <- fit[[6]]
   }
   
   if (family=="binomial") {
@@ -201,8 +207,13 @@ grpreg <- function(X, y, group=1:ncol(X),
                         iter = iter,
                         group.multiplier = grp$m),
                    class = "grpreg")
-  if (screen == 'SSR' || screen == 'SEDPP' || screen == 'SSR-BEDPP') val$rejections <- rejections
-  if (screen == 'SSR-BEDPP') val$safe_rejections <- safe_rejections
+  
+  if (screen %in% c("SSR", "SEDPP", "SSR-BEDPP", "SSR-No-Active", "SEDPP-No-Active", "SSR-BEDPP-No-Active")) {
+    val$rejections <- rejections
+  } 
+  if (screen %in% c("SSR-BEDPP", "SSR-BEDPP-No-Active")) val$safe_rejections <- safe_rejections
+  # if (screen == 'SSR' || screen == 'SEDPP' || screen == 'SSR-BEDPP') val$rejections <- rejections
+  # if (screen == 'SSR-BEDPP') val$safe_rejections <- safe_rejections
   if (family=="poisson") val$y <- y
   if (return.time) val$time <- as.numeric(time['elapsed'])
   
