@@ -6,7 +6,7 @@
   linear and logistic regression models.}
 \usage{
 grpreg(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD",
-"gel", "cMCP", "gBridge", "gLasso", "gMCP"), screen = c("None", "SSR", "SEDPP", "SSR-BEDPP", "No-Active"), 
+"gel", "cMCP", "gBridge", "gLasso", "gMCP"), screen = c("None", "SSR", "SEDPP", "SSR-BEDPP", "No-Active", "SSR-No-Active", "SEDPP-No-Active", "SSR-BEDPP-No-Active"),
 family=c("gaussian","binomial", "poisson"), nlambda=100, lambda, 
 lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05}, log.lambda = TRUE, alpha=1, eps=.001, max.iter=1000, dfmax=p,
 gmax=length(unique(group)), gamma=ifelse(penalty == "grSCAD", 4, 3),
