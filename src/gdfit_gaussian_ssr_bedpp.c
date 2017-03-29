@@ -101,7 +101,7 @@ void bedpp_glasso(int *e3, double *yTxxTv1, double *xTv1_sq, double *xTy_sq,
   double TOLERANCE = 1e-8;
   double LHS, RHS;
   for (int g = 0; g < J; g++) {
-    LHS = pow(lam + lam_max, 2) * xTy_sq[g] + (lam_max * lam_max - lam * lam) * yTxxTv1[g] / n +
+    LHS = pow(lam + lam_max, 2) * xTy_sq[g] - (lam_max * lam_max - lam * lam) * yTxxTv1[g] / n +
       pow((lam_max - lam) / n, 2) * xTy_sq[g];
     LHS = sqrt(LHS);
     RHS = 2 * n * lam * lam_max * sqrt(K[g]) - (lam_max - lam) * sqrt(n * y_norm_sq - pow(n * lam_max, 2) * K_star);
