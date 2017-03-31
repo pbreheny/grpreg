@@ -1,8 +1,12 @@
 *   Minor change
 **  Major change
 
+3.1-2 (3/28/2017)
+  * Fixed a bug in BEDPP screening.
+  * Updated README.
+
 3.1-0 (01/15/2017)
-  ** added new feature screening rules: SSR, SEDPP, SSR-BEDPP
+  ** Added new feature screening rules: SSR, SEDPP, SSR-BEDPP
 
 3.0-2
   *  Fixed bug involving mismatch between group.multiplier and group if
@@ -12,7 +16,7 @@
 	   order.
 
 3.0-1
-        *  Fixed memory allocation bug
+  *  Fixed memory allocation bug
 	*  Re-introduced 'birthwt.grpreg' for backwards compatibility, but this
 	   is deprecated.
 

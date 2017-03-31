@@ -5,7 +5,19 @@
 
 `grpreg` fits regularization paths for linear, logistic, or Poisson regression models with grouped penalties, such as the group lasso, group MCP, group SCAD, group exponential lasso, and group bridge. The algorithms are based on the idea of either locally approximated coordinate descent or group descent, depending on the penalty. All of the algorithms (with the exception of group bridge) are stable and fast.
 
-To install:
+## News:
+New efficient group-wise feature screening rules for group lasso are implemented into the package since Version 3.1-0:
+* SSR: sequential Strong Rule;
+* SEDPP: Sequential Enhanced Dual Polytope Projection;
+* SSR-BEDPP: the hybrid safe strong rule that combines SSR and BEDPP (Basic EDPP)
 
-* the latest released version: `install.packages("grpreg")`
-* the latest version (requires `devtools`): `install_github("pbreheny/grpreg")`
+## Installation:
+* the latest released version: 
+```R
+install.packages("grpreg")
+```
+
+* the latest version (requires `devtools`): 
+```R
+install_github("pbreheny/grpreg")
+```
