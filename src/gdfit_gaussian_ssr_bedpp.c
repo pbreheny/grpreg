@@ -99,17 +99,27 @@ void bedpp_glasso(int *e3, double *yTxxTv1, double *xTv1_sq, double *xTy_sq,
                   double y_norm_sq, int *K, double lam, double lam_max, 
                   int K_star, int n, int J) {
   double TOLERANCE = 1e-8;
-  double LHS, RHS;
+  double LHS, RHS, LHS_temp;
   for (int g = 0; g < J; g++) {
-    LHS = pow(lam + lam_max, 2) * xTy_sq[g] - (lam_max * lam_max - lam * lam) * yTxxTv1[g] / n +
-      pow((lam_max - lam) / n, 2) * xTy_sq[g];
-    LHS = sqrt(LHS);
+    LHS_temp = pow(lam + lam_max, 2) * xTy_sq[g] - 2 * (lam_max * lam_max - lam * lam) * yTxxTv1[g] / n +
+      pow((lam_max - lam) / n, 2) * xTv1_sq[g];
+    if (LHS_temp < 0) {
+      LHS = 0.0;
+    } else {
+      LHS = sqrt(LHS_temp);
+    }
     RHS = 2 * n * lam * lam_max * sqrt(K[g]) - (lam_max - lam) * sqrt(n * y_norm_sq - pow(n * lam_max, 2) * K_star);
+    
     if (LHS + TOLERANCE > RHS) {
       e3[g] = 1; // not reject, thus in BEDPP set
     } else {
       e3[g] = 0; // reject
     }
+    
+    // debug
+    // Rprintf("\t K[%d]: %d;\t Reject: %d;\t LHS_temp[%d]: %f;\t LHS[%d]: %f;\t RHS[%d]: %f;\t yTxxTv1[%d]: %f;\t xTv1_sq[%d]: %f;\t xTy_sq[%d]: %f\n", 
+    //         g, K[g], e3[g], g, LHS_temp, g, LHS, g, RHS, g, yTxxTv1[g], g, xTv1_sq[g], g, xTy_sq[g]);
+    
   }
 }
 
@@ -179,7 +189,7 @@ SEXP gdfit_gaussian_ssr_bedpp(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0
   int L = length(lambda);
   int J = length(K1_) - 1;
   int p = length(X_)/n;
-  
+
   // Pointers
   double *X = REAL(X_);
   double *y = REAL(y_);
@@ -282,6 +292,11 @@ SEXP gdfit_gaussian_ssr_bedpp(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0
     }
     if (bedpp_flag) { //SSR-BEDPP screening
       // BEDPP screening
+      
+      // debug
+      // Rprintf("------------------------------------------------------\n");
+      // Rprintf("l = %d: g_star: %d; K_star: %d; K1_len: %d; BEDPP screening: \n", l, g_star, K_star, K1_len);
+   
       bedpp_glasso(e3, yTxxTv1, xTv1_sq, xTy_sq, y_norm_sq, K, lam[l], lam_max, K_star, n, J);
       INTEGER(safe_rejections)[l] = J - sum_rejections(e3, J);
       // update xTr[g] for groups which are rejected at previous lambda but accepted at current one.
