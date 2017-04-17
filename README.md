@@ -23,8 +23,9 @@ install_github("pbreheny/grpreg")
 ```
 
 ## Reference:
+* Breheny P and Huang J (2015). Group descent algorithms for nonconvex penalized linear and logistic regression models with grouped predictors. Statistics and Computing, 25: 173-187.
 * Tibshirani, R., Bien, J., Friedman, J., Hastie, T., Simon, N., Taylor, J., and Tibshirani, R. J. (2012). Strong rules for discarding predictors in lasso-type problems. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 74 (2), 245-266.
-* Wang, J., Zhou, J., Liu, J., Wonka, P., and Ye, J. (2014). A safe screening rule for sparse logistic regression. In Advances in Neural Information Processing Systems, pp. 1053-1061.
+* Wang J, Wonka P, and Ye J (2015). Lasso Screening Rules via Dual Polytope Projection. Journal of Machine Learning Research 16 (2015), 1063–1101. http://jmlr.org/papers/v16/wang15a.html
 
 
 
