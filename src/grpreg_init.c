@@ -1,24 +1,50 @@
+#include <R.h>
+#include <Rinternals.h>
+#include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include "Rinternals.h"
-#include "R_ext/Rdynload.h"
-#include <R.h>
-#include <R_ext/Applic.h>
-SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP user_);
-SEXP gdfit_gaussian_ssr(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP lam_max_, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP user_);
-SEXP gdfit_gaussian_sedpp(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP lam_max_, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP user_);
-SEXP gdfit_gaussian_ssr_bedpp(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP lam_max_, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP user_);
-SEXP gdfit_gaussian_no_active(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP user_);
+#include <R_ext/Rdynload.h>
 
-SEXP gdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
-SEXP gdfit_poisson(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
-SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
-SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_, SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP user_);
-SEXP lcdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_, SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
-SEXP lcdfit_poisson(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_, SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
-SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_, SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_);
-SEXP standardize(SEXP X_);
-SEXP maxprod(SEXP X_, SEXP y_, SEXP v_, SEXP m_);
+/* .Call calls */
+extern SEXP gdfit_binomial(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP gdfit_cox(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP gdfit_gaussian(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP gdfit_gaussian_no_active(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP gdfit_gaussian_sedpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP gdfit_gaussian_ssr(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP gdfit_gaussian_ssr_bedpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP gdfit_poisson(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP lcdfit_binomial(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP lcdfit_cox(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP lcdfit_gaussian(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP lcdfit_poisson(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP maxgrad(SEXP, SEXP, SEXP, SEXP);
+extern SEXP maxprod(SEXP, SEXP, SEXP, SEXP);
+extern SEXP standardize(SEXP);
+
+static const R_CallMethodDef CallEntries[] = {
+  {"gdfit_binomial",           (DL_FUNC) &gdfit_binomial,           15},
+  {"gdfit_cox",                (DL_FUNC) &gdfit_cox,                15},
+  {"gdfit_gaussian",           (DL_FUNC) &gdfit_gaussian,           14},
+  {"gdfit_gaussian_no_active", (DL_FUNC) &gdfit_gaussian_no_active, 14},
+  {"gdfit_gaussian_sedpp",     (DL_FUNC) &gdfit_gaussian_sedpp,     15},
+  {"gdfit_gaussian_ssr",       (DL_FUNC) &gdfit_gaussian_ssr,       15},
+  {"gdfit_gaussian_ssr_bedpp", (DL_FUNC) &gdfit_gaussian_ssr_bedpp, 15},
+  {"gdfit_poisson",            (DL_FUNC) &gdfit_poisson,            15},
+  {"lcdfit_binomial",          (DL_FUNC) &lcdfit_binomial,          17},
+  {"lcdfit_cox",               (DL_FUNC) &lcdfit_cox,               17},
+  {"lcdfit_gaussian",          (DL_FUNC) &lcdfit_gaussian,          16},
+  {"lcdfit_poisson",           (DL_FUNC) &lcdfit_poisson,           17},
+  {"maxgrad",                  (DL_FUNC) &maxgrad,                   4},
+  {"maxprod",                  (DL_FUNC) &maxprod,                   4},
+  {"standardize",              (DL_FUNC) &standardize,               1},
+  {NULL, NULL, 0}
+};
+
+void R_init_grpreg(DllInfo *dll) {
+  R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+  R_useDynamicSymbols(dll, FALSE);
+}
 
 // Cleanup
 SEXP cleanupG(double *a, double *r, int *e, SEXP beta, SEXP iter, SEXP df, SEXP loss) {
@@ -185,26 +211,4 @@ double dMCP(double theta, double l, double a) {
   theta = fabs(theta);
   if (theta < a*l) return(l-theta/a);
   else return(0);
-}
-
-static R_CallMethodDef callMethods[] = {
-  {"gdfit_gaussian", (DL_FUNC) &gdfit_gaussian, 14},
-  {"gdfit_gaussian_ssr", (DL_FUNC) &gdfit_gaussian_ssr, 15},
-  {"gdfit_gaussian_sedpp", (DL_FUNC) &gdfit_gaussian_sedpp, 15},
-  {"gdfit_gaussian_ssr_bedpp", (DL_FUNC) &gdfit_gaussian_ssr_bedpp, 15},
-  {"gdfit_gaussian_no_active", (DL_FUNC) &gdfit_gaussian_no_active, 14},
-  {"gdfit_binomial", (DL_FUNC) &gdfit_binomial, 15},
-  {"gdfit_poisson", (DL_FUNC) &gdfit_poisson, 15},
-  {"gdfit_cox", (DL_FUNC) &gdfit_cox, 15},
-  {"lcdfit_gaussian", (DL_FUNC) &lcdfit_gaussian, 16},
-  {"lcdfit_binomial", (DL_FUNC) &lcdfit_binomial, 17},
-  {"lcdfit_poisson", (DL_FUNC) &lcdfit_poisson, 17},
-  {"lcdfit_cox", (DL_FUNC) &lcdfit_cox, 17},
-  {"standardize", (DL_FUNC) &standardize, 1},
-  {"maxprod", (DL_FUNC) &maxprod, 4},
-  {NULL, NULL, 0}
-};
-
-void R_init_grpreg(DllInfo *info) {
-  R_registerRoutines(info,NULL,callMethods,NULL,NULL);
 }

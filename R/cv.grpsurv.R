@@ -23,7 +23,7 @@ cv.grpsurv <- function(X, y, group, ..., nfolds=10, seed, cv.ind, returnY=FALSE,
 
   cv.args <- list(...)
   cv.args$lambda <- fit$lambda
-  cv.args$group <- attr(X, "group")
+  cv.args$group <- fit$group
   cv.args$warn <- FALSE
   cv.args$group.multiplier <- fit$group.multiplier
 
