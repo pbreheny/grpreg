@@ -1,7 +1,7 @@
 #include <math.h>
 #include <string.h>
-#include "Rinternals.h"
-#include "R_ext/Rdynload.h"
+#include <Rinternals.h>
+#include <R_ext/Rdynload.h>
 #include <R.h>
 #include <R_ext/Applic.h>
 int checkConvergence(double *beta, double *beta_old, double eps, int l, int J);
@@ -66,6 +66,7 @@ SEXP gdfit_poisson(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lam
   double alpha = REAL(alpha_)[0];
   double eps = REAL(eps_)[0];
   int max_iter = INTEGER(max_iter_)[0];
+  int tot_iter = 0;
   double gamma = REAL(gamma_)[0];
   double *m = REAL(group_multiplier);
   int dfmax = INTEGER(dfmax_)[0];
@@ -131,16 +132,16 @@ SEXP gdfit_poisson(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lam
 	  nv = nv + (K1[g+1]-K1[g]);
 	}
       }
-      if (ng > gmax | nv > dfmax) {
+      if (ng > gmax | nv > dfmax | tot_iter == max_iter) {
 	for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
-	res = cleanupB(a, r, e, eta, beta0, beta, iter, df, Dev);
-	return(res);
+        break;
       }
     }
 
-    while (INTEGER(iter)[l] < max_iter) {
-      while (INTEGER(iter)[l] < max_iter) {
+    while (tot_iter < max_iter) {
+      while (tot_iter  < max_iter) {
 	INTEGER(iter)[l]++;
+        tot_iter++;
 	REAL(Dev)[l] = 0;
 	v = exp(max(eta, n));
 	for (int i=0; i<n; i++) {
@@ -153,8 +154,8 @@ SEXP gdfit_poisson(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lam
 	if (REAL(Dev)[l]/nullDev < .001) {
 	  if (warn) warning("Model saturated; exiting...");
 	  for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
-	  res = cleanupB(a, r, e, eta, beta0, beta, iter, df, Dev);
-	  return(res);
+          tot_iter = max_iter;
+          break;
 	}
 
 	// Update intercept
@@ -215,5 +216,6 @@ SEXP gdfit_poisson(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lam
     }
   }
   res = cleanupB(a, r, e, eta, beta0, beta, iter, df, Dev);
+  UNPROTECT(5);
   return(res);
 }

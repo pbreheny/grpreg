@@ -1,7 +1,7 @@
 #include <math.h>
 #include <string.h>
-#include "Rinternals.h"
-#include "R_ext/Rdynload.h"
+#include <Rinternals.h>
+#include <R_ext/Rdynload.h>
 #include <R.h>
 #include <R_ext/Applic.h>
 int checkConvergence(double *beta, double *beta_old, double eps, int l, int J);
@@ -124,6 +124,7 @@ SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
   double gamma = REAL(gamma_)[0];
   double tau = REAL(tau_)[0];
   int max_iter = INTEGER(max_iter_)[0];
+  int tot_iter = 0;
   double *m = REAL(group_multiplier);
   int dfmax = INTEGER(dfmax_)[0];
   int gmax = INTEGER(gmax_)[0];
@@ -184,17 +185,17 @@ SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
 	}
 	if (nv != nv_old) ng++;
       }
-      if (ng > gmax | nv > dfmax) {
+      if (ng > gmax | nv > dfmax | tot_iter == max_iter) {
 	for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
-	res = cleanupG(a, r, e, beta, iter, df, loss);
-	return(res);
+        break;
       }
     }
 
-    while (INTEGER(iter)[l] < max_iter) {
-      while (INTEGER(iter)[l] < max_iter) {
+    while (tot_iter < max_iter) {
+      while (tot_iter < max_iter) {
 	converged = 0;
 	INTEGER(iter)[l]++;
+        tot_iter++;
 	REAL(df)[l] = 0;
 
 	// Update unpenalized covariates
@@ -237,5 +238,6 @@ SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
     }
   }
   res = cleanupG(a, r, e, beta, iter, df, loss);
+  UNPROTECT(4);
   return(res);
 }

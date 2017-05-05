@@ -1,6 +1,6 @@
 gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poisson"), nlambda=100, lambda,
                     lambda.min={if (nrow(X) > ncol(X)) .001 else .05}, lambda.max, alpha=1, eps=.001, delta=1e-7,
-                    max.iter=1000, gamma=0.5, group.multiplier=rep(1,J), warn=TRUE) {
+                    max.iter=10000, gamma=0.5, group.multiplier=rep(1,J), warn=TRUE) {
   # Coersion
   family <- match.arg(family)
   if (class(X) != "matrix") {

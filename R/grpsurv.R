@@ -1,6 +1,6 @@
 grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD", "gel", "cMCP", "gBridge", "gLasso", "gMCP"),
                    gamma=ifelse(penalty=="grSCAD", 4, 3), alpha=1, nlambda=100, lambda,
-                   lambda.min={if (nrow(X) > ncol(X)) 0.001 else .05}, eps=.001, max.iter=1000,
+                   lambda.min={if (nrow(X) > ncol(X)) 0.001 else .05}, eps=.001, max.iter=10000,
                    dfmax=p, gmax=length(unique(group)), tau=1/3,
                    group.multiplier, warn=TRUE, returnX=FALSE, ...) {
   # Coersion

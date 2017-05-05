@@ -1,7 +1,7 @@
 #include <math.h>
 #include <string.h>
-#include "Rinternals.h"
-#include "R_ext/Rdynload.h"
+#include <Rinternals.h>
+#include <R_ext/Rdynload.h>
 #include <R.h>
 #include <R_ext/Applic.h>
 

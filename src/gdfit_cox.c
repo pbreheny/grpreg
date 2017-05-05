@@ -1,7 +1,7 @@
 #include <math.h>
 #include <string.h>
-#include "Rinternals.h"
-#include "R_ext/Rdynload.h"
+#include <Rinternals.h>
+#include <R_ext/Rdynload.h>
 #include <R.h>
 #include <R_ext/Applic.h>
 int checkConvergence(double *beta, double *beta_old, double eps, int l, int J);
@@ -65,6 +65,7 @@ SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda,
   double alpha = REAL(alpha_)[0];
   double eps = REAL(eps_)[0];
   int max_iter = INTEGER(max_iter_)[0];
+  int tot_iter = 0;
   double gamma = REAL(gamma_)[0];
   double *m = REAL(group_multiplier);
   int dfmax = INTEGER(dfmax_)[0];
@@ -128,16 +129,16 @@ SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda,
 	  nv = nv + (K1[g+1]-K1[g]);
 	}
       }
-      if (ng > gmax | nv > dfmax) {
-	for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
-	res = cleanupCox(h, a, r, e, eta, haz, rsk, beta, Loss, iter, Eta, df);
-	return(res);
+      if (ng > gmax | nv > dfmax | tot_iter == max_iter) {
+        for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
+        break;
       }
     }
 
-    while (INTEGER(iter)[l] < max_iter) {
-      while (INTEGER(iter)[l] < max_iter) {
+    while (tot_iter < max_iter) {
+      while (tot_iter < max_iter) {
 	INTEGER(iter)[l]++;
+        tot_iter++;
 	REAL(Loss)[l] = 0;
 	REAL(df)[l] = 0;
 	
@@ -168,8 +169,8 @@ SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda,
 	if (REAL(Loss)[l]/nullDev < .01) {
 	  if (warn) warning("Model saturated; exiting...");
 	  for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
-	  res = cleanupCox(h, a, r, e, eta, haz, rsk, beta, Loss, iter, Eta, df);
-	  return(res);
+          tot_iter = max_iter;
+          break;
 	}
 
 	// Update unpenalized covariates
@@ -220,5 +221,6 @@ SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda,
     }
   }
   res = cleanupCox(h, a, r, e, eta, haz, rsk, beta, Loss, iter, Eta, df);
+  UNPROTECT(5);
   return(res);
 }

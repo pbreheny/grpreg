@@ -7,6 +7,3 @@ multiX <- function(X, m) {
   }
   cbind(matrix(as.numeric(diag(m)),m*n,m,byrow=TRUE)[,2:m],A)
 }
-multiY <- function(y) {
-  as.numeric(t(y))
-}

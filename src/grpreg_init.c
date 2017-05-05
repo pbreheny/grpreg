@@ -8,11 +8,7 @@
 /* .Call calls */
 extern SEXP gdfit_binomial(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gdfit_cox(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP gdfit_gaussian(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP gdfit_gaussian_no_active(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP gdfit_gaussian_sedpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP gdfit_gaussian_ssr(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP gdfit_gaussian_ssr_bedpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP gdfit_gaussian(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gdfit_poisson(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP lcdfit_binomial(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP lcdfit_cox(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -25,11 +21,7 @@ extern SEXP standardize(SEXP);
 static const R_CallMethodDef CallEntries[] = {
   {"gdfit_binomial",           (DL_FUNC) &gdfit_binomial,           15},
   {"gdfit_cox",                (DL_FUNC) &gdfit_cox,                15},
-  {"gdfit_gaussian",           (DL_FUNC) &gdfit_gaussian,           14},
-  {"gdfit_gaussian_no_active", (DL_FUNC) &gdfit_gaussian_no_active, 14},
-  {"gdfit_gaussian_sedpp",     (DL_FUNC) &gdfit_gaussian_sedpp,     15},
-  {"gdfit_gaussian_ssr",       (DL_FUNC) &gdfit_gaussian_ssr,       15},
-  {"gdfit_gaussian_ssr_bedpp", (DL_FUNC) &gdfit_gaussian_ssr_bedpp, 15},
+  {"gdfit_gaussian",           (DL_FUNC) &gdfit_gaussian,           15},
   {"gdfit_poisson",            (DL_FUNC) &gdfit_poisson,            15},
   {"lcdfit_binomial",          (DL_FUNC) &lcdfit_binomial,          17},
   {"lcdfit_cox",               (DL_FUNC) &lcdfit_cox,               17},
@@ -47,19 +39,6 @@ void R_init_grpreg(DllInfo *dll) {
 }
 
 // Cleanup
-SEXP cleanupG(double *a, double *r, int *e, SEXP beta, SEXP iter, SEXP df, SEXP loss) {
-  Free(a);
-  Free(r);
-  Free(e);
-  SEXP res;
-  PROTECT(res = allocVector(VECSXP, 4));
-  SET_VECTOR_ELT(res, 0, beta);
-  SET_VECTOR_ELT(res, 1, iter);
-  SET_VECTOR_ELT(res, 2, df);
-  SET_VECTOR_ELT(res, 3, loss);
-  UNPROTECT(5);
-  return(res);
-}
 SEXP cleanupB(double *a, double *r, int *e, double *eta, SEXP beta0, SEXP beta, SEXP iter, SEXP df, SEXP Dev) {
   Free(a);
   Free(r);
@@ -72,7 +51,7 @@ SEXP cleanupB(double *a, double *r, int *e, double *eta, SEXP beta0, SEXP beta, 
   SET_VECTOR_ELT(res, 2, iter);
   SET_VECTOR_ELT(res, 3, df);
   SET_VECTOR_ELT(res, 4, Dev);
-  UNPROTECT(6);
+  UNPROTECT(1);
   return(res);
 }
 // Memory handling and output formatting, Cox
@@ -91,7 +70,7 @@ SEXP cleanupCox(double *h, double *a, double *r, int *e, double *eta, double *ha
   SET_VECTOR_ELT(res, 2, df);
   SET_VECTOR_ELT(res, 3, Dev);
   SET_VECTOR_ELT(res, 4, Eta);
-  UNPROTECT(6);
+  UNPROTECT(1);
   return(res);
 }
 
