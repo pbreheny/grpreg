@@ -1,5 +1,5 @@
 set.seed(1)
-n <- 20
+n <- 100
 p <- 5
 
 .test = "multitask learning works"

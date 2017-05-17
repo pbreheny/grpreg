@@ -13,7 +13,6 @@ double Fs(double z, double l1, double l2, double gamma);
 double MCP(double theta, double l, double a);
 double dMCP(double theta, double l, double a);
 double gLoss(double *r, int n);
-SEXP cleanupG(double *a, double *r, int *e, SEXP beta, SEXP iter, SEXP df, SEXP loss);
 
 // Groupwise local coordinate descent updates
 void gLCD_gaussian(double *b, const char *penalty, double *x, double *r, int g, int *K1, int n, int l, int p, double lam1, double lam2, double gamma, double tau, SEXP df, double *a, double delta, int *e)
@@ -132,6 +131,7 @@ SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
 
   // Outcome
   SEXP res, beta, iter, df, loss;
+  PROTECT(res = allocVector(VECSXP, 4));
   PROTECT(beta = allocVector(REALSXP, L*p));
   for (int j=0; j<(L*p); j++) REAL(beta)[j] = 0;
   PROTECT(iter = allocVector(INTSXP, L));
@@ -237,7 +237,13 @@ SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }
   }
-  res = cleanupG(a, r, e, beta, iter, df, loss);
-  UNPROTECT(4);
+  Free(a);
+  Free(r);
+  Free(e);
+  SET_VECTOR_ELT(res, 0, beta);
+  SET_VECTOR_ELT(res, 1, iter);
+  SET_VECTOR_ELT(res, 2, df);
+  SET_VECTOR_ELT(res, 3, loss);
+  UNPROTECT(5);
   return(res);
 }

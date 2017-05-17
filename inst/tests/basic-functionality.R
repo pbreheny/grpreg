@@ -1,3 +1,4 @@
+#source("~/dev/.grpreg.setup.R")
 set.seed(1)
 
 .test = "grpreg() reproduces simple linear regression"

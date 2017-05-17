@@ -6,11 +6,11 @@
   linear and logistic regression models.}
 \usage{
 grpreg(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD",
-"gel", "cMCP", "gBridge", "gLasso", "gMCP"), screen = c("None", "SSR", "SEDPP", "SSR-BEDPP", "No-Active"), 
-family=c("gaussian","binomial", "poisson"), nlambda=100, lambda, 
-lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05}, log.lambda = TRUE, alpha=1, eps=.001, max.iter=1000, dfmax=p,
+"gel", "cMCP"), family=c("gaussian", "binomial", "poisson"),
+nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) 1e-4 else .05},
+log.lambda = TRUE, alpha=1, eps=1e-4, max.iter=10000, dfmax=p,
 gmax=length(unique(group)), gamma=ifelse(penalty == "grSCAD", 4, 3),
-tau = 1/3, group.multiplier, warn=TRUE, return.time=TRUE, ...)
+tau = 1/3, group.multiplier, warn=TRUE, returnX = FALSE, ...)
 }
 
 \arguments{
@@ -28,11 +28,6 @@ tau = 1/3, group.multiplier, warn=TRUE, return.time=TRUE, ...)
     selection, one of \code{grLasso}, \code{grMCP}, or \code{grSCAD}.
     For bi-level selection, one of \code{gel} or \code{cMCP}.  See
     below for details.}
-  \item{screen}{The screening rule to be applied to discard groups of features.
-  "SSR" is the sequential strong rule, "SEDPP" is the sequential EDPP rule, 
-  "SSR-BEDPP" is the combination of sequential strong rule and the basic EDPP (BEDPP) 
-  rule. "None" (default) is that no screen rule is applied (but with active 
-  cycling by default). "No-Active" is to turn off active cycling update. }
   \item{family}{Either "gaussian" or "binomial", depending on the
     response.}
   \item{nlambda}{The number of \code{lambda} values.  Default is 100.}
@@ -54,8 +49,8 @@ tau = 1/3, group.multiplier, warn=TRUE, return.time=TRUE, ...)
   \item{eps}{Convergence threshhold.  The algorithm iterates until the
     change (on the standardized scale) in any coefficient is less than
     \code{eps}.  Default is \code{.001}.  See details.}
-  \item{max.iter}{Maximum number of iterations.  Default is 1000.  See
-    details.}
+  \item{max.iter}{Maximum number of iterations (total across entire
+    path). Default is 10000.  See details.}
   \item{dfmax}{Limit on the number of parameters allowed to be nonzero.
     If this limit is exceeded, the algorithm will exit early from the
     regularization path.}
@@ -74,7 +69,8 @@ tau = 1/3, group.multiplier, warn=TRUE, return.time=TRUE, ...)
     (i.e., no adjustment for group size) for bi-level selection.}
   \item{warn}{Should the function give a warning if it fails to
     converge?  Default is TRUE.  See details.}
-  \item{return.time}{Should return the computing time of solving the model? Default is TRUE.}
+  \item{returnX}{Return the standardized design matrix (and associated
+    group structure information)?  Default is FALSE.}
   \item{...}{Arguments passed to other functions (such as gBridge).}
 }
 \details{

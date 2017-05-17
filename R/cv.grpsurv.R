@@ -10,7 +10,7 @@ cv.grpsurv <- function(X, y, group, ..., nfolds=10, seed, cv.ind, returnY=FALSE,
   fit <- do.call("grpsurv", fit.args)
 
   # Get standardized X, y
-  X <- fit$X
+  X <- fit$XG$X
   y <- cbind(fit$time, fit$fail)
   returnX <- list(...)$returnX
   if (is.null(returnX) || !returnX) fit$X <- NULL
@@ -23,9 +23,9 @@ cv.grpsurv <- function(X, y, group, ..., nfolds=10, seed, cv.ind, returnY=FALSE,
 
   cv.args <- list(...)
   cv.args$lambda <- fit$lambda
-  cv.args$group <- fit$group
+  cv.args$group <- fit$XG$g
+  cv.args$group.multiplier <- fit$XG$m
   cv.args$warn <- FALSE
-  cv.args$group.multiplier <- fit$group.multiplier
 
   for (i in 1:nfolds) {
     if (trace) cat("Starting CV fold #",i,sep="","\n")

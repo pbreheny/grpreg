@@ -12,8 +12,6 @@ double norm(double *x, int p);
 double S(double z, double l);
 double MCP(double theta, double l, double a);
 double dMCP(double theta, double l, double a);
-SEXP cleanupCox(double *h, double *a, double *r, int *e, double *eta, double *haz,
-		double *rsk, SEXP beta, SEXP Dev, SEXP iter, SEXP Eta, SEXP df);
 
 // Groupwise local coordinate descent updates -- Cox
 void gLCD_cox(double *b, const char *penalty, double *X, double *r, double *eta,
@@ -165,6 +163,7 @@ SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
 
   // Outcome
   SEXP res, beta, Loss, iter, df, Eta;
+  PROTECT(res = allocVector(VECSXP, 5));  
   PROTECT(beta = allocVector(REALSXP, L*p));
   for (int j=0; j<(L*p); j++) REAL(beta)[j] = 0;
   PROTECT(iter = allocVector(INTSXP, L));
@@ -235,7 +234,7 @@ SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
 	}
 	if (nv != nv_old) ng++;
       }
-      if (ng > gmax | nv > dfmax | tot_iter = max_iter) {
+      if (ng > gmax | nv > dfmax | tot_iter == max_iter) {
 	for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
         break;
       }
@@ -325,7 +324,18 @@ SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }
   }
-  res = cleanupCox(h, a, r, e, eta, haz, rsk, beta, Loss, iter, Eta, df);
-  UNPROTECT(5);
+  Free(h);
+  Free(a);
+  Free(r);
+  Free(e);
+  Free(eta);
+  Free(haz);
+  Free(rsk);
+  SET_VECTOR_ELT(res, 0, beta);
+  SET_VECTOR_ELT(res, 1, iter);
+  SET_VECTOR_ELT(res, 2, df);
+  SET_VECTOR_ELT(res, 3, Loss);
+  SET_VECTOR_ELT(res, 4, Eta);
+  UNPROTECT(6);
   return(res);
 }

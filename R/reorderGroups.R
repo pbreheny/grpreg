@@ -1,4 +1,4 @@
-reorderGroups <- function(group, m, sqr) {
+reorderGroups <- function(group, m, bilevel) {
   if (any(order(group) != 1:length(group)) | !is.numeric(group)) {
     reorder <- TRUE
     gf <- factor(group)
@@ -18,7 +18,7 @@ reorderGroups <- function(group, m, sqr) {
   }
   J <- max(g)
   if (missing(m)) {
-    m <- if (sqr) sqrt(table(g[g!=0])) else rep(1, J)
+    m <- if (bilevel) rep(1, J) else sqrt(table(g[g!=0]))
   }
   if (length(m)!=max(g)) stop("Length of group.multiplier must equal number of penalized groups")
   if (reorder) {

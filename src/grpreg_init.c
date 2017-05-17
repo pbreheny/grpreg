@@ -38,42 +38,6 @@ void R_init_grpreg(DllInfo *dll) {
   R_useDynamicSymbols(dll, FALSE);
 }
 
-// Cleanup
-SEXP cleanupB(double *a, double *r, int *e, double *eta, SEXP beta0, SEXP beta, SEXP iter, SEXP df, SEXP Dev) {
-  Free(a);
-  Free(r);
-  Free(e);
-  Free(eta);
-  SEXP res;
-  PROTECT(res = allocVector(VECSXP, 5));
-  SET_VECTOR_ELT(res, 0, beta0);
-  SET_VECTOR_ELT(res, 1, beta);
-  SET_VECTOR_ELT(res, 2, iter);
-  SET_VECTOR_ELT(res, 3, df);
-  SET_VECTOR_ELT(res, 4, Dev);
-  UNPROTECT(1);
-  return(res);
-}
-// Memory handling and output formatting, Cox
-SEXP cleanupCox(double *h, double *a, double *r, int *e, double *eta, double *haz, double *rsk, SEXP beta, SEXP Dev, SEXP iter, SEXP Eta, SEXP df) {
-  Free(h);
-  Free(a);
-  Free(r);
-  Free(e);
-  Free(eta);
-  Free(haz);
-  Free(rsk);
-  SEXP res;
-  PROTECT(res = allocVector(VECSXP, 5));
-  SET_VECTOR_ELT(res, 0, beta);
-  SET_VECTOR_ELT(res, 1, iter);
-  SET_VECTOR_ELT(res, 2, df);
-  SET_VECTOR_ELT(res, 3, Dev);
-  SET_VECTOR_ELT(res, 4, Eta);
-  UNPROTECT(1);
-  return(res);
-}
-
 // Check for convergence of beta[l]
 int checkConvergence(double *beta, double *beta_old, double eps, int l, int J) {
   int j;

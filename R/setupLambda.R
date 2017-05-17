@@ -39,8 +39,7 @@ setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, log.lam
   lambda
 }
 
-setupLambda.gBridge <- function(X, y, group, family, alpha, lambda.min, lambda.max, nlambda, gamma, group.multiplier)
-{
+setupLambda.gBridge <- function(X, y, group, family, alpha, lambda.min, lambda.max, nlambda, gamma, group.multiplier) {
   ## Fit to unpenalized covariates
   n <- length(y)
   ind <- which(group!=0)
@@ -59,8 +58,7 @@ setupLambda.gBridge <- function(X, y, group, family, alpha, lambda.min, lambda.m
       z <- crossprod(X[,ind], fit$weights * residuals(fit, "working")) / n
       a <- .2
     }
-    maxGradient <- tapply(abs(z), group[ind],max)*a^(1-gamma)/gamma
-    lambda.max <- max(maxGradient/group.multiplier) / alpha
+    lambda.max <- max(abs(z)/group.multiplier)*a^(1-gamma)/(gamma*alpha)
   }
   if (lambda.min==0) {
     lambda <- c(exp(seq(log(lambda.max), log(.001*lambda.max), len=nlambda-1)),0)                  

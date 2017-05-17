@@ -14,7 +14,6 @@ double F(double z, double l1, double l2, double gamma);
 double Fs(double z, double l1, double l2, double gamma);
 double MCP(double theta, double l, double a);
 double dMCP(double theta, double l, double a);
-SEXP cleanupB(double *a, double *r, int *e, double *eta, SEXP beta0, SEXP beta, SEXP iter, SEXP df, SEXP Dev);
 
 // Group descent update -- poisson
 void gd_poisson(double *b, double *x, double *r, double v, double *eta, int g, int *K1, int n, int l, int p, const char *penalty, double lam1, double lam2, double gamma, SEXP df, double *a) {
@@ -76,6 +75,7 @@ SEXP gdfit_poisson(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lam
 
   // Outcome
   SEXP res, beta0, beta, iter, df, Dev;
+  PROTECT(res = allocVector(VECSXP, 5));
   PROTECT(beta0 = allocVector(REALSXP, L));
   for (int i=0; i<L; i++) REAL(beta0)[i] = 0;
   PROTECT(beta = allocVector(REALSXP, L*p));
@@ -215,7 +215,15 @@ SEXP gdfit_poisson(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lam
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }
   }
-  res = cleanupB(a, r, e, eta, beta0, beta, iter, df, Dev);
-  UNPROTECT(5);
+  Free(a);
+  Free(r);
+  Free(e);
+  Free(eta);
+  SET_VECTOR_ELT(res, 0, beta0);
+  SET_VECTOR_ELT(res, 1, beta);
+  SET_VECTOR_ELT(res, 2, iter);
+  SET_VECTOR_ELT(res, 3, df);
+  SET_VECTOR_ELT(res, 4, Dev);
+  UNPROTECT(6);
   return(res);
 }

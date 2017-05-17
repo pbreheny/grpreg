@@ -6,10 +6,9 @@
   lambda.}
 \usage{
 grpsurv(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD",
-"gel", "cMCP", "gBridge", "gLasso", "gMCP"),
-gamma=ifelse(penalty=="grSCAD", 4, 3), alpha=1, nlambda=100, lambda,
-lambda.min={if (nrow(X) > ncol(X)) 0.001 else .05}, eps=.001,
-max.iter=1000, dfmax=p, gmax=length(unique(group)), tau=1/3,
+"gel", "cMCP"), gamma=ifelse(penalty=="grSCAD", 4, 3), alpha=1,
+nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) 0.001 else .05},
+eps=.001, max.iter=10000, dfmax=p, gmax=length(unique(group)), tau=1/3,
 group.multiplier, warn=TRUE, returnX=FALSE, ...)
 }
 \arguments{
@@ -47,7 +46,8 @@ group.multiplier, warn=TRUE, returnX=FALSE, ...)
   \item{eps}{Convergence threshhold.  The algorithm iterates until the
     relative change in any coefficient is less than \code{eps}.  Default
     is \code{.001}.}
-  \item{max.iter}{Maximum number of iterations.  Default is 1000.}
+  \item{max.iter}{Maximum number of iterations (total across entire
+    path).  Default is 10000.}
   \item{dfmax}{Limit on the number of parameters allowed to be nonzero.
     If this limit is exceeded, the algorithm will exit early from the
     regularization path.}

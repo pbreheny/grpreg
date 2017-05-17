@@ -10,8 +10,6 @@ double norm(double *x, int p);
 double S(double z, double l);
 double F(double z, double l1, double l2, double gamma);
 double Fs(double z, double l1, double l2, double gamma);
-SEXP cleanupCox(double *h, double *a, double *r, int *e, double *eta, double *haz,
-		double *rsk, SEXP beta, SEXP Dev, SEXP iter, SEXP Eta, SEXP df);
 
 // Group descent update -- cox
 void gd_cox(double *b, double *x, double *r, double *eta, double v, int g,
@@ -75,6 +73,7 @@ SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda,
 
   // Outcome
   SEXP res, beta, Loss, iter, df, Eta;
+  PROTECT(res = allocVector(VECSXP, 5));
   PROTECT(beta = allocVector(REALSXP, L*p));
   for (int j=0; j<(L*p); j++) REAL(beta)[j] = 0;
   PROTECT(iter = allocVector(INTSXP, L));
@@ -220,7 +219,18 @@ SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda,
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }
   }
-  res = cleanupCox(h, a, r, e, eta, haz, rsk, beta, Loss, iter, Eta, df);
-  UNPROTECT(5);
+  Free(h);
+  Free(a);
+  Free(r);
+  Free(e);
+  Free(eta);
+  Free(haz);
+  Free(rsk);
+  SET_VECTOR_ELT(res, 0, beta);
+  SET_VECTOR_ELT(res, 1, iter);
+  SET_VECTOR_ELT(res, 2, df);
+  SET_VECTOR_ELT(res, 3, Loss);
+  SET_VECTOR_ELT(res, 4, Eta);
+  UNPROTECT(6);
   return(res);
 }

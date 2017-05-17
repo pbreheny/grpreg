@@ -39,13 +39,13 @@ y <- rnorm(n)
 yy <- y > 0
 par(mfrow=c(3,3))
 fit <- grpreg(X, y, group, penalty="grLasso"); plot(fit)
-fit <- grpreg(X, y, group, penalty="gMCP"); plot(fit)
+fit <- grpreg(X, y, group, penalty="cMCP"); plot(fit)
 fit <- gBridge(X, y, group); plot(fit)
 fit <- grpreg(X, yy, group, penalty="grLasso", family="binomial"); plot(fit)
-fit <- grpreg(X, yy, group, penalty="gMCP", family="binomial"); plot(fit); fit$beta[,100]
+fit <- grpreg(X, yy, group, penalty="cMCP", family="binomial"); plot(fit); fit$beta[,100]
 fit <- gBridge(X, yy, group, family="binomial"); plot(fit); fit$beta[,100]
 fit <- grpreg(X, yy, group, penalty="grLasso", family="poisson"); plot(fit)
-fit <- grpreg(X, yy, group, penalty="gMCP", family="poisson"); plot(fit); fit$beta[,100]
+fit <- grpreg(X, yy, group, penalty="cMCP", family="poisson"); plot(fit); fit$beta[,100]
 fit <- gBridge(X, yy, group, family="poisson"); plot(fit); fit$beta[,100]
 
 .test = "grpreg handles groups of non-full rank"
@@ -58,11 +58,11 @@ y <- rnorm(n)
 yy <- y > 0
 par(mfrow=c(2,3))
 fit <- grpreg(X, y, group, penalty="grLasso"); plot(fit)
-fit <- grpreg(X, y, group, penalty="gMCP"); plot(fit)
+fit <- grpreg(X, y, group, penalty="cMCP"); plot(fit)
 fit <- grpreg(X, yy, group, penalty="grLasso", family="binomial"); plot(fit)
-fit <- grpreg(X, yy, group, penalty="gMCP", family="binomial"); plot(fit)
+fit <- grpreg(X, yy, group, penalty="cMCP", family="binomial"); plot(fit)
 fit <- grpreg(X, yy, group, penalty="grLasso", family="poisson"); plot(fit)
-fit <- grpreg(X, yy, group, penalty="gMCP", family="poisson"); plot(fit)
+fit <- grpreg(X, yy, group, penalty="cMCP", family="poisson"); plot(fit)
 
 .test = "grpreg out-of-order groups"
 n <- 50
@@ -77,7 +77,7 @@ fit1 <- grpreg(X, y, group, penalty="grLasso")
 fit2 <- grpreg(X[,ind], y, group[ind], penalty="grLasso")
 b1 <- coef(fit1)[-1,][ind,]
 b2 <- coef(fit2)[-1,]
-check(b1, b2, tol=0.001)
+check(b1, b2, tol=0.01)
 
 .test = "grpreg named groups"
 n <- 50
@@ -99,7 +99,7 @@ X <- matrix(rnorm(n*p),ncol=p)
 y <- rnorm(n)
 group <- rep(0:3,1:4)
 gm <- 1:3
-plot(fit <- grpreg(X, y, group, penalty="gMCP", lambda.min=0, group.multiplier=gm), main=fit$penalty)
+plot(fit <- grpreg(X, y, group, penalty="cMCP", lambda.min=0, group.multiplier=gm), main=fit$penalty)
 plot(fit <- gBridge(X, y, group, lambda.min=0, group.multiplier=gm), main=fit$penalty)
 plot(fit <- grpreg(X, y, group, penalty="grLasso", lambda.min=0, group.multiplier=gm), main=fit$penalty)
 plot(fit <- grpreg(X, y, group, penalty="grMCP", lambda.min=0, group.multiplier=gm), main=fit$penalty)

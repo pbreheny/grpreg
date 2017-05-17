@@ -2,6 +2,7 @@ newY <- function(y, family) {
   if (is.data.frame(y)) y <- as.matrix(y)
   if (is.matrix(y)) {
     d <- dim(y)
+    y <- t(y)
   } else {
     d <- c(length(y), 1)
   }
@@ -31,7 +32,11 @@ newY <- function(y, family) {
     attributes(y) <- NULL
   }
 
-  if (family=="gaussian") y <- y - mean(y)
+  if (family=="gaussian") {
+    meanY <- mean(y)
+    y <- y - meanY
+    attr(y, "mean") <- meanY
+  }
   attr(y, "m") <- d[2]
   y
 }

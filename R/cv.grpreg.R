@@ -1,21 +1,27 @@
 cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, returnY=FALSE, trace=FALSE) {
-  if (!missing(seed)) set.seed(seed)
-  fit <- grpreg(X=X, y=y, group=group, ...)
-  multi <- FALSE
-  if (is.matrix(y) && ncol(y) > 1) {
-    multi <- TRUE
-    m <- ncol(y)
-    response.names <- if (is.null(colnames(y))) paste("Y",1:m,sep="") else colnames(y)
-    y <- multiY(y)
-    X <- multiX(X, m)
-  }
-  g <- if (multi) c(rep(0,m-1), fit$group) else fit$group
-  E <- Y <- matrix(NA, nrow=length(y), ncol=length(fit$lambda))
-  if (fit$family=="binomial") PE <- E
 
+  # Complete data fit
+  fit.args <- list(...)
+  fit.args$X <- X
+  fit.args$y <- y
+  fit.args$group <- group
+  fit.args$returnX <- TRUE
+  fit <- do.call("grpreg", fit.args)
+
+  # Get standardized X, y
+  X <- fit$XG$X
+  g <- fit$XG$g
+  gm <- fit$XG$m
+  y <- fit$y
+  m <- attr(fit$y, "m")
+  returnX <- list(...)$returnX
+  if (is.null(returnX) || !returnX) fit$XG <- NULL
+
+  # Set up folds
+  if (!missing(seed)) set.seed(seed)
   n <- length(y)
   if (missing(cv.ind)) {
-    if (multi) {
+    if (m > 1) {
       nn <- n/m
       cv.ind <- rep(ceiling(sample(1:nn)/nn*nfolds), each=m)
     } else if (fit$family=="binomial" & (min(table(y)) > nfolds)) {
@@ -33,6 +39,9 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, retur
     }
   }
 
+  # Do cross-validation
+  E <- Y <- matrix(NA, nrow=length(y), ncol=length(fit$lambda))
+  if (fit$family=="binomial") PE <- E
   for (i in 1:nfolds) {
     if (trace) cat("Starting CV fold #",i,sep="","\n")
     X1 <- X[cv.ind!=i, , drop=FALSE]
@@ -40,7 +49,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, retur
     X2 <- X[cv.ind==i, , drop=FALSE]
     y2 <- y[cv.ind==i]
 
-    args <- list(..., X=X1, y=y1, group=g)
+    args <- list(..., X=X1, y=y1, group=g, group.multiplier=gm)
     args$lambda <- fit$lambda
     args$warn <- FALSE
     fit.i <- do.call('grpreg', args)
@@ -65,6 +74,9 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, retur
 
   val <- list(cve=cve, cvse=cvse, lambda=lambda, fit=fit, min=min, lambda.min=lambda[min], null.dev=null.dev)
   if (fit$family=="binomial") val$pe <- apply(PE[,ind], 2, mean)
-  if (returnY) val$Y <- Y
+  if (returnY) {
+    if (fit$family=="gaussian") val$Y <- Y + attr(y, "mean")
+    else val$Y <- Y
+  }
   structure(val, class="cv.grpreg")
 }
