@@ -22,17 +22,17 @@ setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, log.lam
     zmax <- .Call("maxprod", X, r, K1, as.double(group.multiplier)) / n
   }
   lambda.max <- zmax/alpha
-  
+
   if (log.lambda) { # lambda sequence on log-scale
     if (lambda.min==0) {
       lambda <- c(exp(seq(log(lambda.max), log(.001*lambda.max), length=nlambda-1)), 0)
-    } else { 
+    } else {
       lambda <- exp(seq(log(lambda.max), log(lambda.min*lambda.max), length=nlambda))
     }
   } else { # lambda sequence on linear-scale
     if (lambda.min==0) {
       lambda <- c(seq(lambda.max, 0.001*lambda.max, length = nlambda-1), 0)
-    } else { 
+    } else {
       lambda <- seq(lambda.max, lambda.min*lambda.max, length = nlambda)
     }
   }
@@ -48,7 +48,7 @@ setupLambda.gBridge <- function(X, y, group, family, alpha, lambda.min, lambda.m
   } else {
     fit <- glm(y~1, family=family)
   }
-  
+
   ## Guess lambda.max
   if (missing(lambda.max)) {
     if (family=="gaussian") {
@@ -61,7 +61,7 @@ setupLambda.gBridge <- function(X, y, group, family, alpha, lambda.min, lambda.m
     lambda.max <- max(abs(z)/group.multiplier)*a^(1-gamma)/(gamma*alpha)
   }
   if (lambda.min==0) {
-    lambda <- c(exp(seq(log(lambda.max), log(.001*lambda.max), len=nlambda-1)),0)                  
+    lambda <- c(exp(seq(log(lambda.max), log(.001*lambda.max), len=nlambda-1)),0)
   } else {
     lambda <- exp(seq(log(lambda.max),log(lambda.min*lambda.max),len=nlambda))
   }

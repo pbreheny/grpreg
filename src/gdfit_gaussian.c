@@ -20,9 +20,9 @@ int sum_rejections(int *x, int n) {
 }
 
 // Group descent update
-double gd_gaussian(double *b, double *x, double *r, int g, int *K1, int *K,
+void gd_gaussian(double *b, double *x, double *r, int g, int *K1, int *K,
                        int n, int l, int p, const char *penalty, double lam1, double lam2,
-                       double gamma, SEXP df, double *a, double maxChange) {
+                       double gamma, SEXP df, double *a, double *maxChange) {
   // Calculate z
   double *z = Calloc(K[g], double);
   for (int j=K1[g]; j<K1[g+1]; j++) z[j-K1[g]] = crossprod(x, r, n, j)/n + a[j];
@@ -38,14 +38,13 @@ double gd_gaussian(double *b, double *x, double *r, int g, int *K1, int *K,
     for (int j=K1[g]; j<K1[g+1]; j++) {
       b[l*p+j] = len * z[j-K1[g]] / z_norm;
       double shift = b[l*p+j]-a[j];
-      if (fabs(shift) > maxChange) maxChange = fabs(shift);
+      if (fabs(shift) > maxChange[0]) maxChange[0] = fabs(shift);
       for (int i=0; i<n; i++) r[i] -= x[n*j+i] * shift;
     }
   }
   // Update df
   if (len > 0) REAL(df)[l] += K[g] * len / z_norm;
   Free(z);
-  return(maxChange);
 }
 
 // Scan for violations in rest set
@@ -294,7 +293,7 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
   int *e = Calloc(J, int); // ever-active set
   for (int g=0; g<J; g++) e[g] = 0;
   int converged, lstart = 0, ng, nv, violations;
-  double shift, l1, l2;
+  double shift, l1, l2, maxChange;
 
   // variables for screening
   int *e2 = Calloc(J, int); // strong set
@@ -377,11 +376,12 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
           INTEGER(iter)[l]++;
           tot_iter++;
           REAL(df)[l] = 0;
-          double maxChange = 0;
+          maxChange = 0;
           
           // Update unpenalized covariates
           for (int j=0; j<K0; j++) {
             shift = crossprod(X, r, n, j)/n;
+            if (fabs(shift) > maxChange) maxChange = fabs(shift);
             b[l*p+j] = shift + a[j];
             for (int i=0; i<n; i++) r[i] -= shift * X[n*j+i];
             REAL(df)[l] += 1;
@@ -392,19 +392,13 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
             l1 = lam[l] * m[g] * alpha;
             l2 = lam[l] * m[g] * (1-alpha);
             if (e[g]) {
-              maxChange = gd_gaussian(b, X, r, g, K1, K, n, l, p, penalty, l1, l2, gamma, df, a, maxChange);
+              gd_gaussian(b, X, r, g, K1, K, n, l, p, penalty, l1, l2, gamma, df, a, &maxChange);
             }
           }
           
           // Check convergence
 	  for (int j=0; j<p; j++) a[j] = b[l*p+j];
 	  if (maxChange < eps*sdy) break;
-          if (checkConvergence(b, a, eps, l, p)) {
-            converged  = 1;
-            REAL(loss)[l] = gLoss(r,n);
-            break;
-          }
-          for (int j=0; j<p; j++) a[j] = b[l*p+j];
         }
         // Scan for violations in strong set
         violations = check_strong_set(e2, e, xTr, X, r, K1, K, lam[l], n, J);

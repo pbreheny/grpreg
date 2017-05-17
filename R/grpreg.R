@@ -30,7 +30,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   m <- attr(yy, "m")
   XG <- newXG(X, group, group.multiplier, m, bilevel)
   if (nrow(XG$X) != length(yy)) stop("X and y do not have the same number of observations")
-  
+
   # Setup lambda
   if (missing(lambda)) {
     lambda <- setupLambda(XG$X, yy, XG$g, family, penalty, alpha, lambda.min, log.lambda, nlambda, XG$m)

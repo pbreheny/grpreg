@@ -146,3 +146,32 @@ plot(fit, main=fit$penalty)
 check(grSCAD, reg, tolerance=.01)
 check(predict(fit, X)[,100], predict(fit.mle), tolerance=.001)
 check(predict(fit, X, type="response")[,100], predict(fit.mle, type="response"), tolerance=.001)
+
+
+
+
+.test = "grpreg exactly reproduces linear regression"
+n <- 50
+p <- 10
+X <- matrix(rnorm(n*p),ncol=p)
+y <- rnorm(n)
+group <- rep(0:3,4:1)
+group <- 1:10
+reg <- coef(fit.mle <- lm(y~X))
+gel <- coef(fit <- grpreg(X, y, group, penalty="gel", lambda.min=0, eps=1e-10), lambda=0)
+grl <- coef(fit <- grpreg(X, y, group, penalty="grLasso", lambda.min=0, eps=1e-10), lambda=0)
+check(reg, grl)
+check(reg, gel)
+
+.test = "grpreg exactly reproduces linear regression"
+n <- 50
+p <- 10
+X <- ncvreg::std(matrix(rnorm(n*p),ncol=p))
+y <- rnorm(n)
+group <- rep(0:3,4:1)
+group <- 1:10
+reg <- coef(fit.mle <- lm(y~X))
+gel <- coef(fit <- grpreg(X, y, group, penalty="gel", lambda.min=0, eps=1e-10), lambda=0)
+grl <- coef(fit <- grpreg(X, y, group, penalty="grLasso", lambda.min=0, eps=1e-10), lambda=0)
+check(reg, grl)
+check(reg, gel)

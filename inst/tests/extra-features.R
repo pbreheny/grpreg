@@ -92,6 +92,18 @@ fit1 <- grpreg(X, y, group1, penalty="grLasso")
 fit2 <- grpreg(X, y, group2, penalty="grLasso")
 check(coef(fit1), coef(fit2), tol=0.001)
 
+.test = "grpreg out-of-order groups with constant columns"
+n <- 50
+group <- rep(c(1,3,0,2),5:2)
+p <- length(group)
+X <- matrix(rnorm(n*p),ncol=p)
+#X[,group==2] <- 0
+y <- rnorm(n)
+mle <- coef(lm(y~X))
+mle[!is.finite(mle)] <- 0
+grl <- coef(grpreg(X, y, group, penalty="grLasso", lambda.min=0, eps=1e-7), lambda=0)
+check(mle, grl, tol=0.01)
+
 .test = "group.multiplier works"
 n <- 50
 p <- 10

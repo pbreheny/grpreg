@@ -45,7 +45,7 @@ forms of the penalty.
 
 The following notation will be used.  The objective function $Q(\bb)$ being minimized can be decomposed into
 \as{Q(\bb|\X,\y) = L(\bb|\X,\y) + P(\bb),}
-where $L(\bb|\X,\y)$ denotes the loss function (negative log-likelihood) and $P(\bb)$ denotes the penalty.  In what follows,
+where $L(\bb|\X,\y)$ denotes the loss function (scaled negative log-likelihood) and $P(\bb)$ denotes the penalty.  In what follows,
 \begin{itemize}
   \item $\bb$ denotes the entire vector of regression coefficients
   \item $\bb_j$ denotes the vector of regression coefficients corresponding to the $j$th group
@@ -53,6 +53,12 @@ where $L(\bb|\X,\y)$ denotes the loss function (negative log-likelihood) and $P(
   \item $\norm{\bb_j}$ denotes the Euclidean ($L_2$) norm of $\bb_j$
   \item $\norm{\bb_j}_1$ denotes the $L_1$ norm of $\beta_j$ (Manhattan distance)
 \end{itemize}
+
+To clarify, by ``scaled'' loss function, we mean that the loss function has been multiplied by a factor of $1/n$.  So, for least-squares loss,
+\as{L(\bb|\X,\y) = \frac{1}{2n}\norm{\y - \X\bb}^2}
+while for binomial loss
+\as{L(\bb|\X,\y) = -\frac{1}{n}\sum_{i=1}^n \left\{y_i \log{\pi_i} + (1-y_i)\log{(1-\pi_i)}\right\},}
+and so on.
 
 \section{Group selection}
 
