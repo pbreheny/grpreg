@@ -149,16 +149,3 @@ ng <- sapply(predict(fit, type="groups"), length)
 check(max(head(ng, length(ng)-1)) <= gmax)
 check(max(ng) > 2)
 
-.test = "cv.grpreg() return LP array works"
-n <- 50
-group <- rep(0:4,5:1)
-p <- length(group)
-X <- matrix(rnorm(n*p),ncol=p)
-y <- rnorm(n)
-cvfit <- cv.grpreg(X, y, group, returnY=TRUE)
-cve <- apply(cvfit$Y - y, 2, crossprod)/n
-check(cve, cvfit$cve, tol= .001)
-y <- rnorm(n) > 0
-cvfit <- cv.grpreg(X, y, group, family='binomial', returnY=TRUE, lambda.min=0.5)
-pe <- apply((cvfit$Y>0.5)!=y, 2, mean)
-check(pe, cvfit$pe, tol= .001)
