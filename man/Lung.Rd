@@ -38,7 +38,7 @@ data(Lung)
     0.}
   }
 }
-\source{\url{http://CRAN.R-project.org/package=survival}}
+\source{\url{https://cran.r-project.org/package=survival}}
 \references{
   \itemize{
     \item Kalbfleisch D and Prentice RL (1980), \emph{The Statistical

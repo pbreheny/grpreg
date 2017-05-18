@@ -1,5 +1,3 @@
-#source("~/dev/.grpreg.setup.R")
-
 .test = "grpreg() reproduces simple linear regression"
 n <- 5
 p <- 1

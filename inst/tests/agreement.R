@@ -1,6 +1,3 @@
-##source("~/dev/.grpreg.setup.R")
-#require(grpreg)
-
 #################################
 .test = "gel reproduces lasso" ##
 #################################

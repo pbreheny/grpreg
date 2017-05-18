@@ -29,4 +29,3 @@ fit3 <- grpreg(X, y, group=g3, family="binomial")
 check(coef(fit1, which=50), coef(fit2, which=50), tol=0.001)
 check(coef(fit2, which=50), coef(fit3, which=50), tol=0.001)
 check(coef(fit1, which=50), coef(fit3, which=50), tol=0.001)
-# check(names(coef(fit1))=="TEST ME")  # Do I have good tests for constant columns?

@@ -176,10 +176,6 @@ void bedpp_glasso(int *e3, double *yTxxTv1, double *xTv1_sq, double *xTy_sq,
       e3[g] = 0; // reject
     }
     
-    // debug
-    // Rprintf("\t K[%d]: %d;\t Reject: %d;\t LHS_temp[%d]: %f;\t LHS[%d]: %f;\t RHS[%d]: %f;\t yTxxTv1[%d]: %f;\t xTv1_sq[%d]: %f;\t xTy_sq[%d]: %f\n", 
-    //         g, K[g], e3[g], g, LHS_temp, g, LHS, g, RHS, g, yTxxTv1[g], g, xTv1_sq[g], g, xTy_sq[g]);
-    
   }
 }
 

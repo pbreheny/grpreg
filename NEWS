@@ -1,16 +1,17 @@
-3.1-0 ()
+3.1-0 (2017-05-18)
   * New: Additional tests and support for coersion of various types with
     respect to both X and y
-  * Internal: new SSR-BEDPP feature screening rule for group lasso
   * Change: Convergence criterion now based on RMSD of linear predictors
   * Change: 'Lung' and 'Birthwt' data sets now use factor representation of
     group, as character vectors are inherently ambiguous with respect to order
   * Change: max.iter now based on total number of iterations for entire path
   * Internal: 'X', 'group', and 'group.multiplier' now bundled together in an
     object called 'XG' to enforce agreement at all times
-  * Fixed:
+  * Internal: new SSR-BEDPP feature screening rule for group lasso
   * Internal: Registration of native routines
   * Internal: Changing PROTECT/UNPROTECT to conform to new coding standards
+  * Fixed: The binding of X and G fixes several potential bugs, including
+    Issue #12 (GitHub)
 
 3.0-2
   *  Fixed bug involving mismatch between group.multiplier and group if

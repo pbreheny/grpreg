@@ -1,5 +1,3 @@
-set.seed(1)
-
 .test = "grpsurv works"
 y <- survival::Surv(rexp(50), sample(rep(0:1, c(10,40))))
 X <- matrix(rnorm(50*6), 50, 6)

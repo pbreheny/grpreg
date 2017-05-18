@@ -44,8 +44,8 @@ group.multiplier, warn=TRUE, returnX=FALSE, ...)
     a sequence of values of length \code{nlambda} is computed
     automatically, equally spaced on the log scale.}
   \item{eps}{Convergence threshhold.  The algorithm iterates until the
-    relative change in any coefficient is less than \code{eps}.  Default
-    is \code{.001}.}
+    RMSD for the change in linear predictors for each coefficient is
+    less than \code{eps}.  Default is \code{0.001}.}
   \item{max.iter}{Maximum number of iterations (total across entire
     path).  Default is 10000.}
   \item{dfmax}{Limit on the number of parameters allowed to be nonzero.

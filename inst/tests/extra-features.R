@@ -1,5 +1,3 @@
-set.seed(1)
-
 .test = "logLik is correct"
 n <- 50
 group <- rep(0:4,5:1)
