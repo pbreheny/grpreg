@@ -38,27 +38,6 @@ void R_init_grpreg(DllInfo *dll) {
   R_useDynamicSymbols(dll, FALSE);
 }
 
-// Check for convergence of beta[l]
-int checkConvergence(double *beta, double *beta_old, double eps, int l, int J) {
-  int j;
-  int converged = 1;
-  for (j=0; j < J; j++) {
-    if (beta[l*J+j]!=0 & beta_old[j]!=0) {
-      if (fabs(beta[l*J+j]-beta_old[j]) > eps) {
-	converged = 0;
-	break;
-      }
-    } else if (beta[l*J+j]==0 & beta_old[j]!=0) {
-      converged = 0;
-      break;
-    } else if (beta[l*J+j]!=0 & beta_old[j]==0) {
-      converged = 0;
-      break;
-    }
-  }
-  return(converged);
-}
-
 // Cross product of the jth column of x with y
 double crossprod(double *x, double *y, int n, int j) {
   double val = 0;

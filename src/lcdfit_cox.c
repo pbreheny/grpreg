@@ -4,7 +4,6 @@
 #include <R_ext/Rdynload.h>
 #include <R.h>
 #include <R_ext/Applic.h>
-int checkConvergence(double *beta, double *beta_old, double eps, int l, int J);
 double crossprod(double *x, double *y, int n, int j);
 double wcrossprod(double *X, double *y, double *w, int n, int j);
 double wsqsum(double *X, double *w, int n, int j);
@@ -16,12 +15,13 @@ double dMCP(double theta, double l, double a);
 // Groupwise local coordinate descent updates -- Cox
 void gLCD_cox(double *b, const char *penalty, double *X, double *r, double *eta,
 	      double *h, int g, int *K1, int n, int l, int p, double lam1, double lam2,
-	      double gamma, double tau, SEXP df, double *a, double delta, int *e) {
+	      double gamma, double tau, SEXP df, double *a, double delta, int *e, double *maxChange) {
 
   // Pre-calculcate v
   int K = K1[g+1] - K1[g];
   double xwr, u;
   double *v = Calloc(K, double);
+  double shift;
   for (int j=K1[g]; j<K1[g+1]; j++) {
     if (e[j]) {
       v[j-K1[g]] = wsqsum(X, h, n, j)/n;
@@ -45,7 +45,9 @@ void gLCD_cox(double *b, const char *penalty, double *X, double *r, double *eta,
     if (sG < delta) {
       for (int j=K1[g]; j<K1[g+1]; j++) {
 	b[l*p+j] = 0;
-	for (int i=0; i<n; i++) r[i] = r[i] - (b[l*p+j] - a[j]) * X[n*j+i];
+        shift = b[l*p+j] - a[j];
+        if (fabs(shift) > maxChange[0]) maxChange[0] = fabs(shift);
+	for (int i=0; i<n; i++) r[i] = r[i] - shift * X[n*j+i];
       }
       return;
     }
@@ -69,8 +71,9 @@ void gLCD_cox(double *b, const char *penalty, double *X, double *r, double *eta,
       b[l*p+j] = S(u, ljk) / (v[j-K1[g]]*(1+lam2));
 
       // Update r, eta, sG, df
-      double shift = b[l*p+j] - a[j];
+      shift = b[l*p+j] - a[j];
       if (shift != 0) {
+        if (fabs(shift) > maxChange[0]) maxChange[0] = fabs(shift);
 	for (int i=0; i<n; i++) {
 	  double si = shift*X[j*n+i];
 	  r[i] -= si;
@@ -186,8 +189,8 @@ SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
   double *eta = Calloc(n, double);
   int *e = Calloc(p, int);
   for (int j=0; j<p; j++) e[j] = 0;
-  int converged, lstart, ng, nv, violations;
-  double shift, l1, l2, nullDev, u, v, s, xwr, xwx;
+  int lstart, ng, nv, violations;
+  double shift, l1, l2, nullDev, u, v, s, xwr, xwx, maxChange;
 
   // Initialization
   rsk[n-1] = 1;
@@ -279,12 +282,14 @@ SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
         }
 
 	// Update unpenalized covariates
+        maxChange = 0;
 	for (int j=0; j<K0; j++) {
 	  xwr = wcrossprod(X, r, h, n, j);
 	  xwx = wsqsum(X, h, n, j);
 	  u = xwr/n;
 	  v = xwx/n;
 	  shift = u/v;
+          if (fabs(shift) > maxChange) maxChange = fabs(shift);
 	  b[l*p+j] = shift + a[j];
 	  for (int i=0; i<n; i++) {
 	    double si = shift * X[n*j+i];
@@ -298,15 +303,12 @@ SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
 	for (int g=0; g<J; g++) {
 	  l1 = lam[l] * m[g] * alpha;
 	  l2 = lam[l] * m[g] * (1-alpha);
-	  gLCD_cox(b, penalty, X, r, eta, h, g, K1, n, l, p, l1, l2, gamma, tau, df, a, delta, e);
+	  gLCD_cox(b, penalty, X, r, eta, h, g, K1, n, l, p, l1, l2, gamma, tau, df, a, delta, e, &maxChange);
 	}
 
 	// Check convergence
-	if (checkConvergence(b, a, eps, l, p)) {
-	  converged  = 1;
-	  break;
-	}
 	for (int j=0; j<p; j++) a[j] = b[l*p+j];
+        if (maxChange < eps) break;        
       }
 
       // Scan for violations

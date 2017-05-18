@@ -1,10 +1,8 @@
-Pending:
-  * Change: Convergence criterion now based on RMSD of linear predictors
-
 3.1-0 ()
   * New: Additional tests and support for coersion of various types with
     respect to both X and y
   * Internal: new SSR-BEDPP feature screening rule for group lasso
+  * Change: Convergence criterion now based on RMSD of linear predictors
   * Change: 'Lung' and 'Birthwt' data sets now use factor representation of
     group, as character vectors are inherently ambiguous with respect to order
   * Change: max.iter now based on total number of iterations for entire path

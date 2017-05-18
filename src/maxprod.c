@@ -27,7 +27,7 @@ SEXP maxprod(SEXP X_, SEXP y_, SEXP K_, SEXP m_) {
     }
   }
 
-  // Return list
+  // Return
   UNPROTECT(1);
   return(zmax);
 }
@@ -56,7 +56,7 @@ SEXP maxgrad(SEXP X_, SEXP y_, SEXP K_, SEXP m_) {
     Free(Z);
   }
 
-  // Return list
+  // Return
   UNPROTECT(1);
   return(zmax);
 }
