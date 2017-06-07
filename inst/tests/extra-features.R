@@ -45,6 +45,8 @@ fit <- gBridge(X, yy, group, family="binomial"); plot(fit); fit$beta[,100]
 fit <- grpreg(X, yy, group, penalty="grLasso", family="poisson"); plot(fit)
 fit <- grpreg(X, yy, group, penalty="cMCP", family="poisson"); plot(fit); fit$beta[,100]
 fit <- gBridge(X, yy, group, family="poisson"); plot(fit); fit$beta[,100]
+cvfit <- cv.grpreg(X, y, group, penalty="grLasso")
+cvfit <- cv.grpreg(X, y, group, penalty="gel")
 
 .test = "grpreg handles groups of non-full rank"
 n <- 50
@@ -61,6 +63,8 @@ fit <- grpreg(X, yy, group, penalty="grLasso", family="binomial"); plot(fit)
 fit <- grpreg(X, yy, group, penalty="cMCP", family="binomial"); plot(fit)
 fit <- grpreg(X, yy, group, penalty="grLasso", family="poisson"); plot(fit)
 fit <- grpreg(X, yy, group, penalty="cMCP", family="poisson"); plot(fit)
+cvfit <- cv.grpreg(X, y, group, penalty="grLasso")
+cvfit <- cv.grpreg(X, y, group, penalty="gel")
 
 .test = "grpreg out-of-order groups"
 n <- 50
@@ -76,6 +80,7 @@ fit2 <- grpreg(X[,ind], y, group[ind], penalty="grLasso")
 b1 <- coef(fit1)[-1,][ind,]
 b2 <- coef(fit2)[-1,]
 check(b1, b2, tol=0.01)
+cvfit <- cv.grpreg(X, y, group, penalty="grLasso")
 
 .test = "grpreg named groups"
 n <- 50
@@ -89,18 +94,20 @@ yy <- y > 0
 fit1 <- grpreg(X, y, group1, penalty="grLasso")
 fit2 <- grpreg(X, y, group2, penalty="grLasso")
 check(coef(fit1), coef(fit2), tol=0.001)
+cvfit <- cv.grpreg(X, y, group, penalty="grLasso")
 
 .test = "grpreg out-of-order groups with constant columns"
 n <- 50
 group <- rep(c(1,3,0,2),5:2)
 p <- length(group)
 X <- matrix(rnorm(n*p),ncol=p)
-#X[,group==2] <- 0
+X[,group==2] <- 0
 y <- rnorm(n)
 mle <- coef(lm(y~X))
 mle[!is.finite(mle)] <- 0
 grl <- coef(grpreg(X, y, group, penalty="grLasso", lambda.min=0, eps=1e-7), lambda=0)
 check(mle, grl, tol=0.01)
+cvfit <- cv.grpreg(X, y, group, penalty="grLasso")
 
 .test = "group.multiplier works"
 n <- 50
@@ -114,6 +121,7 @@ plot(fit <- gBridge(X, y, group, lambda.min=0, group.multiplier=gm), main=fit$pe
 plot(fit <- grpreg(X, y, group, penalty="grLasso", lambda.min=0, group.multiplier=gm), main=fit$penalty)
 plot(fit <- grpreg(X, y, group, penalty="grMCP", lambda.min=0, group.multiplier=gm), main=fit$penalty)
 plot(fit <- grpreg(X, y, group, penalty="grSCAD", lambda.min=0, group.multiplier=gm), main=fit$penalty)
+cvfit <- cv.grpreg(X, y, group, penalty="grLasso", group.multiplier=gm)
 
 .test = "dfmax works"
 n <- 100

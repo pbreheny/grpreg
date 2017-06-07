@@ -10,8 +10,6 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, retur
 
   # Get standardized X, y
   X <- fit$XG$X
-  g <- fit$XG$g
-  gm <- fit$XG$m
   y <- fit$y
   m <- attr(fit$y, "m")
   returnX <- list(...)$returnX
@@ -42,22 +40,17 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, retur
   # Do cross-validation
   E <- Y <- matrix(NA, nrow=length(y), ncol=length(fit$lambda))
   if (fit$family=="binomial") PE <- E
+  cv.args <- list(...)
+  cv.args$lambda <- fit$lambda
+  cv.args$group <- fit$XG$g
+  cv.args$group.multiplier <- fit$XG$m
+  cv.args$warn <- FALSE
   for (i in 1:nfolds) {
     if (trace) cat("Starting CV fold #",i,sep="","\n")
-    X1 <- X[cv.ind!=i, , drop=FALSE]
-    y1 <- y[cv.ind!=i]
-    X2 <- X[cv.ind==i, , drop=FALSE]
-    y2 <- y[cv.ind==i]
-
-    args <- list(..., X=X1, y=y1, group=g, group.multiplier=gm)
-    args$lambda <- fit$lambda
-    args$warn <- FALSE
-    fit.i <- do.call('grpreg', args)
-
-    yhat <- matrix(predict(fit.i, X2, type="response"), length(y2))
-    E[cv.ind==i, 1:length(fit.i$lambda)] <- loss.grpreg(y2, yhat, fit$family)
-    if (fit$family=="binomial") PE[cv.ind==i, 1:length(fit.i$lambda)] <- (yhat < 0.5) == y2
-    Y[cv.ind==i, 1:length(fit.i$lambda)] <- yhat
+    res <- cvf(i, X, y, cv.ind, cv.args)
+    Y[cv.ind==i, 1:res$nl] <- res$yhat
+    E[cv.ind==i, 1:res$nl] <- res$loss
+    if (fit$family=="binomial") PE[cv.ind==i, 1:res$nl] <- res$pe
   }
 
   ## Eliminate saturated lambda values, if any
@@ -70,7 +63,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, retur
   cve <- apply(E, 2, mean)
   cvse <- apply(E, 2, sd) / sqrt(n)
   min <- which.min(cve)
-  null.dev <- calcNullDev(X, y, group=g, family=fit$family)
+  null.dev <- calcNullDev(X, y, group=fit$XG$g, family=fit$family)
 
   val <- list(cve=cve, cvse=cvse, lambda=lambda, fit=fit, min=min, lambda.min=lambda[min], null.dev=null.dev)
   if (fit$family=="binomial") val$pe <- apply(PE[,ind], 2, mean)
@@ -79,4 +72,16 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, retur
     else val$Y <- Y
   }
   structure(val, class="cv.grpreg")
+}
+cvf <- function(i, X, y, cv.ind, cv.args) {
+  cv.args$X <- X[cv.ind!=i, , drop=FALSE]
+  cv.args$y <- y[cv.ind!=i]
+  fit.i <- do.call("grpreg", cv.args)
+
+  X2 <- X[cv.ind==i, , drop=FALSE]
+  y2 <- y[cv.ind==i]
+  yhat <- predict(fit.i, X2, type="response")
+  loss <- loss.grpreg(y2, yhat, fit.i$family)
+  pe <- if (fit.i$family=="binomial") {(yhat < 0.5) == y2} else NULL
+  list(loss=loss, pe=pe, nl=length(fit.i$lambda), yhat=yhat)
 }
