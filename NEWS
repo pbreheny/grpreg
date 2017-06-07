@@ -1,3 +1,8 @@
+3.1-1 (2017-06-07)
+  * Fixed: Cross-validation no longer fails when constant columns are present
+    (thank you to Matthew Rosenberg for pointing this out)
+  * Fixed: Cross-validation no longer fails when group.multiplier is specified
+
 3.1-0 (2017-05-18)
   * New: Additional tests and support for coersion of various types with
     respect to both X and y
