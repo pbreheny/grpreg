@@ -175,7 +175,6 @@ void bedpp_glasso(int *e3, double *yTxxTv1, double *xTv1_sq, double *xTy_sq,
     } else {
       e3[g] = 0; // reject
     }
-    
   }
 }
 
@@ -311,7 +310,7 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
   int *K_star_ptr = &K_star;
   double y_norm_sq = pow(norm(y, n), 2);
   int bedpp_flag;
-  if (strcmp(penalty, "grLasso")==0) {
+  if ((strcmp(penalty, "grLasso")==0) & !user) {
     bedpp_flag = 1;
     bedpp_init(yTxxTv1, xTv1_sq, xTy_sq, xTr, X, y, K1, K, g_star_ptr, K_star_ptr, K1_len, n, J);
   }

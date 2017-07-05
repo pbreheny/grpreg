@@ -95,22 +95,22 @@ reg <- coef(fit.mle)
 par(mfcol=c(3,2))
 gel <- coef(fit <- grpreg(X, y, group, penalty="gel", family="binomial", eps=1e-10, lambda.min=0))[,100]
 plot(fit, main=fit$penalty)
-check(gel, reg)
+check(gel, reg, tol=1e-6)
 cMCP <- coef(fit <- grpreg(X, y, group, penalty="cMCP", family="binomial", eps=1e-10, lambda.min=0))[,100]
 plot(fit, main=fit$penalty)
-check(cMCP, reg)
+check(cMCP, reg, tol=1e-6)
 bridge <- coef(fit <- gBridge(X, y, group, family="binomial", eps=1e-10, lambda.min=0))[,1]
 plot(fit, main=fit$penalty)
-check(bridge, reg)
+check(bridge, reg, tol=1e-6)
 grLasso <- coef(fit <- grpreg(X, y, group, penalty="grLasso", family="binomial", eps=1e-10, lambda.min=0))[,100]
 plot(fit, main=fit$penalty)
-check(grLasso, reg)
+check(grLasso, reg, tol=1e-6)
 grMCP <- coef(fit <- grpreg(X, y, group, penalty="grMCP", family="binomial", gamma=2, eps=1e-10, lambda.min=0))[,100]
 plot(fit, main=fit$penalty)
-check(grMCP, reg)
+check(grMCP, reg, tol=1e-6)
 grSCAD <- coef(fit <- grpreg(X, y, group, penalty="grSCAD", family="binomial", gamma=2.1, eps=1e-10, lambda.min=0))[,100]
 plot(fit, main=fit$penalty)
-check(grSCAD, reg)
+check(grSCAD, reg, tol=1e-6)
 check(predict(fit, X)[,100], predict(fit.mle))
 check(predict(fit, X, type="response")[,100], predict(fit.mle, type="response"))
 

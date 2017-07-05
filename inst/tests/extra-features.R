@@ -27,6 +27,26 @@ fit <- grpreg(X, yy, group, penalty="gMCP", lambda.min=0, family="poisson")
 check(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
 check(AIC(fit)[100], AIC(fit.mle), tol=.001)
 
+.test = "grpreg handles user-specified lambda"
+n <- 50
+group <- rep(0:3,4:1)
+p <- length(group)
+X <- matrix(rnorm(n*p),ncol=p)
+y <- rnorm(n)
+yy <- y > 0
+fit1 <- grpreg(X, y, group, penalty="grLasso")
+fit2 <- grpreg(X, y, group, penalty="grLasso", lambda=fit1$lambda)
+check(fit1$beta, fit2$beta)
+fit1 <- grpreg(X, y, group, penalty="gel")
+fit2 <- grpreg(X, y, group, penalty="gel", lambda=fit1$lambda)
+check(fit1$beta, fit2$beta)
+fit1 <- grpreg(X, yy, group, penalty="grLasso", family="binomial")
+fit2 <- grpreg(X, yy, group, penalty="grLasso", family="binomial", lambda=fit1$lambda)
+check(fit1$beta, fit2$beta)
+fit1 <- grpreg(X, yy, group, penalty="gel", family="binomial")
+fit2 <- grpreg(X, yy, group, penalty="gel", family="binomial", lambda=fit1$lambda)
+check(fit1$beta, fit2$beta)
+
 .test = "grpreg handles constant columns"
 n <- 50
 group <- rep(0:3,4:1)
