@@ -131,10 +131,10 @@ cvfit <- cv.grpreg(X, y, group, penalty="grLasso")
 
 .test = "group.multiplier works"
 n <- 50
-p <- 10
+p <- 11
 X <- matrix(rnorm(n*p),ncol=p)
 y <- rnorm(n)
-group <- rep(0:3,1:4)
+group <- rep(0:3,c(1, 2, 3, 5))
 gm <- 1:3
 plot(fit <- grpreg(X, y, group, penalty="cMCP", lambda.min=0, group.multiplier=gm), main=fit$penalty)
 plot(fit <- gBridge(X, y, group, lambda.min=0, group.multiplier=gm), main=fit$penalty)

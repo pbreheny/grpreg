@@ -26,12 +26,19 @@ newXG <- function(X, g, m, ncolY, bilevel) {
   XX <- std[[1]]
   center <- std[[2]]
   scale <- std[[3]]
-  nz <- which(scale > 1e-6)                        # non-constant columns
+  nz <- which(scale > 1e-6)                # non-constant columns
   zg <- setdiff(unique(g), unique(g[nz]))  # constant groups
-  if (length(zg)) m <- m[-zg]
+  if (length(zg)) {
+    gf <- factor(g[!(g %in% zg)])
+    if (any(levels(gf)=="0")) {
+      g <- as.numeric(gf) - 1
+    } else {
+      g <- as.numeric(gf)
+    }
+    m <- m[-zg]
+  }
   if (length(nz) != ncol(X)) {
     XX <- XX[ ,nz, drop=FALSE]
-    g <- g[nz]
   }
   if (!bilevel) {
     XX <- orthogonalize(XX, g)
