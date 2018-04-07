@@ -218,7 +218,7 @@ SEXP lcdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
 	}
 	if (nv != nv_old) ng++;
       }
-      if (ng > gmax | nv > dfmax | tot_iter == max_iter) {
+      if (ng > gmax || nv > dfmax || tot_iter == max_iter) {
 	for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
         break;
       }

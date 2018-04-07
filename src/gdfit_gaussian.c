@@ -33,7 +33,7 @@ void gd_gaussian(double *b, double *x, double *r, int g, int *K1, int *K,
   if (strcmp(penalty, "grLasso")==0) len = S(z_norm, lam1) / (1+lam2);
   if (strcmp(penalty, "grMCP")==0) len = F(z_norm, lam1, lam2, gamma);
   if (strcmp(penalty, "grSCAD")==0) len = Fs(z_norm, lam1, lam2, gamma);
-  if (len != 0 | a[K1[g]] != 0) {
+  if (len != 0 || a[K1[g]] != 0) {
     // If necessary, update beta and r
     for (int j=K1[g]; j<K1[g+1]; j++) {
       b[l*p+j] = len * z[j-K1[g]] / z_norm;
@@ -343,7 +343,7 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
       	  nv = nv + (K1[g+1]-K1[g]);
       	}
       }
-      if (ng > gmax | nv > dfmax | tot_iter == max_iter) {
+      if (ng > gmax || nv > dfmax || tot_iter == max_iter) {
         for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
         break;
       }
