@@ -88,8 +88,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   beta <- matrix(0, nrow=m*(ncol(X)+1), ncol=length(lambda))
   beta[1,] <- b[1,]
   if (XG$reorder) {
-    beta[XG$nz+1,] <- b[-1,]
-    beta[-1,] <- beta[1+XG$ord.inv,]
+    beta[XG$nz+1,] <- b[1+XG$ord.inv,]
   } else {
     beta[XG$nz+1,] <- b[-1,]
   }

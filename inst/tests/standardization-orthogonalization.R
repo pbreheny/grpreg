@@ -25,7 +25,7 @@ X <- matrix(rnorm(n*p),ncol=p)
 XX <- grpreg:::orthogonalize(X, group)
 for (j in 1:group[p]) {
   ind <- which(group==j)
-  check(crossprod(XX[,ind])/n, diag(length(ind)))
+  print(check(crossprod(XX[,ind])/n, diag(length(ind))))
 }
 
 .test = "unorthogonalize() unorthogonalizes correctly"
@@ -42,14 +42,6 @@ bb <- matrix(rnorm(l*(p)), nrow=p)
 b <- grpreg:::unorthogonalize(bb, XX, attr(XX, "group"), intercept=FALSE)
 check(XX %*% bb, X %*% b)
 
-.test = "orthogonalize() orthogonalizes correctly w/ 0's present"
-X <- matrix(rnorm(n*p),ncol=p)
-XX <- grpreg:::orthogonalize(X, zgroup)
-for (j in 1:zgroup[p]) {
-  ind <- which(zgroup==j)
-  check(crossprod(XX[,ind])/n, diag(length(ind)))
-}
-
 .test = "orthogonalize() orthogonalizes correctly w/o full rank"
 X <- matrix(rnorm(n*p),ncol=p)
 X[,5] <- X[,4]
@@ -58,3 +50,19 @@ for (j in 1:group[p]) {
   ind <- which(attr(XX, "group")==j)
   check(crossprod(XX[,ind])/n, diag(length(ind)))
 }
+y <- rnorm(nrow(X))
+fit <- grpreg(X, y, group=LETTERS[group])
+
+.test = "orthogonalize() orthogonalizes correctly w/ 0's present and non-full-rank"
+X <- matrix(rnorm(n*p),ncol=p)
+X[,4] <- 0
+X[,5] <- X[,3]
+grp <- newXG(X, group, rep(1, max(group)), 1, FALSE)
+XX <- grp$X
+g <- grp$g
+for (j in 1:max(g)) {
+  ind <- which(g==j)
+  print(check(crossprod(XX[,ind])/n, diag(length(ind))))
+}
+y <- rnorm(nrow(X))
+fit <- grpreg(X, y, group=LETTERS[group])

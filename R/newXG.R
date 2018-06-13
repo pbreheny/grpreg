@@ -6,46 +6,52 @@ newXG <- function(X, g, m, ncolY, bilevel) {
   }
   if (storage.mode(X)=="integer") storage.mode(X) <- "double"
   if (any(is.na(X))) stop("Missing data (NA's) detected in X.  You must eliminate missing data (e.g., by removing cases, removing features, or imputation) before passing X to grpreg")
-
-  # Reorder groups, if necessary
   if (length(g) != ncol(X)) stop ("Dimensions of group is not compatible with X")
   xnames <- if (is.null(colnames(X))) paste("V",1:ncol(X),sep="") else colnames(X)
-  grp <- reorderGroups(g, m, bilevel)
-  g <- grp$g
-  m <- grp$m
-  if (grp$reorder) X <- X[,grp$ord]
 
-  # Make multiX, if necessary
+  # Setup group
+  G <- setupG(g, m, bilevel)
+
+  # Reconfigure for multiple outcomes, if necessary
   if (ncolY > 1) {
     X <- multiX(X, ncolY)
-    g <- c(rep(0, ncolY-1), rep(g, each=ncolY))
+    G <- multiG(G, ncolY)
   }
 
-  # Standardize
+  # Feature-level standardization
   std <- .Call("standardize", X)
   XX <- std[[1]]
   center <- std[[2]]
   scale <- std[[3]]
   nz <- which(scale > 1e-6)                # non-constant columns
-  zg <- setdiff(unique(g), unique(g[nz]))  # constant groups
-  if (length(zg)) {
-    gf <- factor(g[!(g %in% zg)])
-    if (any(levels(gf)=="0")) {
-      g <- as.numeric(gf) - 1
-    } else {
-      g <- as.numeric(gf)
-    }
-    m <- m[-zg]
-  }
   if (length(nz) != ncol(X)) {
     XX <- XX[ ,nz, drop=FALSE]
-  }
-  if (!bilevel) {
-    XX <- orthogonalize(XX, g)
-    g <- attr(XX, "group")
+    G <- subsetG(G, nz)
   }
 
+  # Reorder groups, if necessary
+  G <- reorderG(G, attr(G, 'm'), bilevel)
+  if (attr(G, 'reorder')) XX <- XX[,attr(G, 'ord')]
+
+  # Group-level standardization
+  if (!bilevel) {
+    XX <- orthogonalize(XX, G)
+    g <- attr(XX, "group")
+  } else {
+    g <- as.integer(G)
+  }
+
+  # Set group multiplier if missing
+  m <- attr(G, 'm')
+  if (all(is.na(m))) {
+    m <- if (bilevel) rep(1, max(g)) else sqrt(table(g[g!=0]))
+  }
+  print(head(XX))
+  print(g)
+  print(G)
+  print(m)
+
   # Return
-  return(list(X=XX, g=g, m=m, reorder=grp$reorder, ord.inv=grp$ord.inv, names=xnames,
+  return(list(X=XX, g=g, m=m, reorder=attr(G, 'reorder'), ord.inv=attr(G, 'ord.inv'), names=xnames,
               center=center[nz], scale=scale[nz], nz=nz))
 }
