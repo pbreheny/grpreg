@@ -50,7 +50,7 @@ X[,7] <- X[,6]
 y <- rnorm(n)
 b0 <- coef(lm(y~X)); b0[7:8] <- b0[7]/2
 b <- coef(fit <- grpreg(X, y, group, penalty="grLasso", lambda.min=0, eps=1e-7), 0)
-check(b, b0, tol=0.0001) %>% print
+print(check(b, b0, tol=0.0001))
 cvfit <- cv.grpreg(X, y, group, penalty="grLasso")
 cvfit <- cv.grpreg(X, y, group, penalty="gel")
 
@@ -94,46 +94,11 @@ X[,15] <- 0       # Group 4 contains a zero column
 y <- rnorm(n)
 fit1 <- grpreg(X, y, group, penalty="grLasso", lambda.min=0)
 fit2 <- grpreg(X[,perm], y, group[perm], penalty="grLasso", lambda.min=0)
-b1 <- coef(fit1, 0)[-1][perm]
+b1 <- coef(fit1, 0)[-1]
 b2 <- coef(fit2, 0)[-1]
-check(b1, b2, tol=0.01)
-
-
-
-b1 <- coef(fit1, 0)[-1][perm]
-b2 <- coef(fit2, 0)[-1]
-check(b1, b2, tol=0.01)
-cvfit <- cv.grpreg(X[,perm], y, group[perm], penalty="grLasso")
-
-
-
-
-
-.test = "grpreg out-of-order groups with constant columns"
-n <- 50
-group <- rep(c(1,3,0,2),5:2)
-p <- length(group)
-X <- matrix(rnorm(n*p),ncol=p)
-X[,group==2] <- 0
-y <- rnorm(n)
-mle <- coef(lm(y~X))
-mle[!is.finite(mle)] <- 0
-grl <- coef(grpreg(X, y, group, penalty="grLasso", lambda.min=0, eps=1e-7), lambda=0)
-check(mle, grl, tol=0.01)
-cvfit <- cv.grpreg(X, y, group, penalty="grLasso")
-
-
-
-
-y <- rnorm(nrow(X))
-perm <- sample(1:ncol(X))
-Xp <- X[,perm]
-gp <- LETTERS[group][perm]
-fit <- grpreg(Xp, y, group=gp, lambda.min=0)
-b1 <- coef(fit, 0)
-b2 <- coef(lm(y ~ Xp))
-b
-check(b1[5], 0)
-b1[4] <- b1[4] + b1[6]
-check(b1[1:4], b2[1:4])
-
+check(b1[perm], b2, tol=0.01) # Checking perm ordering
+nz <- which(apply(X, 2, sd)!=0)
+fit3 <- grpreg(X[,nz], y, group[nz], penalty="grLasso", lambda.min=0)
+b3 <- coef(fit3, 0)[-1]
+check(b1[nz], b3, tol=0.01)  # Checking dropped group/var
+check(coef(fit1)["V6",], coef(fit1)["V7",], tol=0.01)  # Checking rank handled correctly

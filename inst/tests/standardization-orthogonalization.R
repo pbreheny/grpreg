@@ -17,7 +17,7 @@ XX <- std[[1]]
 center <- std[[2]]
 scale <- std[[3]]
 bb <- matrix(rnorm(l*(p+1)), nrow=p+1)
-b <- grpreg:::unstandardize(bb, center, scale)
+b <- grpreg:::unstandardize(bb, list(center=center, scale=scale, nz=which(scale>1e-10)))
 check(cbind(1,XX) %*% bb, cbind(1,X) %*% b)
 
 .test = "orthogonalize() orthogonalizes correctly"
@@ -48,7 +48,7 @@ X[,5] <- X[,4]
 XX <- grpreg:::orthogonalize(X, group)
 for (j in 1:group[p]) {
   ind <- which(attr(XX, "group")==j)
-  check(crossprod(XX[,ind])/n, diag(length(ind)))
+  print(check(crossprod(XX[,ind])/n, diag(length(ind))))
 }
 y <- rnorm(nrow(X))
 fit <- grpreg(X, y, group=LETTERS[group])
@@ -57,7 +57,7 @@ fit <- grpreg(X, y, group=LETTERS[group])
 X <- matrix(rnorm(n*p),ncol=p)
 X[,4] <- 0
 X[,5] <- X[,3]
-grp <- newXG(X, group, rep(1, max(group)), 1, FALSE)
+grp <- grpreg:::newXG(X, group, rep(1, max(group)), 1, FALSE)
 XX <- grp$X
 g <- grp$g
 for (j in 1:max(g)) {

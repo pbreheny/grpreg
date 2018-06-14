@@ -46,12 +46,8 @@ newXG <- function(X, g, m, ncolY, bilevel) {
   if (all(is.na(m))) {
     m <- if (bilevel) rep(1, max(g)) else sqrt(table(g[g!=0]))
   }
-  print(head(XX))
-  print(g)
-  print(G)
-  print(m)
 
   # Return
   return(list(X=XX, g=g, m=m, reorder=attr(G, 'reorder'), ord.inv=attr(G, 'ord.inv'), names=xnames,
-              center=center[nz], scale=scale[nz], nz=nz))
+              center=center, scale=scale, nz=nz))
 }
