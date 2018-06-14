@@ -14,14 +14,14 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
   XG <- newXG(X, group, group.multiplier, m, TRUE)
   if (nrow(XG$X) != length(yy)) stop("X and y do not have the same number of observations")
 
-  ## Set up lambda
+  # Set up lambda
   if (missing(lambda)) {
     lambda <- setupLambda.gBridge(XG$X, yy, XG$g, family, alpha, lambda.min, lambda.max, nlambda, gamma, XG$m)
   } else {
     nlambda <- length(lambda)
   }
 
-  ## Fit
+  # Fit
   n <- length(yy)
   p <- ncol(XG$X)
   K <- as.numeric(table(XG$g))
@@ -31,7 +31,7 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
     fit <- .Call("lcdfit_gaussian", XG$X, yy, "gBridge", K1, K0, lambda, alpha, eps, delta, gamma, 0, as.integer(max.iter), as.double(XG$m), as.integer(p), as.integer(max(XG$g)), as.integer(TRUE))
     b <- rbind(mean(y), matrix(fit[[1]], nrow=p))
     iter <- fit[[2]]
-    df <- fit[[3]] + 1 ## Intercept
+    df <- fit[[3]] + 1 # Intercept
     loss <- fit[[4]]
   } else {
     if (family=="binomial") {
@@ -45,7 +45,7 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
     loss <- fit[[5]]
   }
 
-  ## Eliminate saturated lambda values, if any
+  # Eliminate saturated lambda values, if any
   ind <- !is.na(iter)
   b <- b[, ind, drop=FALSE]
   iter <- iter[ind]
@@ -54,18 +54,11 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
   loss <- loss[ind]
   if (warn & any(iter==max.iter)) warning("Algorithm failed to converge for all values of lambda")
 
-  ## Unstandardize
-  b <- unstandardize(b, XG$center, XG$scale)
-  beta <- matrix(0, nrow=m*(ncol(X)+1), ncol=length(lambda))
-  beta[1,] <- b[1,]
-  if (XG$reorder) {
-    beta[XG$nz+1,] <- b[-1,]
-    beta[-1,] <- beta[1+XG$ord.inv,]
-  } else {
-    beta[XG$nz+1,] <- b[-1,]
-  }
+  # Unstandardize
+  if (XG$reorder) b[-1,] <- b[1+XG$ord.inv,]
+  beta <- unstandardize(b, XG)
 
-  ## Names
+  # Names
   varnames <- c("(Intercept)", XG$names)
   if (m > 1) {
     beta[2:m,] <- sweep(beta[2:m,,drop=FALSE], 2, beta[1,], FUN="+")

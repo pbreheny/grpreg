@@ -7,7 +7,7 @@ multiX <- function(X, m) {
   }
   cbind(matrix(as.numeric(diag(m)),m*n,m,byrow=TRUE)[,2:m],A)
 }
-multiG <- function(g, m) {
+multiG <- function(g, ncolY) {
   structure(c(rep(0, ncolY-1), rep(g, each=ncolY)),
             levels=attr(g, 'levels'),
             m=attr(g, 'm'))
