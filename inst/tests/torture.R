@@ -102,3 +102,7 @@ fit3 <- grpreg(X[,nz], y, group[nz], penalty="grLasso", lambda.min=0)
 b3 <- coef(fit3, 0)[-1]
 check(b1[nz], b3, tol=0.01)  # Checking dropped group/var
 check(coef(fit1)["V6",], coef(fit1)["V7",], tol=0.01)  # Checking rank handled correctly
+cvfit <- cv.grpreg(X[,perm], y, group[perm], penalty="grLasso", lambda.min=0)
+plot(cvfit)
+summary(cvfit)
+plot(cvfit$fit)
