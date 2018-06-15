@@ -27,8 +27,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   # Construct XG, yy
   bilevel <- strtrim(penalty,2) != "gr"
   yy <- newY(y, family)
-  m <- attr(yy, "m")
-  XG <- newXG(X, group, group.multiplier, m, bilevel)
+  XG <- newXG(X, group, group.multiplier, attr(yy, 'm'), bilevel)
   if (nrow(XG$X) != length(yy)) stop("X and y do not have the same number of observations")
 
   # Setup lambda
@@ -89,10 +88,11 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
 
   # Names
   varnames <- c("(Intercept)", XG$names)
-  if (m > 1) {
-    beta[2:m,] <- sweep(beta[2:m,,drop=FALSE], 2, beta[1,], FUN="+")
-    beta <- array(beta, dim=c(m, nrow(beta)/m, ncol(beta)))
-    group <- group[-(1:(m-1))]
+  ncolY <- attr(yy, 'm')
+  if (ncolY > 1) {
+    beta[2:ncolY,] <- sweep(beta[2:ncolY,,drop=FALSE], 2, beta[1,], FUN="+")
+    beta <- array(beta, dim=c(ncolY, nrow(beta)/ncolY, ncol(beta)))
+    group <- group[-(1:(ncolY-1))]
     dimnames(beta) <- list(colnames(yy), varnames, round(lambda,digits=4))
   } else {
     dimnames(beta) <- list(varnames, round(lambda,digits=4))
@@ -100,7 +100,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
 
   val <- structure(list(beta = beta,
                         family = family,
-                        group = group,
+                        group = factor(group),
                         lambda = lambda,
                         alpha = alpha,
                         loss = loss,
