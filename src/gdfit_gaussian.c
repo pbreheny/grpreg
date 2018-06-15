@@ -310,11 +310,12 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
   int *K_star_ptr = &K_star;
   double y_norm_sq = pow(norm(y, n), 2);
   int bedpp_flag;
-  if ((strcmp(penalty, "grLasso")==0) & !user) {
-    bedpp_flag = 1;
-    bedpp_init(yTxxTv1, xTv1_sq, xTy_sq, xTr, X, y, K1, K, g_star_ptr, K_star_ptr, K1_len, n, J);
-  }
-  else bedpp_flag = 0;
+  bedpp_flag = 0;
+  /* if ((strcmp(penalty, "grLasso")==0) & !user) { */
+  /*   bedpp_flag = 1; */
+  /*   bedpp_init(yTxxTv1, xTv1_sq, xTy_sq, xTr, X, y, K1, K, g_star_ptr, K_star_ptr, K1_len, n, J); */
+  /* } */
+  /* else bedpp_flag = 0; */
   
   // If lam[0]=lam_max, skip lam[0] -- closed form sol'n available
   double rss = gLoss(r,n);
