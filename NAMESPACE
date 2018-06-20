@@ -19,4 +19,6 @@ S3method(coef, grpreg)
 S3method(coef, cv.grpreg)
 S3method(logLik, grpreg)
 S3method(logLik, grpsurv)
-S3method(AUC, cv.grpsurv)
+if (!("package:ncvreg" %in% search())) {
+  S3method(AUC, cv.grpsurv)
+}
