@@ -159,7 +159,7 @@ void bedpp_glasso(int *e3, double *yTxxTv1, double *xTv1_sq, double *xTy_sq,
                   double y_norm_sq, int *K, double lam, double lam_max, 
                   int K_star, int n, int J) {
   double TOLERANCE = 1e-8;
-  double LHS, RHS, LHS_temp;
+  double LHS, RHS, LHS_temp, tmp;
   for (int g = 0; g < J; g++) {
     LHS_temp = pow(lam + lam_max, 2) * xTy_sq[g] - 2 * (lam_max * lam_max - lam * lam) * yTxxTv1[g] / n +
       pow((lam_max - lam) / n, 2) * xTv1_sq[g];
@@ -168,7 +168,9 @@ void bedpp_glasso(int *e3, double *yTxxTv1, double *xTv1_sq, double *xTy_sq,
     } else {
       LHS = sqrt(LHS_temp);
     }
-    RHS = 2 * n * lam * lam_max * sqrt(K[g]) - (lam_max - lam) * sqrt(n * y_norm_sq - pow(n * lam_max, 2) * K_star);
+    tmp = n * y_norm_sq - pow(n * lam_max, 2) * K_star;
+    if (tmp < 0.0) tmp = 0.0;
+    RHS = 2 * n * lam * lam_max * sqrt(K[g]) - (lam_max - lam) * sqrt(tmp);
     
     if (LHS + TOLERANCE > RHS) {
       e3[g] = 1; // not reject, thus in BEDPP set
@@ -311,11 +313,11 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
   double y_norm_sq = pow(norm(y, n), 2);
   int bedpp_flag;
   bedpp_flag = 0;
-  /* if ((strcmp(penalty, "grLasso")==0) & !user) { */
-  /*   bedpp_flag = 1; */
-  /*   bedpp_init(yTxxTv1, xTv1_sq, xTy_sq, xTr, X, y, K1, K, g_star_ptr, K_star_ptr, K1_len, n, J); */
-  /* } */
-  /* else bedpp_flag = 0; */
+  if ((strcmp(penalty, "grLasso")==0) & !user) {
+    bedpp_flag = 1;
+    bedpp_init(yTxxTv1, xTv1_sq, xTy_sq, xTr, X, y, K1, K, g_star_ptr, K_star_ptr, K1_len, n, J);
+  }
+  else bedpp_flag = 0;
   
   // If lam[0]=lam_max, skip lam[0] -- closed form sol'n available
   double rss = gLoss(r,n);
