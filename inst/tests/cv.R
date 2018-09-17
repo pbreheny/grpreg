@@ -55,3 +55,14 @@ y <- rnorm(n) > 0
 cvfit <- cv.grpreg(X, y, group, family='binomial', returnY=TRUE, lambda.min=0.5)
 pe <- apply((cvfit$Y>0.5)!=y, 2, mean)
 check(pe, cvfit$pe, tol= .001)
+
+.test = "Cross-validation: p > n"
+n <- 75
+p <- 200
+X <- matrix(rnorm(n*p), n, p)
+mu <- exp(apply(X[,1:10], 1, sum))
+y <- rpois(n, mu)
+g <- rep(LETTERS[1:20], each=10)
+cvfit <- cv.grpreg(X, y, group=g)
+cvfit <- cv.grpreg(X, y>0, group=g, family='binomial')
+cvfit <- cv.grpreg(X, y, group=g, family='poisson')

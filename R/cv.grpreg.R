@@ -9,7 +9,8 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, retur
   fit <- do.call("grpreg", fit.args)
 
   # Get standardized X, y
-  X <- fit$XG$X
+  XG <- fit$XG
+  X <- XG$X
   y <- fit$y
   m <- attr(fit$y, "m")
   returnX <- list(...)$returnX
@@ -42,8 +43,8 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, retur
   if (fit$family=="binomial") PE <- E
   cv.args <- list(...)
   cv.args$lambda <- fit$lambda
-  cv.args$group <- fit$XG$g
-  cv.args$group.multiplier <- fit$XG$m
+  cv.args$group <- XG$g
+  cv.args$group.multiplier <- XG$m
   cv.args$warn <- FALSE
   for (i in 1:nfolds) {
     if (trace) cat("Starting CV fold #",i,sep="","\n")
@@ -63,7 +64,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, retur
   cve <- apply(E, 2, mean)
   cvse <- apply(E, 2, sd) / sqrt(n)
   min <- which.min(cve)
-  null.dev <- calcNullDev(X, y, group=fit$XG$g, family=fit$family)
+  null.dev <- calcNullDev(X, y, group=XG$g, family=fit$family)
 
   val <- list(cve=cve, cvse=cvse, lambda=lambda, fit=fit, min=min, lambda.min=lambda[min], null.dev=null.dev)
   if (fit$family=="binomial") val$pe <- apply(PE[,ind], 2, mean)
