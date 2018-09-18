@@ -33,12 +33,12 @@ cv.grpsurv <- function(X, y, group, ..., nfolds=10, seed, cv.ind, returnY=FALSE,
     Y[cv.ind==i, 1:res$nl] <- res$yhat
   }
 
-  ## Eliminate saturated lambda values, if any
+  # Eliminate saturated lambda values, if any
   ind <- which(apply(is.finite(Y), 2, all))
   Y <- Y[,ind]
   lambda <- fit$lambda[ind]
 
-  ## Return
+  # Return
   cve <- as.numeric(loss.grpsurv(y, Y))
   min <- which.min(cve)
 

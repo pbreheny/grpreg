@@ -54,13 +54,13 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, retur
     if (fit$family=="binomial") PE[cv.ind==i, 1:res$nl] <- res$pe
   }
 
-  ## Eliminate saturated lambda values, if any
+  # Eliminate saturated lambda values, if any
   ind <- which(apply(is.finite(E), 2, all))
   E <- E[, ind, drop=FALSE]
   Y <- Y[,ind]
   lambda <- fit$lambda[ind]
 
-  ## Return
+  # Return
   cve <- apply(E, 2, mean)
   cvse <- apply(E, 2, sd) / sqrt(n)
   min <- which.min(cve)

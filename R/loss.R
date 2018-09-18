@@ -3,10 +3,12 @@ loss.grpreg <- function(y, yhat, family) {
   if (family=="gaussian") {
     val <- (y-yhat)^2
   } else if (family=="binomial") {
+    yhat[yhat < 0.00001] <- 0.00001
+    yhat[yhat > 0.99999] <- 0.99999
     if (is.matrix(yhat)) {
       val <- matrix(NA, nrow=nrow(yhat), ncol=ncol(yhat))
       if (sum(y==1)) val[y==1,] <- -2*log(yhat[y==1, , drop=FALSE])
-      if (sum(y==0)) val[y==0,] <- -2*log(1-yhat[y==0, , drop=FALSE])      
+      if (sum(y==0)) val[y==0,] <- -2*log(1-yhat[y==0, , drop=FALSE])
     } else {
       val <- numeric(length(y))
       if (sum(y==1)) val[y==1] <- -2*log(yhat[y==1])
@@ -19,7 +21,7 @@ loss.grpreg <- function(y, yhat, family) {
   }
   val
 }
-loss.grpsurv <- function(y, eta) {
+loss.grpsurv <- function(y, eta, total=TRUE) {
   ind <- order(y[,1])
   d <- as.numeric(y[ind,2])
   if (is.matrix(eta)) {
@@ -29,5 +31,9 @@ loss.grpsurv <- function(y, eta) {
     eta <- eta[ind]
     r <- rev(cumsum(rev(exp(eta))))
   }
-  -1*(crossprod(d, eta) - crossprod(d, log(r)))
+  if (total) {
+    return(-2*(crossprod(d, eta) - crossprod(d, log(r))))
+  } else {
+    return(-2*(eta[d==1,] - log(r)[d==1,]))
+  }
 }
