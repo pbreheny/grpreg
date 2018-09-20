@@ -1,4 +1,4 @@
-cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, returnY=FALSE, trace=FALSE) {
+cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY=FALSE, trace=FALSE) {
 
   # Complete data fit
   fit.args <- list(...)
@@ -19,22 +19,22 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, retur
   # Set up folds
   if (!missing(seed)) set.seed(seed)
   n <- length(y)
-  if (missing(cv.ind)) {
+  if (missing(fold)) {
     if (m > 1) {
       nn <- n/m
-      cv.ind <- rep(ceiling(sample(1:nn)/nn*nfolds), each=m)
+      fold <- rep(ceiling(sample(1:nn)/nn*nfolds), each=m)
     } else if (fit$family=="binomial" & (min(table(y)) > nfolds)) {
       ind1 <- which(y==1)
       ind0 <- which(y==0)
       n1 <- length(ind1)
       n0 <- length(ind0)
-      cv.ind1 <- ceiling(sample(1:n1)/n1*nfolds)
-      cv.ind0 <- ceiling(sample(1:n0)/n0*nfolds)
-      cv.ind <- numeric(n)
-      cv.ind[y==1] <- cv.ind1
-      cv.ind[y==0] <- cv.ind0
+      fold1 <- ceiling(sample(1:n1)/n1*nfolds)
+      fold0 <- ceiling(sample(1:n0)/n0*nfolds)
+      fold <- numeric(n)
+      fold[y==1] <- fold1
+      fold[y==0] <- fold0
     } else {
-      cv.ind <- ceiling(sample(1:n)/n*nfolds)
+      fold <- ceiling(sample(1:n)/n*nfolds)
     }
   }
 
@@ -48,10 +48,10 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, retur
   cv.args$warn <- FALSE
   for (i in 1:nfolds) {
     if (trace) cat("Starting CV fold #",i,sep="","\n")
-    res <- cvf(i, X, y, cv.ind, cv.args)
-    Y[cv.ind==i, 1:res$nl] <- res$yhat
-    E[cv.ind==i, 1:res$nl] <- res$loss
-    if (fit$family=="binomial") PE[cv.ind==i, 1:res$nl] <- res$pe
+    res <- cvf(i, X, y, fold, cv.args)
+    Y[fold==i, 1:res$nl] <- res$yhat
+    E[fold==i, 1:res$nl] <- res$loss
+    if (fit$family=="binomial") PE[fold==i, 1:res$nl] <- res$pe
   }
 
   # Eliminate saturated lambda values, if any
@@ -66,7 +66,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, retur
   min <- which.min(cve)
   null.dev <- calcNullDev(X, y, group=XG$g, family=fit$family)
 
-  val <- list(cve=cve, cvse=cvse, lambda=lambda, fit=fit, min=min, lambda.min=lambda[min], null.dev=null.dev)
+  val <- list(cve=cve, cvse=cvse, lambda=lambda, fit=fit, fold=fold, min=min, lambda.min=lambda[min], null.dev=null.dev)
   if (fit$family=="binomial") val$pe <- apply(PE[,ind], 2, mean)
   if (returnY) {
     if (fit$family=="gaussian") val$Y <- Y + attr(y, "mean")
@@ -74,13 +74,13 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, cv.ind, retur
   }
   structure(val, class="cv.grpreg")
 }
-cvf <- function(i, X, y, cv.ind, cv.args) {
-  cv.args$X <- X[cv.ind!=i, , drop=FALSE]
-  cv.args$y <- y[cv.ind!=i]
+cvf <- function(i, X, y, fold, cv.args) {
+  cv.args$X <- X[fold!=i, , drop=FALSE]
+  cv.args$y <- y[fold!=i]
   fit.i <- do.call("grpreg", cv.args)
 
-  X2 <- X[cv.ind==i, , drop=FALSE]
-  y2 <- y[cv.ind==i]
+  X2 <- X[fold==i, , drop=FALSE]
+  y2 <- y[fold==i]
   yhat <- predict(fit.i, X2, type="response")
   loss <- loss.grpreg(y2, yhat, fit.i$family)
   pe <- if (fit.i$family=="binomial") {(yhat < 0.5) == y2} else NULL

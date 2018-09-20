@@ -54,29 +54,25 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   loss <- -1*res[[4]]
   Eta <- matrix(res[[5]], n, nlambda)
 
-  ## Eliminate saturated lambda values, if any
+  # Eliminate saturated lambda values, if any
   ind <- !is.na(iter)
   b <- b[, ind, drop=FALSE]
   iter <- iter[ind]
   lambda <- lambda[ind]
+  df <- df[ind]
   loss <- loss[ind]
   if (warn & any(iter==max.iter)) warning("Algorithm failed to converge for some values of lambda")
 
-  ## Unstandardize
+  # Unstandardize
   if (!bilevel) b <- unorthogonalize(b, XG$X, XG$g, intercept=FALSE)
-  b <- b/XG$scale
-  beta <- matrix(0, nrow=ncol(X), ncol=length(lambda))
-  if (XG$reorder) {
-    beta[XG$nz,] <- b
-    beta <- beta[XG$ord.inv,]
-  } else {
-    beta[XG$nz,] <- b
-  }
+  if (XG$reorder) b <- b[XG$ord.inv,]
+  beta <- matrix(0, nrow=length(XG$scale), ncol=ncol(b))
+  beta[XG$nz,] <- b / XG$scale[XG$nz]
 
-  ## Names
+  # Names
   dimnames(beta) <- list(XG$names, round(lambda,digits=4))
 
-  ## Output
+  # Output
   val <- structure(list(beta = beta,
                         group = group,
                         lambda = lambda,
