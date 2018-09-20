@@ -1,5 +1,5 @@
-cv.grpsurv <- function(X, y, group, ..., nfolds=10, seed, cv.ind, returnY=FALSE, trace=FALSE) {
-  if (!missing(seed)) set.seed(seed)
+cv.grpsurv <- function(X, y, group, ..., nfolds=10, seed, fold, se=c('quick', 'bootstrap'), returnY=FALSE, trace=FALSE) {
+  se <- match.arg(se)
 
   # Complete data fit
   fit.args <- list(...)
@@ -18,7 +18,7 @@ cv.grpsurv <- function(X, y, group, ..., nfolds=10, seed, cv.ind, returnY=FALSE,
   # Set up folds
   n <- nrow(X)
   if (!missing(seed)) set.seed(seed)
-  if (missing(cv.ind)) cv.ind <- ceiling(sample(1:n)/n*nfolds)
+  if (missing(fold)) fold <- ceiling(sample(1:n)/n*nfolds)
   Y <- matrix(NA, nrow=n, ncol=length(fit$lambda))
 
   cv.args <- list(...)
@@ -29,8 +29,8 @@ cv.grpsurv <- function(X, y, group, ..., nfolds=10, seed, cv.ind, returnY=FALSE,
 
   for (i in 1:nfolds) {
     if (trace) cat("Starting CV fold #",i,sep="","\n")
-    res <- cvf.surv(i, X, y, cv.ind, cv.args)
-    Y[cv.ind==i, 1:res$nl] <- res$yhat
+    res <- cvf.surv(i, X, y, fold, cv.args)
+    Y[fold==i, 1:res$nl] <- res$yhat
   }
 
   # Eliminate saturated lambda values, if any
@@ -39,20 +39,27 @@ cv.grpsurv <- function(X, y, group, ..., nfolds=10, seed, cv.ind, returnY=FALSE,
   lambda <- fit$lambda[ind]
 
   # Return
-  cve <- as.numeric(loss.grpsurv(y, Y))
+  if (se == "quick") {
+    L <- loss.grpsurv(y, Y, total=FALSE)
+    cve <- apply(L, 2, sum)/sum(fit$fail)
+    cvse <- apply(L, 2, sd)*sqrt(nrow(L))/sum(fit$fail)
+  } else {
+    cve <- as.numeric(loss.grpsurv(y, Y))/sum(fit$fail)
+    cvse <- se.grpsurv(y, Y)/sum(fit$fail)
+  }
   min <- which.min(cve)
 
-  val <- list(cve=cve, lambda=lambda, fit=fit, min=min, lambda.min=lambda[min], null.dev=cve[1])
+  val <- list(cve=cve, cvse=cvse, fold=fold, lambda=lambda, fit=fit, min=min, lambda.min=lambda[min], null.dev=cve[1])
   if (returnY) val$Y <- Y
   structure(val, class=c("cv.grpsurv", "cv.grpreg"))
 }
-cvf.surv <- function(i, XX, y, cv.ind, cv.args) {
-  cv.args$X <- XX[cv.ind!=i, , drop=FALSE]
-  cv.args$y <- y[cv.ind!=i,]
+cvf.surv <- function(i, XX, y, fold, cv.args) {
+  cv.args$X <- XX[fold!=i, , drop=FALSE]
+  cv.args$y <- y[fold!=i,]
   fit.i <- do.call("grpsurv", cv.args)
 
-  X2 <- XX[cv.ind==i, , drop=FALSE]
-  y2 <- y[cv.ind==i,]
+  X2 <- XX[fold==i, , drop=FALSE]
+  y2 <- y[fold==i,]
   nl <- length(fit.i$lambda)
   yhat <- predict(fit.i, X2)
 

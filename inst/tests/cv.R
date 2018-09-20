@@ -31,17 +31,6 @@ cvfit <- cv.grpreg(X, y, group, family='poisson', penalty='gel')
 cvfit <- cv.grpreg(X, y, group, family='poisson', penalty='grLasso', nfolds=50)
 cvfit <- cv.grpreg(X, y, group, family='poisson', penalty='gel', nfolds=50)
 
-.test = "Cross-validation: cox"
-n <- 50
-group <- rep(0:3,4:1)
-p <- length(group)
-X <- matrix(rnorm(n*p),ncol=p)
-y <- cbind(rexp(n), rep(0:1, c(10, n-10)))
-cvfit <- cv.grpsurv(X, y, group, penalty='grLasso')
-cvfit <- cv.grpsurv(X, y, group, penalty='gel')
-cvfit <- cv.grpsurv(X, y, group, penalty='grLasso', nfolds=50)
-cvfit <- cv.grpsurv(X, y, group, penalty='gel', nfolds=50)
-
 .test = "Cross-validation: multitask learning"
 n <- 50
 group <- rep(0:4,5:1)
