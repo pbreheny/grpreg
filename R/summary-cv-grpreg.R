@@ -1,18 +1,27 @@
 summary.cv.grpreg <- function(object, ...) {
   S <- pmax(object$null.dev - object$cve, 0)
-  rsq <- S/object$null.dev
+  if (!('cv.grpsurv' %in% class(object)) && object$fit$family=="gaussian") {
+    rsq <- pmin(pmax(1 - object$cve/object$null.dev, 0), 1)
+  } else {
+    rsq <- pmin(pmax(1 - exp(object$cve-object$null.dev), 0), 1)
+  }
   snr <- S/object$cve
   nvars <- predict(object$fit, type="nvars")
   ngroups <- predict(object$fit, type="ngroups")
-  model <- switch(object$fit$family,
-                  gaussian = "linear",
-                  binomial = "logistic",
-                  poisson = "Poisson")
+  if ('cv.grpsurv' %in% class(object)) {
+    model <- 'Cox'
+  } else {
+    model <- switch(object$fit$family, gaussian="linear", binomial="logistic", poisson="Poisson")
+  }
   d <- dim(object$fit$beta)
   if (length(d)==3) {
     p <- d[2] - 1
   } else {
-    p <- d[1] - 1
+    if (model == 'Cox') {
+      p <- d[1]
+    } else {
+      p <- d[1] - 1
+    }
   }
   val <- list(penalty=object$fit$penalty,
               model=model,
@@ -26,8 +35,8 @@ summary.cv.grpreg <- function(object, ...) {
               nvars=nvars,
               ngroups=ngroups,
               d=d)
-  if (object$fit$family=="gaussian") val$sigma <- sqrt(object$cve)
-  if (object$fit$family=="binomial") val$pe <- object$pe
+  if (!('cv.grpsurv' %in% class(object)) && object$fit$family=="gaussian") val$sigma <- sqrt(object$cve)
+  if (!('cv.grpsurv' %in% class(object)) && object$fit$family=="binomial") val$pe <- object$pe
   structure(val, class="summary.cv.grpreg")
 }
 print.summary.cv.grpreg <- function(x, digits, ...) {
