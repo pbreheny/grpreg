@@ -4,7 +4,7 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
   # Error checking
   family <- match.arg(family)
   if (alpha > 1 | alpha <= 0) stop("alpha must be in (0,1]")
-  if (any(is.na(y)) | any(is.na(X))) stop("Missing data (NA's) detected.  Take actions (e.g., removing cases, removing features, imputation) to eliminate missing data before passing X and y to ncvreg")
+  if (any(is.na(y)) | any(is.na(X))) stop("Missing data (NA's) detected.  Take actions (e.g., removing cases, removing features, imputation) to eliminate missing data before passing X and y to gBridge")
   if (length(group)!=ncol(X)) stop("group does not match X")
   if (delta <= 0) stop("Delta must be a positive number")
 

@@ -111,8 +111,8 @@ check(grMCP, reg, tol=1e-6)
 grSCAD <- coef(fit <- grpreg(X, y, group, penalty="grSCAD", family="binomial", gamma=2.1, eps=1e-10, lambda.min=0))[,100]
 plot(fit, main=fit$penalty)
 check(grSCAD, reg, tol=1e-6)
-check(predict(fit, X)[,100], predict(fit.mle))
-check(predict(fit, X, type="response")[,100], predict(fit.mle, type="response"))
+check(predict(fit, X)[,100], predict(fit.mle), tol=1e-6)
+check(predict(fit, X, type="response")[,100], predict(fit.mle, type="response"), tol=1e-6)
 
 .test = "grpreg() reproduces poisson regression"
 n <- 50

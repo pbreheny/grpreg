@@ -1,0 +1,54 @@
+figures:
+  dev: grDevices::png
+  dpi: 96
+  dev.args: []
+  fig.ext: png
+  fig.width: 5
+  fig.height: 5
+  fig.retina: 2
+
+navbar:
+  left:
+    - icon: fa-home fa-lg
+      href: index.html
+    - text: Learn more
+      menu:
+      - text: Models
+        href: articles/web/models.html
+      - text: Penalties
+        href: articles/web/penalties.html
+    - text: Functions
+      href: reference/index.html
+  right:
+    github:
+      icon: fa-github fa-lg
+      href: https://github.com/pbreheny/grpreg
+
+template:
+  params:
+    bootswatch: cerulean
+
+reference:
+- title: Model fitting
+  contents:
+  - grpreg
+  - grpsurv
+  - gBridge
+- title: Model selection and cross-validation
+  contents:
+  - cv.grpreg
+  - cv.grpsurv
+  - plot.cv.grpreg
+  - summary.cv.grpreg
+  - AUC.cv.grpsurv
+  - select
+- title: Plotting and extracting model features
+  contents:
+  - predict.grpreg
+  - predict.grpsurv
+  - plot.grpreg
+  - plot.grpsurv.func
+- title: Data sets
+  contents:
+  - Birthwt
+  - Lung

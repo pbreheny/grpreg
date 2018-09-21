@@ -156,6 +156,10 @@ tau = 1/3, group.multiplier, warn=TRUE, returnX = FALSE, ...)
   Gaussian responses, it is recommended to standardize the columns of
   \code{y} prior to fitting, in order to apply the penalization equally
   across columns.
+
+  \code{grpreg} requires groups to be non-overlapping; for model fitting
+  involving overlapping groups, see the companion package
+  \code{grpregOverlap}.
 }
 \value{
   An object with S3 class \code{"grpreg"} containing:
@@ -185,12 +189,12 @@ tau = 1/3, group.multiplier, warn=TRUE, returnX = FALSE, ...)
     \item Breheny, P. and Huang, J. (2009) Penalized methods for
     bi-level variable selection.  \emph{Statistics and its interface},
     \strong{2}: 369-380.
-    \url{myweb.uiowa.edu/pbreheny/publications/Breheny2009.pdf}
+    \url{myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf}
 
     \item Huang J., Breheny, P. and Ma, S. (2012). A selective
     review of group selection in high dimensional
     models. \emph{Statistical Science}, \strong{27}: 481-499.
-    \url{myweb.uiowa.edu/pbreheny/publications/Huang2012.pdf}
+    \url{myweb.uiowa.edu/pbreheny/pdf/Huang2012.pdf}
 
     \item Breheny, P. and Huang, J. (2015) Group descent algorithms for
     nonconvex penalized linear and logistic regression models with grouped
@@ -213,7 +217,7 @@ data(Birthwt)
 X <- Birthwt$X
 group <- Birthwt$group
 
-## Linear regression
+# Linear regression
 y <- Birthwt$bwt
 fit <- grpreg(X, y, group, penalty="grLasso")
 plot(fit)
@@ -227,7 +231,7 @@ fit <- grpreg(X, y, group, penalty="cMCP")
 plot(fit)
 select(fit, "AIC")
 
-## Logistic regression
+# Logistic regression
 y <- Birthwt$low
 fit <- grpreg(X, y, group, penalty="grLasso", family="binomial")
 plot(fit)
@@ -241,8 +245,7 @@ fit <- grpreg(X, y, group, penalty="cMCP", family="binomial")
 plot(fit)
 select(fit, "BIC")
 
-## Multitask learning
-## Simulated example
+# Multitask learning (simulated example)
 set.seed(1)
 n <- 50
 p <- 10
@@ -250,7 +253,17 @@ k <- 5
 X <- matrix(runif(n*p), n, p)
 y <- matrix(rnorm(n*k, X[,1] + X[,2]), n, k)
 fit <- grpreg(X, y)
-## Note that group is set up automatically:
+# Note that group is set up automatically
 fit$group
 plot(fit)
+
+# Overlapping groups
+\dontrun{
+library(grpregOverlap)
+data(pathway.dat)
+X <- pathway.dat$expression
+group <- pathway.dat$pathways
+y <- pathway.dat$mutation
+fit <- grpregOverlap(X, y, group, family='binomial')
+plot(fit)}
 }

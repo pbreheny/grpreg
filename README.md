@@ -2,9 +2,11 @@
 ![downloads](http://cranlogs.r-pkg.org/badges/grpreg)
 [![codecov.io](https://codecov.io/github/pbreheny/grpreg/coverage.svg?branch=master)](https://codecov.io/github/pbreheny/grpreg?branch=master)
 
-`grpreg` fits regularization paths for linear, logistic, or Poisson regression models with grouped penalties, such as the group lasso, group MCP, group SCAD, group exponential lasso, and group bridge. The algorithms are based on the idea of either locally approximated coordinate descent or group descent, depending on the penalty. All of the algorithms (with the exception of group bridge) are stable and fast.
+# Regularization Paths for Regression Models with Grouped Covariates
 
-To install:
+`grpreg` is an R package for fitting the regularization path of linear regression, GLM, and Cox regression models with grouped penalties.  This includes group selection methods such as group lasso, group MCP, and group SCAD as well as bi-level selection methods such as the group exponential lasso, the composite MCP, and the group bridge.  Utilities for carrying out cross-validation as well as post-fitting visualization, summarization, and prediction are also provided.
 
-* the latest released version: `install.packages("grpreg")`
-* the latest version (requires `devtools`): `install_github("pbreheny/grpreg")`
+## Installation
+
+* To install the latest release version from CRAN: `install.packages("grpreg")`
+* To install the latest development version from GitHub: `devtools::install_github("pbreheny/grpreg")`

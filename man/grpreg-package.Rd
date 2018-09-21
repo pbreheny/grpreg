@@ -12,7 +12,16 @@
   the algorithms (with the exception of group bridge) are stable and
   fast.
 }
-\details{The following penalties are available:
+\details{
+  Given a design matrix \code{X} in which the features consist of
+  non-overlapping groups and vector of responses \code{y}, \code{grpreg}
+  solves the regularization path for a variety of penalties.  The
+  package also provides methods for plotting and cross-validation.
+  
+  See the "Getting started" vignette for a brief overview of how the
+  package works.
+
+  The following penalties are available:
   \itemize{
     \item \code{grLasso}: Group lasso (Yuan and Lin, 2006)
     \item \code{grMCP}: Group MCP; like the group lasso, but with an MCP
@@ -26,6 +35,7 @@
     \item \code{gel}: Group exponential lasso (Breheny, 2015)
     \item \code{gBridge}: A penalty which places a bridge penalty on the
     L1-norm of each group (Huang et al., 2009)}
+  
   The \code{cMCP}, \code{gel}, and \code{gBridge} penalties carry out
   bi-level selection, meaning that they carry out variable selection at
   the group level and at the level of individual covariates (i.e., they
@@ -35,9 +45,8 @@
   either all be zero or all nonzero.  A variety of supporting methods
   for selecting lambda and plotting the paths are provided also.
 
-  See the "Quick start guide" for a brief overview of how the package
-  works, and "Penalties in grpreg" for a more detailed description of
-  the individual penalties availabe in the package.
+  For group penalization involving overlapping groups, see the
+  companion package \code{grpregOverlap}.
 }
 \references{
   \itemize{
@@ -52,12 +61,12 @@
     \item Breheny, P. and Huang, J. (2009) Penalized methods for
     bi-level variable selection.  \emph{Statistics and its interface},
     \strong{2}: 369-380.
-    \url{myweb.uiowa.edu/pbreheny/publications/Breheny2009.pdf}
+    \url{myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf}
     
     \item Huang J., Breheny, P. and Ma, S. (2012). A selective
     review of group selection in high dimensional
     models. \emph{Statistical Science}, \strong{27}: 481-499.
-    \url{myweb.uiowa.edu/pbreheny/publications/Huang2012.pdf}
+    \url{myweb.uiowa.edu/pbreheny/pdf/Huang2012.pdf}
     
     \item Breheny, P. and Huang, J. (2015) Group descent algorithms for
     nonconvex penalized linear and logistic regression models with
@@ -70,8 +79,7 @@
     \url{http://dx.doi.org/10.1111/biom.12300}
   }
 }
-\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
+\author{Patrick Breheny}
 \examples{
-vignette("quick-start", "grpreg")
-vignette("penalties", "grpreg")
+vignette("getting-started", "grpreg")
 }

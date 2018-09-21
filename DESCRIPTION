@@ -2,16 +2,20 @@ Package: grpreg
 Title: Regularization Paths for Regression Models with Grouped Covariates
 Version: 3.1-5
 Date: 2018-06-15
-Author: Patrick Breheny [aut, cre], Yaohui Zeng [ctb]
-Maintainer: Patrick Breheny <patrick-breheny@uiowa.edu>
+Authors@R: c(
+  person("Patrick", "Breheny", role=c("aut","cre"), email="patrick-breheny@uiowa.edu", comment=c(ORCID="000-0002-0650-1119")),
+  person("Yaohui", "Zeng", role="ctb"))
 Depends: R (>= 3.1.0)
 Imports: Matrix
 Suggests: grpregOverlap, knitr, survival
 VignetteBuilder: knitr
-Description: Efficient algorithms for fitting the regularization path of
- linear or logistic regression models with grouped penalties.  This
- includes group selection methods such as group lasso, group MCP, and
- group SCAD as well as bi-level selection methods such as the group
- exponential lasso, the composite MCP, and the group bridge.
+Description: Efficient algorithms for fitting the regularization path of linear
+  regression, GLM, and Cox regression models with grouped penalties.  This
+  includes group selection methods such as group lasso, group MCP, and
+  group SCAD as well as bi-level selection methods such as the group
+  exponential lasso, the composite MCP, and the group bridge.
 BugReports: http://github.com/pbreheny/grpreg/issues
 License: GPL-3
+URL: http://pbreheny.github.io/grpreg, https://github.com/pbreheny/grpreg
+LazyData: TRUE
+RoxygenNote: 6.1.0

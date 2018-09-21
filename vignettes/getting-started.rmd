@@ -1,0 +1,90 @@
+---
+title: "Getting started with grpreg"
+author: "Patrick Breheny"
+output:
+  rmarkdown::html_vignette:
+    css: vignette.css
+vignette: >
+  %\VignetteIndexEntry{Getting started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+library(grpreg)
+set.seed(4)
+knitr::opts_knit$set(aliases=c(h = 'fig.height', w = 'fig.width'))
+knitr::opts_chunk$set(comment="#", collapse=TRUE, cache=FALSE, tidy=FALSE)
+knitr::knit_hooks$set(small.mar = function(before, options, envir) {
+  if (before) par(mar = c(4, 4, .1, .1))
+})
+```
+
+`grpreg` is an R package for fitting the regularization path of linear regression, GLM, and Cox regression models with grouped penalties.  This includes group selection methods such as group lasso, group MCP, and group SCAD as well as bi-level selection methods such as the group exponential lasso, the composite MCP, and the group bridge.  Utilities for carrying out cross-validation as well as post-fitting visualization, summarization, and prediction are also provided.
+
+This vignette offers a brief introduction to the basic use of `grpreg`.  For more details on the package, visit the `grpreg` website at <http://pbreheny.github.io/grpreg>.  For more on the algorithms used by `grpreg`, see the original articles:
+
+* [Breheny, P. and Huang, J. (2009) Penalized methods for bi-level variable selection.  *Statistics and its interface*, **2**: 369-380.](http://myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf)
+
+* [Breheny, P. and Huang, J. (2015) Group descent algorithms for nonconvex penalized linear and logistic regression models with grouped predictors. *Statistics and Computing*, **25**: 173-187.](http://www.springerlink.com/openurl.asp?genre=article&id=doi:10.1007/s11222-013-9424-2)
+
+For more information on specific penalties, see <http://pbreheny.github.io/grpreg/articles/web/penalties.html>.
+
+`grpreg` comes with a few example data sets; we'll look at `Birthwt`, which involves identifying risk factors associated with low birth weight.  The outcome can either be measured continuously (`bwt`, the birth weight in kilograms) or dichotomized (`low`) with respect to the newborn having a low birth weight (under 2.5 kg).
+
+```{r Birthwt}
+data(Birthwt)
+X <- Birthwt$X
+y <- Birthwt$bwt
+head(X)
+```
+The original design matrix consisted of 8 variables, which have been expanded here into 16 features.  For example, there are multiple indicator functions for race ("other" being the reference group) and several continuous factors such as age have been expanded using polynomial contrasts (splines would give a similar structure).  Hence, the columns of the design matrix are *grouped*; this is what grpreg is designed for.  The grouping information is encoded as follows:
+
+```{r Birthwt_group}
+group <- Birthwt$group
+group
+```
+
+Here, groups are given as a factor; unique integer codes (which are essentially unlabeled factors) and character vectors are also allowed (character vectors do have some limitations, however, as the order of the groups is left unspecified, which can lead to ambiguity if you also try to set the `group.multiplier` option).  To fit a group lasso model to this data:
+
+```{r fit}
+fit <- grpreg(X, y, group, penalty="grLasso")
+```
+
+We can then plot the coefficient paths with
+
+```{r plot, h=4, w=6, small.mar=TRUE}
+plot(fit)
+```
+
+Notice that when a group enters the model (e.g., the green group), all of its coefficients become nonzero; this is what happens with group lasso models.  To see what the coefficients are, we could use the `coef` function:
+
+```{r coef}
+coef(fit, lambda=0.05)
+```
+
+Note that the number of physician's visits (`ftv`) is not included in the model at $\lambda=0.05$.
+
+Typically, one would carry out cross-validation for the purposes of carrying out inference on the predictive accuracy of the model at various values of $\lambda$.
+
+```{r cvplot, h=5, w=6}
+cvfit <- cv.grpreg(X, y, group, penalty="grLasso")
+plot(cvfit)
+```
+The coefficients corresponding to the value of $\lambda$ that minimizes the cross-validation error can be obtained via `coef`:
+
+```{r cv_coef}
+coef(cvfit)
+```
+
+Predicted values can be obtained via `predict`, which has a number of options:
+
+```{r predict}
+predict(cvfit, X=head(X))                 # Predictions for new observations
+predict(fit, type="ngroups", lambda=0.1)  # Number of nonzero groups
+predict(fit, type="groups", lambda=0.1)   # Identity of nonzero groups
+predict(fit, type="nvars", lambda=0.1)    # Number of nonzero coefficients
+predict(fit, type="vars", lambda=0.1)     # Identity of nonzero coefficients
+```
+
+Note that the original fit (to the full data set) is returned as `cvfit$fit`; it is not necessary to call both `grpreg` and `cv.grpreg` to analyze a data set.  Several other penalties are available, as are methods for logistic regression and Cox proportional hazards regression.
