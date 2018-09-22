@@ -1,0 +1,161 @@
+---
+title: "Penalties"
+author: "Patrick Breheny"
+---
+
+```{r setup, include=FALSE}
+library(grpreg)
+knitr::opts_knit$set(aliases=c(h = 'fig.height', w = 'fig.width'))
+knitr::opts_chunk$set(comment="#", collapse=TRUE, cache=FALSE, tidy=FALSE)
+knitr::knit_hooks$set(small.mar = function(before, options, envir) {
+  if (before) par(mar = c(4, 4, .1, .1))
+})
+```
+
+`grpreg` fits models that fall into the penalized likelihood framework, in which we estimate $\bb$ by minimizing the objective function
+
+$$
+Q(\bb|\X, \y) = L(\bb|\X,\y) + P_\lam(\bb),
+$$
+
+where $L(\bb|\X,\y)$ is the loss (deviance) and $P_\lam(\bb)$ is the penalty.  This article describes the different penalties available in `grpreg`; see [models](models.html) for more information on the different loss functions available.
+
+The following notation is used throughout (recall that the design matrix $\X$ is decomposed into groups $\X_1, \X_2, \ldots$:
+
+* $\bb$ denotes the entire vector of regression coefficients
+* $\bb_j$ denotes the vector of regression coefficients corresponding to the $j$th group
+* $\beta_{jk}$ denotes $k$th regression coefficient in the $j$th group
+* $\norm{\bb_j}$ denotes the Euclidean ($L_2$) norm of $\bb_j$
+* $\norm{\bb_j}_1$ denotes the $L_1$ norm of $\beta_j$ (Manhattan distance)
+
+## Group selection
+
+These penalties are sparse at the group level -- the coefficients within a group will either all equal zero or none will equal zero.
+
+If you use any of these penalties, please cite
+
+* Breheny P and Huang J (2015). Group descent algorithms for nonconvex penalized linear and logistic regression models with grouped predictors. *Statistics and Computing*, **25**: 173-187. [[pdf](http://myweb.uiowa.edu/pbreheny/pdf/group-computing.pdf)].
+
+The article goes into more mathematical details, discusses issues of standardization in the group sense, and provides references.
+
+The group lasso was originally proposed in
+
+* Yuan M. and Lin Y. (2006) Model selection and estimation in regression with grouped variables. *Journal of the Royal Statistical Society Series B*, **68**: 49-67.
+
+### Group lasso
+
+```{r, eval=FALSE}
+grpreg(X, y, group, penalty="grLasso")
+```
+
+$$
+P(\beta) = \lam \sum_j \norm{\bb_j}
+$$
+
+### Group MCP
+
+```{r, eval=FALSE}
+grpreg(X, y, group, penalty="grMCP")
+```
+
+$$
+P(\bb) = \sum_j \textrm{MCP}_{\lam, \gamma}(\norm{\bb_j})
+$$
+
+where $\textrm{MCP}_{\lam, \gamma}(\cdot)$ denotes the MCP penalty with regularization parameter $\lam$ and tuning parameter $\gamma$.
+
+### Group SCAD
+
+```{r, eval=FALSE}
+grpreg(X, y, group, penalty="grSCAD")
+```
+
+$$
+P(\bb) = \sum_j \textrm{SCAD}_{\lam, \gamma}(\norm{\bb_j})
+$$
+
+where $\textrm{SCAD}_{\lam, \gamma}(\cdot)$ denotes the SCAD penalty with regularization parameter $\lam$ and tuning parameter $\gamma$.
+
+## Bi-level selection
+
+These penalties are sparse at both the group and individual levels.  In some groups, all coefficients will equal zero.  However, even if a group is selected, some of the coefficients within that group may still be zero.
+
+### Group exponential lasso (GEL)
+
+```{r, eval=FALSE}
+grpreg(X, y, group, penalty="gel")
+```
+
+$$
+P(\beta) = \sum_j f_{\lam, \tau}(\norm{\bb_j})
+$$
+
+where $f(\cdot)$ denotes the exponential penalty with regularization parameter $\lam$ and tuning parameter $\tau$:
+
+$$
+f_{\lam, \tau}(\theta) = \frac{\lam^2}{\tau}\left\{1-\exp\left(-\frac{\tau\theta}{\lam}\right)\right\}
+$$
+
+If you use the GEL penalty, please cite
+
+* Breheny P (2015). The group exponential lasso for bi-level variable selection. *Biometrics*, **71**: 731-740. [[pdf](http://onlinelibrary.wiley.com/doi/10.1111/biom.12300/pdf)].
+
+### Composite MCP
+
+```{r, eval=FALSE}
+grpreg(X, y, group, penalty="cMCP")
+```
+
+$$
+P(\bb) = \sum_j \textrm{MCP}_{\lam, \gam_1} \left( \sum_k \textrm{MCP}_{\lam, \gam_2} (\abs{\beta_{jk}}) \right)
+$$
+
+where $\textrm{MCP}_{\lam, \gamma}(\cdot)$ denotes the MCP penalty with regularization parameter $\lam$ and tuning parameter $\gamma$.
+
+If you use the composite MCP penalty, please cite either of the following papers:
+
+* Breheny P and Huang J (2009). Penalized methods for bi-level variable selection. *Statistics and Its Interface*, **2**: 369-380. [[pdf](http://myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf)]
+* Huang J, Breheny P and Ma S (2012). A selective review of group selection in high-dimensional models. *Statistical Science*, **27**: 481-499. [[pdf](http://myweb.uiowa.edu/pbreheny/pdf/Huang2012.pdf)]
+
+Please note that there is some confusion around the name "group MCP".  In the first paper above (2009), the composite MCP penalty was referred to as the "group MCP" penalty; the second paper (2012), in reviewing the various kinds of group penalties that had been proposed, recommended changing the name to "composite MCP" to avoid confusion with the "group MCP" [defined above](#group-mcp).
+
+### Group bridge
+
+```{r, eval=FALSE}
+gBridge(X, y, group)
+```
+
+$$
+P(\bb) = \lambda \sum_j K_j^\gamma \norm{\bb_j}_1^\gamma
+$$
+
+where $K_j$ denotes the number of elements in group $j$.
+
+Please note that the group bridge penalty uses a very different algorithm from the other penalties.  Due to the nature of the penalty, model fitting is slower and less stable for group bridge models.  This is, in fact, the main motivation of the GEL penalty of Section~\ref{Sec:gel}: to offer a more tractable alternative to group bridge that has similar estimation properties but is much better behaved from a numerical optimization perspective.
+
+If you use the group bridge penalty, please cite either of the following papers:
+
+* Huang J, Ma S, Xie H and Zhang C (2009). A group bridge approach for variable selection. *Biometrika*, **96**: 339-355.
+* Breheny P and Huang J (2009). Penalized methods for bi-level variable selection. *Statistics and Its Interface*, **2**: 369-380. [[pdf](\href{http://myweb.uiowa.edu/pbreheny/publications/Breheny2009.pdf)]
+
+The first paper proposed the method; the second paper proposed the algorithm that is used in the `grpreg` package.
+
+## Specifying an additional ridge component
+
+For all of the penalties in the previous section, `grpreg` allows the specification of an additional ridge ($L_2$) component to the penalty.  This will set $\lam_1 = \alpha\lam$ and $\lam_2=(1-\alpha)\lam$, with the penalty given by
+
+$$
+P(\bb) = P_1(\bb|\lam_1) + \frac{\lam_2}{2}\norm{\bb}^2,
+$$
+
+where $P_1$ is any of the penalties from the earlier sections.  So, for example
+
+```{r, eval=FALSE}
+grpreg(X, y, group, penalty="grLasso", alpha=0.75)
+```
+
+will fit a model with penalty
+
+$$
+P(\beta) = 0.75\lam \sum_j \norm{\bb_j} + \frac{0.25\lam}{2}\norm{\bb}^2.
+$$
