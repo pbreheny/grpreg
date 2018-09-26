@@ -1,3 +1,5 @@
+loss.grpreg <- grpreg:::loss.grpreg
+
 .test = "logLik is correct"
 n <- 50
 group <- rep(0:4,5:1)
@@ -8,23 +10,29 @@ yy <- runif(n) > .5
 fit.mle <- lm(y~X)
 fit <- grpreg(X, y, group, penalty="grLasso", lambda.min=0)
 check(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
+check(apply(loss.grpreg(y, predict(fit, X=X, type='response'), family='gaussian'), 2, sum), fit$loss)
 check(AIC(fit)[100], AIC(fit.mle), tol=.001)
 fit <- grpreg(X, y, group, penalty="gel", lambda.min=0)
 check(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
+check(apply(loss.grpreg(y, predict(fit, X=X, type='response'), family='gaussian'), 2, sum), fit$loss, tol=0.0001)
 check(AIC(fit)[100], AIC(fit.mle), tol=.001)
 fit.mle <- glm(yy~X, family="binomial")
 fit <- grpreg(X, yy, group, penalty="grLasso", lambda.min=0, family="binomial")
 check(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
+check(apply(loss.grpreg(yy, predict(fit, X=X, type='response'), family='binomial'), 2, sum), fit$loss, tol=0.0001)
 check(AIC(fit)[100], AIC(fit.mle), tol=.001)
-fit <- grpreg(X, yy, group, penalty="gMCP", lambda.min=0, family="binomial")
+fit <- grpreg(X, yy, group, penalty="gel", lambda.min=0, family="binomial")
 check(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
+check(apply(loss.grpreg(yy, predict(fit, X=X, type='response'), family='binomial'), 2, sum), fit$loss, tol=0.0001)
 check(AIC(fit)[100], AIC(fit.mle), tol=.001)
 fit.mle <- glm(yy~X, family="poisson")
 fit <- grpreg(X, yy, group, penalty="grLasso", lambda.min=0, family="poisson")
 check(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
+check(apply(loss.grpreg(yy, predict(fit, X=X, type='response'), family='poisson'), 2, sum), fit$loss, tol=0.0001)
 check(AIC(fit)[100], AIC(fit.mle), tol=.001)
-fit <- grpreg(X, yy, group, penalty="gMCP", lambda.min=0, family="poisson")
+fit <- grpreg(X, yy, group, penalty="gel", lambda.min=0, family="poisson")
 check(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
+check(apply(loss.grpreg(yy, predict(fit, X=X, type='response'), family='poisson'), 2, sum), fit$loss, tol=0.0001)
 check(AIC(fit)[100], AIC(fit.mle), tol=.001)
 
 .test = "grpreg handles user-specified lambda"

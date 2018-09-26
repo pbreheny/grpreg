@@ -6,27 +6,23 @@
 #include <R_ext/Rdynload.h>
 
 /* .Call calls */
-extern SEXP gdfit_binomial(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP gdfit_glm(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gdfit_cox(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gdfit_gaussian(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP gdfit_poisson(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP lcdfit_binomial(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP lcdfit_glm(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP lcdfit_cox(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP lcdfit_gaussian(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP lcdfit_poisson(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP maxgrad(SEXP, SEXP, SEXP, SEXP);
 extern SEXP maxprod(SEXP, SEXP, SEXP, SEXP);
 extern SEXP standardize(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-  {"gdfit_binomial",           (DL_FUNC) &gdfit_binomial,           15},
+  {"gdfit_glm",                (DL_FUNC) &gdfit_glm,                16},
   {"gdfit_cox",                (DL_FUNC) &gdfit_cox,                15},
   {"gdfit_gaussian",           (DL_FUNC) &gdfit_gaussian,           15},
-  {"gdfit_poisson",            (DL_FUNC) &gdfit_poisson,            15},
-  {"lcdfit_binomial",          (DL_FUNC) &lcdfit_binomial,          17},
+  {"lcdfit_glm",               (DL_FUNC) &lcdfit_glm,               18},
   {"lcdfit_cox",               (DL_FUNC) &lcdfit_cox,               17},
   {"lcdfit_gaussian",          (DL_FUNC) &lcdfit_gaussian,          16},
-  {"lcdfit_poisson",           (DL_FUNC) &lcdfit_poisson,           17},
   {"maxgrad",                  (DL_FUNC) &maxgrad,                   4},
   {"maxprod",                  (DL_FUNC) &maxprod,                   4},
   {"standardize",              (DL_FUNC) &standardize,               1},
@@ -83,6 +79,17 @@ double gLoss(double *r, int n) {
   double l = 0;
   for (int i=0;i<n;i++) l = l + pow(r[i],2);
   return(l);
+}
+
+// Pr(y=1) for binomial
+double p_binomial(double eta) {
+  if (eta > 10) {
+    return(1);
+  } else if (eta < -10) {
+    return(0);
+  } else {
+    return(exp(eta)/(1+exp(eta)));
+  }
 }
 
 // Euclidean norm

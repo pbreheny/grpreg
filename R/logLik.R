@@ -7,19 +7,19 @@ logLik.grpreg <- function(object, df.method=c("default","active"), REML=FALSE, .
     RSS <- object$loss
     l <- -n/2 * (log(2*pi) + log(RSS) - log(rdf)) - rdf/2
     df <- df + 1
-  } else if (object$family=="binomial") {
-    l <- -1*object$loss
-  } else if (object$family=="poisson") {
+  } else if (object$family=='poisson') {
     y <- object$y
     ind <- y != 0
-    l <- -object$loss + sum(y[ind]*log(y[ind])) - sum(y) - sum(lfactorial(y))
+    l <- -object$loss/2 + sum(y[ind]*log(y[ind])) - sum(y) - sum(lfactorial(y))
+  } else {
+    l <- -object$loss/2
   }
-  
+
   val <- l
   attr(val,"df") <- df
   attr(val,"nobs") <- n
   class(val) <- "logLik"
-  return(val)    
+  return(val)
 }
 logLik.grpsurv <- function(object, df.method=c("default","active"), ...) {
   df.method <- match.arg(df.method)

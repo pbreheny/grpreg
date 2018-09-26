@@ -34,11 +34,7 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
     df <- fit[[3]] + 1 # Intercept
     loss <- fit[[4]]
   } else {
-    if (family=="binomial") {
-      fit <- .Call("lcdfit_binomial", XG$X, yy, "gBridge", K1, K0, lambda, alpha, eps, delta, gamma, 0, as.integer(max.iter), as.double(XG$m), as.integer(p), as.integer(max(XG$g)), as.integer(warn), as.integer(TRUE))
-    } else if (family=="poisson") {
-      fit <- .Call("lcdfit_poisson", XG$X, yy, "gBridge", K1, K0, lambda, alpha, eps, delta, gamma, 0, as.integer(max.iter), as.double(XG$m), as.integer(p), as.integer(max(XG$g)), as.integer(warn), as.integer(TRUE))
-    }
+    fit <- .Call("lcdfit_glm", XG$X, yy, family, "gBridge", K1, K0, lambda, alpha, eps, delta, gamma, 0, as.integer(max.iter), as.double(XG$m), as.integer(p), as.integer(max(XG$g)), as.integer(warn), as.integer(TRUE))
     b <- rbind(fit[[1]], matrix(fit[[2]], nrow=p))
     iter <- fit[[3]]
     df <- fit[[4]]

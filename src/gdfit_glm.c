@@ -6,6 +6,8 @@
 #include <R_ext/Applic.h>
 double crossprod(double *x, double *y, int n, int j);
 double sum(double *x, int n);
+double max(double *x, int n);
+double p_binomial(double eta);
 double norm(double *x, int p);
 double S(double z, double l);
 double F(double z, double l1, double l2, double gamma);
@@ -13,15 +15,14 @@ double Fs(double z, double l1, double l2, double gamma);
 double MCP(double theta, double l, double a);
 double dMCP(double theta, double l, double a);
 
-// Group descent update -- binomial
-void gd_binomial(double *b, double *x, double *r, double *eta, int g, int *K1, int n, int l, int p, const char *penalty, double lam1, double lam2, double gamma, SEXP df, double *a, double *maxChange) {
+// Group descent update
+void gd_glm(double *b, double *x, double *r, double v, double *eta, int g, int *K1, int n, int l, int p, const char *penalty, double lam1, double lam2, double gamma, SEXP df, double *a, double *maxChange) {
 
   // Calculate z
   int K = K1[g+1] - K1[g];
   double *z = Calloc(K, double);
   for (int j=K1[g]; j<K1[g+1]; j++) z[j-K1[g]] = crossprod(x, r, n, j)/n + a[j];
   double z_norm = norm(z,K);
-  double v = 0.25;
 
   // Update b
   double len;
@@ -47,7 +48,7 @@ void gd_binomial(double *b, double *x, double *r, double *eta, int g, int *K1, i
   Free(z);
 }
 
-SEXP gdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_) {
+SEXP gdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_) {
 
   // Lengths/dimensions
   int n = length(y_);
@@ -59,6 +60,7 @@ SEXP gdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP la
   double *X = REAL(X_);
   double *y = REAL(y_);
   const char *penalty = CHAR(STRING_ELT(penalty_, 0));
+  const char *family = CHAR(STRING_ELT(family_, 0));
   int *K1 = INTEGER(K1_);
   int K0 = INTEGER(K0_)[0];
   double *lam = REAL(lambda);
@@ -98,14 +100,22 @@ SEXP gdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP la
   for (int j=0; j<p; j++) a[j] = 0;
   int *e = Calloc(J, int);
   for (int g=0; g<J; g++) e[g] = 0;
-  int converged, lstart, ng, nv, violations;
-  double shift, l1, l2, maxChange;
+  int lstart, ng, nv, violations;
+  double shift, l1, l2, mu, v, maxChange;
 
   // Initialization
   double ybar = sum(y, n)/n;
-  a0 = b0[0] = log(ybar/(1-ybar));
   double nullDev = 0;
-  for (int i=0; i<n; i++) nullDev += - y[i]*log(ybar) - (1-y[i])*log(1-ybar);
+  if (strcmp(family, "binomial")==0) {
+    a0 = b0[0] = log(ybar/(1-ybar));
+    for (int i=0; i<n; i++) nullDev -= 2*y[i]*log(ybar) + 2*(1-y[i])*log(1-ybar);
+  } else if (strcmp(family, "poisson")==0) {
+    a0 = b0[0] = log(ybar);
+    for (int i=0;i<n;i++) {
+      if (y[i]!=0) nullDev += 2*(y[i]*log(y[i]/ybar) + ybar - y[i]);
+      else nullDev += 2*ybar;
+    }
+  }
   for (int i=0; i<n; i++) eta[i] = a0;
 
   // If lam[0]=lam_max, skip lam[0] -- closed form sol'n available
@@ -117,7 +127,6 @@ SEXP gdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP la
   }
 
   // Path
-  double pi;
   for (int l=lstart; l<L; l++) {
     R_CheckUserInterrupt();
     if (l != 0) {
@@ -141,23 +150,28 @@ SEXP gdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP la
 
     while (tot_iter < max_iter) {
       while (tot_iter < max_iter) {
-	converged = 0;
 	INTEGER(iter)[l]++;
         tot_iter++;
 
 	// Approximate L
 	REAL(Dev)[l] = 0;
-	for (int i=0; i<n; i++) {
-	  if (eta[i] > 10) {
-	    pi = 1;
-	  } else if (eta[i] < -10) {
-	    pi = 0;
-	  } else {
-	    pi = exp(eta[i])/(1+exp(eta[i]));
-	  }
-	  r[i] = (y[i] - pi) / 0.25;
-	  REAL(Dev)[l] += - y[i]*log(pi) - (1-y[i])*log(1-pi);
-	}
+        if (strcmp(family, "binomial")==0) {
+          v = 0.25;
+          for (int i=0; i<n; i++) {
+            mu = p_binomial(eta[i]);
+            r[i] = (y[i] - mu) / v;
+            if (y[i]==1) REAL(Dev)[l] -= 2*log(mu);
+            else REAL(Dev)[l] -= 2*log(1-mu);
+          }
+        } else if (strcmp(family, "poisson")==0) {
+          v = exp(max(eta, n));
+          for (int i=0; i<n; i++) {
+            mu = exp(eta[i]);
+            r[i] = (y[i] - mu)/v;
+            if (y[i]!=0) REAL(Dev)[l] += 2*(y[i]*log(y[i]/mu) + mu - y[i]);
+            else REAL(Dev)[l] += 2*mu;
+          }
+        }
 
 	// Check for saturation
 	if (REAL(Dev)[l]/nullDev < .01) {
@@ -194,7 +208,7 @@ SEXP gdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP la
 	for (int g=0; g<J; g++) {
 	  l1 = lam[l] * m[g] * alpha;
 	  l2 = lam[l] * m[g] * (1-alpha);
-	  if (e[g]) gd_binomial(b, X, r, eta, g, K1, n, l, p, penalty, l1, l2, gamma, df, a, &maxChange);
+	  if (e[g]) gd_glm(b, X, r, v, eta, g, K1, n, l, p, penalty, l1, l2, gamma, df, a, &maxChange);
 	}
 
 	// Check convergence
@@ -209,7 +223,7 @@ SEXP gdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP la
 	if (e[g]==0) {
 	  l1 = lam[l] * m[g] * alpha;
 	  l2 = lam[l] * m[g] * (1-alpha);
-	  gd_binomial(b, X, r, eta, g, K1, n, l, p, penalty, l1, l2, gamma, df, a, &maxChange);
+	  gd_glm(b, X, r, v, eta, g, K1, n, l, p, penalty, l1, l2, gamma, df, a, &maxChange);
 	  if (b[l*p+K1[g]] != 0) {
 	    e[g] = 1;
 	    violations++;

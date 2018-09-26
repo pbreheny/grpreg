@@ -59,13 +59,8 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
     df <- fit[[3]] + 1 # Intercept
     loss <- fit[[4]]
   } else {
-    if (family=="binomial") {
-      if (bilevel) fit <- .Call("lcdfit_binomial", XG$X, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), XG$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
-      else fit <- .Call("gdfit_binomial", XG$X, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, XG$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
-    } else if (family=="poisson") {
-      if (bilevel) fit <- .Call("lcdfit_poisson", XG$X, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), XG$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
-      else fit <- .Call("gdfit_poisson", XG$X, yy, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, XG$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
-    }
+    if (bilevel) fit <- .Call("lcdfit_glm", XG$X, yy, family, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), XG$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
+    else fit <- .Call("gdfit_glm", XG$X, yy, family, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, XG$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
     b <- rbind(fit[[1]], matrix(fit[[2]], nrow=p))
     iter <- fit[[3]]
     df <- fit[[4]]
