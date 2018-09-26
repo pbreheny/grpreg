@@ -30,7 +30,7 @@ REML=FALSE, ...)
   display correctly.  However, it works with 'AIC' and 'BIC' without any
   glitches and returns the expected vectorized output.
   }
-\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
+\author{Patrick Breheny}
 \seealso{\code{grpreg}}
 \examples{
 data(Birthwt)

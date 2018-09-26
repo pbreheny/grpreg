@@ -108,14 +108,15 @@ tau = 1/3, group.multiplier, warn=TRUE, returnX = FALSE, ...)
   parameter of the MCP penalty is denoted 'gamma'.  Note, however, that
   in Breheny and Huang (2009), \code{gamma} is denoted 'a'.
 
-  The objective function is defined to be
-  \deqn{\frac{1}{2n}RSS + penalty}{RSS/(2*n) + penalty}
-  for \code{"gaussian"} and
-  \deqn{-\frac{1}{n} loglik + penalty}{-loglik/n + penalty}
-  for \code{"binomial"}, where the likelihood is from a traditional
-  generalized linear model for the log-odds of an event.  For logistic
-  regression models, some care is taken to avoid model saturation; the
-  algorithm  may exit early in this setting.
+  The objective function for \code{grpreg} optimization is defined to be
+  \deqn{Q(\beta|X, y) = \frac{1}{n} L(\beta|X, y) +
+    P_\lambda(\beta)}{Q(\beta|X, y) = (1/n)*L(\beta|X, y) +
+    P(\beta, \lambda),}
+  where the loss function L is the deviance (-2 times the log
+  likelihood) for the specified outcome distribution
+  (gaussian/binomial/poisson).
+  \href{http://pbreheny.github.io/ncvreg/articles/web/models.html}{See
+    here for more details}.
 
   For the bi-level selection methods, a locally approximated coordinate
   descent algorithm is employed.  For the group selection methods, group
@@ -163,26 +164,28 @@ tau = 1/3, group.multiplier, warn=TRUE, returnX = FALSE, ...)
 }
 \value{
   An object with S3 class \code{"grpreg"} containing:
-  \item{beta}{The fitted matrix of coefficients.  The number of rows is
-    equal to the number of coefficients, and the number of columns is
-    equal to \code{nlambda}.}
-  \item{family}{Same as above.}
-  \item{group}{Same as above.}
-  \item{lambda}{The sequence of \code{lambda} values in the path.}
-  \item{alpha}{Same as above.}
-  \item{loss}{A vector containing either the residual sum of squares
-    (\code{"gaussian"}) or negative log-likelihood (\code{"binomial"})
-    of the fitted model at each value of \code{lambda}.}
-  \item{n}{Number of observations.}
-  \item{penalty}{Same as above.}
-  \item{df}{A vector of length \code{nlambda} containing estimates of
-    effective number of model parameters all the points along the
-    regularization path.  For details on how this is calculated, see
-    Breheny and Huang (2009).}
-  \item{iter}{A vector of length \code{nlambda} containing the number
-    of iterations until convergence at each value of \code{lambda}.}
-  \item{group.multiplier}{A named vector containing the multiplicative
-    constant applied to each group's penalty.}
+  \describe{
+    \item{beta}{The fitted matrix of coefficients.  The number of rows
+      is equal to the number of coefficients, and the number of columns
+      is equal to \code{nlambda}.}
+    \item{family}{Same as above.}
+    \item{group}{Same as above.}
+    \item{lambda}{The sequence of \code{lambda} values in the path.}
+    \item{alpha}{Same as above.}
+    \item{loss}{A vector containing either the residual sum of squares
+      (\code{"gaussian"}) or negative log-likelihood (\code{"binomial"})
+      of the fitted model at each value of \code{lambda}.}
+    \item{n}{Number of observations.}
+    \item{penalty}{Same as above.}
+    \item{df}{A vector of length \code{nlambda} containing estimates of
+      effective number of model parameters all the points along the
+      regularization path.  For details on how this is calculated, see
+      Breheny and Huang (2009).}
+    \item{iter}{A vector of length \code{nlambda} containing the number
+      of iterations until convergence at each value of \code{lambda}.}
+    \item{group.multiplier}{A named vector containing the multiplicative
+      constant applied to each group's penalty.}
+  }
 }
 \references{
   \itemize{
@@ -207,7 +210,7 @@ tau = 1/3, group.multiplier, warn=TRUE, returnX = FALSE, ...)
   }
 }
 
-\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
+\author{Patrick Breheny}
 \seealso{\code{\link{cv.grpreg}}, as well as
   \code{\link[=plot.grpreg]{plot}} and
   \code{\link[=select.grpreg]{select}} methods.}

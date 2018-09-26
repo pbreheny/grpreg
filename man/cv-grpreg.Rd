@@ -74,8 +74,8 @@ cv.grpsurv(X, y, group, ..., nfolds=10, seed, fold, se=c('quick',
   An object with S3 class \code{"cv.grpreg"} containing:
   \item{cve}{The error for each value of \code{lambda}, averaged
     across the cross-validation folds.}
-  \item{cvse}{The estimated standard error associated with each value of
-    for \code{cve}.}
+  \item{cvse}{The estimated standard error associated with each value
+    of for \code{cve}.}
   \item{lambda}{The sequence of regularization parameter values along
     which the cross-validation error was calculated.}
   \item{fit}{The fitted \code{grpreg} object for the whole data.}
@@ -87,8 +87,8 @@ cv.grpsurv(X, y, group, ..., nfolds=10, seed, fold, se=c('quick',
   \item{lambda.min}{The value of \code{lambda} with the minimum
     cross-validation error.}
   \item{null.dev}{The deviance for the intercept-only model.}
-  \item{pe}{If \code{family="binomial"}, the cross-validation prediction
-    error for each value of \code{lambda}.}
+  \item{pe}{If \code{family="binomial"}, the cross-validation
+    prediction error for each value of \code{lambda}.}
 }
 \author{Patrick Breheny}
 \seealso{\code{\link{grpreg}}, \code{\link{plot.cv.grpreg}},

@@ -49,7 +49,7 @@ which=object$min, ...)
   \code{coef.grpreg} and \code{predict.grpreg} with \code{lambda} set to
   the value that minimizes the cross-validation error.}
 \value{The object returned depends on type.}
-\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
+\author{Patrick Breheny}
 \seealso{\code{grpreg}}
 \examples{
 # Fit penalized logistic regression model to birthweight data

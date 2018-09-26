@@ -1,0 +1,124 @@
+---
+title: "Models"
+author: "Patrick Breheny"
+---
+
+```{r setup, include=FALSE}
+library(grpreg)
+knitr::opts_knit$set(aliases=c(h = 'fig.height', w = 'fig.width'))
+knitr::opts_chunk$set(comment="#", collapse=TRUE, cache=FALSE, tidy=FALSE)
+knitr::knit_hooks$set(small.mar = function(before, options, envir) {
+  if (before) par(mar = c(4, 4, .1, .1))
+})
+```
+
+<div style='text-align: center; font-size: 200%; font-weight: 700; margin: 20pt;'><i class="fa fa-wrench"></i> Under construction <i class="fa fa-wrench"></div>
+
+`grpreg` fits models that fall into the penalized likelihood framework.  Rather than estimating $\bb$ by maximizing the likelihood, in this framework we estimate $\bb$ by minimizing the objective function
+$$
+Q(\bb|\X, \y) = \frac{1}{n}L(\bb|\X,\y) + P_\lam(\bb),
+$$
+where the loss function $L(\bb|\X,\y)$ is the deviance ($-2$ times the log-likelihood), $P_\lam(\bb)$ is the penalty, and $\lam$ is a regularization parameter that controls the tradeoff between the two components.  This article describes the different loss models available in `grpreg`; see [penalties](penalties.html) for more information on the different penalties available.
+
+# Gaussian (linear regression)
+
+In linear regression, the loss function is simply the squared error loss:
+$$
+L(\bb|\X,\y) = \norm{\y-\X\bb}_2^2;
+$$
+this loss is proportional to the deviance if the outcome $\y$ follows a normal distribution with constant variance and mean given by $\X\bb$.
+
+To fit a penalized linear regression model with `grpreg`:
+
+```{r, eval=FALSE}
+fit <- grpreg(X, y, group)
+```
+
+# Binomial (logistic regression)
+
+In logistic regression, the loss function is:
+$$
+L(\bb|\X,\y) = -2\sum_{i:y_i=1}\log\ph_i - 2\sum_{i:y_i=0}\log(1-\ph_i);
+$$
+this loss is the deviance for a binomial distribution with probabilities $P(Y_i=1)=\ph_i$ given by:
+$$
+\ph_i = \frac{\exp(\eta_i)}{1+\eta_i},
+$$
+where $\be = \X\bb$ denotes the linear predictors.
+
+To fit a penalized logistic regression model with `grpreg`:
+
+```{r, eval=FALSE}
+fit <- grpreg(X, y, group, family='binomial')
+```
+
+# Poisson
+
+In Poisson regression, the loss function is:
+$$
+L(\bb|\X,\y) = 2\sum_i \left\{y_i\log y_i - y_i\log \mu_i + mu_i - y_i\right\};
+$$
+note that some of these terms are constant with respect to $\mu_i$ and can therefore be ignored during optimization.  This loss is the deviance for a Poisson distribution $Y_i \sim \text{Pois}(\mh_i)$ with rate parameter given by:
+$$
+\mh_i = \exp(\eta_i).
+$$
+
+To fit a penalized Poisson regression model with `grpreg`:
+```{r, eval=FALSE}
+fit <- grpreg(X, y, group, family='poisson')
+```
+
+# Cox proportional hazards
+
+The above models all fall into the category of distributions known as exponential families (hence the `family`) argument.  `grpreg` also allows users to fit Cox proportional hazards models, although these models fall outside this framework and are therefore fit using a different function, `grpsurv`.  In Cox regression, the deviance is
+$$
+L(\bb|\X,\y) = -2\sum_{j=1}^{m} d_j \eta_j + 2\sum_{j=1}^{m} d_j \log\left\{\sum_{i \in R_j} \exp(\eta_i)\right\},
+$$
+where $t_1 < t_2 < \ldots < t_m$ denotes an increasing list of unique failure times indexed by $j$ and $R_j$ denotes the set of observations still at risk at time $t_j$, known as the risk set.
+
+The `Lung` data (see `?Lung` for more details) provides an example of time-to-event data that can be used with Cox regression.  Loading this data set into R,
+
+```{r}
+data(Lung)
+X <- Lung$X
+y <- Lung$y
+group <- Lung$group
+```
+
+To fit a penalized Cox regression model,
+
+```{r}
+fit <- grpsurv(X, y, group)
+```
+
+As before, you can call `plot`, `coef`, `predict`, etc. on `fit`:
+
+```{r}
+coef(fit, lambda=0.1)
+```
+
+Cross-validation is similar:
+
+```{r models-cox-cv, h=3, w=6, out.height=360, out.width=720}
+cvfit <- cv.grpsurv(X, y, group)
+par(mfrow=c(1,2))
+plot(cvfit, type='cve')
+plot(cvfit, type='rsq')
+```
+
+In addition to the quantities like coefficients and number of nonzero coefficients that `predict` returns for other types of models, `predict()` for an `grpsurv` object can also estimate the baseline hazard (using the Kalbfleish-Prentice method) and therefore, the survival function.  A method to plot the resulting function is also available:
+
+```{r models-cox-surv-single, h=4, w=4}
+S <- predict(fit, X[1,], type='survival', lambda=0.02)
+S(365)   # Estiamted survival at 1 year
+plot(S, xlim=c(0,200))
+```
+
+When multiple subjects are involved in the prediction:
+
+```{r models-cox-surv-multiple, h=4, w=4}
+S <- predict(fit, X, type='survival', lambda=0.02)
+S[[1]](365)  # Estimated survival at 1 year for subject 1
+S[[2]](365)  # Estimated survival at 1 year for subject 2
+plot(S, xlim=c(0,200))
+```

@@ -72,16 +72,20 @@ group.multiplier, warn=TRUE, returnX=FALSE, ...)
   The sequence of models indexed by the regularization parameter
   \code{lambda} is fit using a coordinate descent algorithm.  In order
   to accomplish this, the second derivative (Hessian) of the Cox partial
-  log-likelihood is diagonalized (see references for details).  The
+  log-likelihood is diagonalized (see references for details).    The
   objective function is defined to be
-  \deqn{-\frac{1}{n}L(\beta|X,y) + \textrm{penalty},}{-(1/n) L(beta|X,y)
-    + penalty(beta),}
-  where L is the partial log-likelihood from the Cox regression
-  model.
+  \deqn{Q(\beta|X, y) = \frac{1}{n} L(\beta|X, y) +
+    P_\lambda(\beta)}{Q(\beta|X, y) = (1/n)*L(\beta|X, y) +
+    P(\beta, \lambda),}
+  where the loss function L is the deviance (-2 times the partial
+  log-likelihood) from the Cox regression mode.
+  \href{http://pbreheny.github.io/ncvreg/articles/web/models.html}{See
+    here for more details}.
 
   Presently, ties are not handled by \code{grpsurv} in a particularly
   sophisticated manner.  This will be improved upon in a future release
-  of \code{grpreg}.}
+  of \code{grpreg}.
+}
 \value{
   An object with S3 class \code{"grpsurv"} containing:
   \item{beta}{The fitted matrix of coefficients.  The number of rows is
@@ -142,7 +146,7 @@ not correspond to the ith row of \code{X}):
     \url{http://www.jstatsoft.org/v39/i05}
   }
 }
-\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
+\author{Patrick Breheny}
 \seealso{\code{\link{plot.grpreg}},
   \code{\link{predict.grpsurv}},
   \code{\link{cv.grpsurv}},

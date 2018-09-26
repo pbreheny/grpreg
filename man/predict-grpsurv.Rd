@@ -46,7 +46,7 @@ lambda, which=1:length(object$lambda), ...)
       Failure Time Data, 2nd edition. Wiley.
   }
 }
-\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
+\author{Patrick Breheny}
 \seealso{\code{\link{grpsurv}}}
 \examples{
 data(Lung)

@@ -20,13 +20,15 @@
   predictors are used to guard against overfitting.  Thus, the values
   returned by \code{AUC.cv.grpsurv} will be lower than those
   you would obtain with \code{survConcordance} if you fit the full
-  (unpenalized) model.}
+  (unpenalized) model.
+}
 \references{van Houwelingen H, Putter H (2011). Dynamic Prediction in
   Clinical Survival Analysis.  CRC Press.}
 \author{Patrick Breheny}
 \seealso{\code{\link{cv.grpsurv}},
   \code{\link[survival]{survConcordance}}} 
 \examples{
+\dontshow{set.seed(1)}
 data(Lung)
 X <- Lung$X
 y <- Lung$y
@@ -36,5 +38,5 @@ cvfit <- cv.grpsurv(X, y, group, returnY=TRUE)
 head(AUC(cvfit))
 ll <- log(cvfit$fit$lambda)
 plot(ll, AUC(cvfit), xlim=rev(range(ll)), lwd=3, type='l',
-     xlab=expression(log(lambda)), ylab='AUC')
+     xlab=expression(log(lambda)), ylab='AUC', las=1)
 }

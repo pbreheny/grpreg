@@ -66,7 +66,7 @@ gamma=0.5, group.multiplier, warn=TRUE)
     bi-level variable selection.  \emph{Statistics and its interface},
     \strong{2}: 369-380.
     }}
-\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
+\author{Patrick Breheny}
 \seealso{\code{\link{grpreg}}}
 \examples{
 data(Birthwt)

@@ -1,23 +1,39 @@
-3.1-4 (2018-06-15)
+# grpreg 3.2-0 (2018-XX-XX)
+  * New: cv.grpsurv now calculates SE, with bootstrap option
+  * Change: R^2 now consistently uses the Cox-Snell definition for all types
+    of models
+  * Change: Survival loss now uses deviance
+  * Change: cv.grpsurv now uses 'fold', not 'cv.ind', to declare assignments
+  * Fixed: cv.grpreg now correctly handles out-of-order groups for Poisson
+  * Fixed: cv.grpsurv now correctly standardizes out-of-order groups
+  * Fixed: grpreg no longer returns loss=NA with family='binomial' for some
+    lambda values
+  * Internal: SSR-BEDPP optimization reinstated after bug fix
+  * Internal: C code for binom/pois combined into gdfit_glm, lcdfit_glm
+  * Documentation: Lots of updates
+  * Documentation: vignette now html (used to be pdf)
+  * Documentation: pkgdown website
+
+# grpreg 3.1-4 (2018-06-15)
   * Fixed: Works with arbitrarily "messy" group structures now (constant
     columns, out of order groups, etc.) due to restructuring of standardization/
     orthogonalization
   * Internal: SSR-BEDPP rule turned off due to bug
 
-3.1-3 (2018-04-07)
+# grpreg 3.1-3 (2018-04-07)
   * Internal: C code now uses || instead of |
 
-3.1-2 (2017-07-05)
+# grpreg 3.1-2 (2017-07-05)
   * Fixed: Bug in applying screening rules with group lasso for linear
     regression with user-specified lambda sequence (thank you very much to
     Natasha Sahr for pointing this out)
 
-3.1-1 (2017-06-07)
+# grpreg 3.1-1 (2017-06-07)
   * Fixed: Cross-validation no longer fails when constant columns are present
     (thank you to Matthew Rosenberg for pointing this out)
   * Fixed: Cross-validation no longer fails when group.multiplier is specified
 
-3.1-0 (2017-05-18)
+# grpreg 3.1-0 (2017-05-18)
   * New: Additional tests and support for coersion of various types with
     respect to both X and y
   * Change: Convergence criterion now based on RMSD of linear predictors
@@ -32,16 +48,16 @@
   * Fixed: The binding of X and G fixes several potential bugs, including
     Issue #12 (GitHub)
 
-3.0-2
+# grpreg 3.0-2
   *  Fixed bug involving mismatch between group.multiplier and group if
 	   group is given out of order.
 
-3.0-1 (2016-06-06)
+# grpreg 3.0-1 (2016-06-06)
   * Fixed: memory allocation bug
   * Deprecation: Re-introduced 'birthwt.grpreg' for backwards compatibility,
     but this is deprecated
 
-3.0-0 (2016-06-02)
+# grpreg 3.0-0 (2016-06-02)
   * New: methods for survival analysis (Cox modeling): grpsurv, cv.grpsurv, AUC,
     predict.grpsurv
   * New: option to return fitted values from cross-validation folds
@@ -54,14 +70,14 @@
   * Documentation: Added vignettes (a quick-start guide and a detailed
     description of available penalties)
 
-2.8-1 (2015-05-30)
+# grpreg 2.8-1 (2015-05-30)
   * New: cv.grpreg now allows user to specify lambda (thanks to Vincent
     Arel-Bundock for suggesting this change)
   * Fixed: bug for predict.grpreg(fit, type="nvars") or type="ngroups" when
     scalar lambda value is passed
   * Documentation: Updated citations
 
-2.8-0 (2014-11-15)
+# grpreg 2.8-0 (2014-11-15)
   * New: More flexible interface through the 'group' argument; groups may now be
     out of order, and may be named rather than only consecutive integers
   * New: 'X' can now be a matrix of integers (previously this would result in
@@ -78,7 +94,7 @@
   * Fixed: bug in cv.grpreg when attempting to use leave-one-out
     cross-validation
 
-2.7-1 (2014-08-13)
+# grpreg 2.7-1 (2014-08-13)
   * Fixed: More rigorous initialization at C level to prevent possible memory
     access problems
   * Fixed: predict() for types 'vars', 'nvars', and 'ngroups' with multivariate
@@ -87,23 +103,23 @@
     multivariate outcomes (thank you to Cajo ter Braak for pointing out that
     this was broken)
 
-2.7-0 (2014-08-13)
+# grpreg 2.7-0 (2014-08-13)
   * New: support for Poisson regression
   * Internal: .Call now used instead of .C
   * Fixed: bug in cv.grpreg when attempting to use leave-one-out
     cross-validation (thank you to Cajo ter Braak for pointing this out)
 
-2.6-0 (2014-03-21)
+# grpreg 2.6-0 (2014-03-21)
   * Internal: Various internal changes to make the package more efficient for
     large data sets
 
-2.5-0 (2013-12-24)
+# grpreg 2.5-0 (2013-12-24)
   * New: group exponential lasso 'gel' method
   * New: 'gmax' option
   * New: 'nvars' and 'ngroups' options for predict
   * Change: appearance of summary.cv.grpreg display
 
-2.4-0 (2013-06-07)
+# grpreg 2.4-0 (2013-06-07)
   * New: options in plot.cv.grpreg to plot estimates of r-squared,
     signal-to-noise ratio, scale parameter, and prediction error in addition to
     cross-validation error (deviance)
@@ -114,20 +130,20 @@
   * New: 'summary' method for cv.grpreg objects
   * New: 'coef' and 'predict' methods for cv.grpreg objects
   * Change: Brought gBridge up to date so that it now handles constant columns,
-    etc. (see 2.2-0)
+    etc. (see # grpreg 2.2-0)
   * Fixed: bug in predict type='coefficients' when 'lambda' argument specified
   * Fixed: bug in cv.grpreg with user-defined lambda values
 
-2.3-0 (2013-02-10)
+# grpreg 2.3-0 (2013-02-10)
   * Internal: Switched to SVD-based orthogonalization to allow for linear
     dependency within groups
 
-2.2-1 (2012-11-16)
+# grpreg 2.2-1 (2012-11-16)
   * Fixed: compilation error for 32-bit Windows
   * Fixed: bug in calculation of binomial deviance when fitted probabilities
     are close to 0 or 1
 
-2.2-0 (2012-10-09)
+# grpreg 2.2-0 (2012-10-09)
   * New: select now Now allows '...' options to be passed to logLik
   * New: Added option to plot norm of each group, rather than individual
     coefficients
@@ -139,12 +155,12 @@
   * Fixed: bug for returning group when some groups were eliminated due to
     constant columns
 
-2.1-0 (2012-07-28)
+# grpreg 2.1-0 (2012-07-28)
   * New: grpreg can now handle constant columns (they produce beta=0)
   * Fixed: Bug involving orthogonalization with unpenalized groups
   * Internal: restructuring of C code
 
-2.0-0 (2012-07-21)
+# grpreg 2.0-0 (2012-07-21)
   * New: Group MCP, group SCAD methods added
   * New: Added 'cv.grpreg' to facilitate cross-validation
   * New: 'dfmax' option
@@ -156,7 +172,7 @@
   * Internal: standardize and orthogonalize functions added
   * Internal: Much more extensive and reproducible code testing
 
-1.2-0 (2011-06-22)
+# grpreg 1.2-0 (2011-06-22)
   * New: grpreg now returns 'loss'
   * New: Added logLik method
   * Change: Syntax of 'select' modified (no longer requires X, y to be passed)

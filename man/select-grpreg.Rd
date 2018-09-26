@@ -22,14 +22,15 @@ select(obj,\dots)
     selecting the optimal value.}
   \item{\dots}{For S3 method compatibility.}}
 \details{
-  The criteria are defined as follows, where \eqn{\ell}{L} is the log
-  likelihood, \eqn{\nu}{df} is the degrees of freedom, and \eqn{n}{n} is
-  the sample size: \cr
-  \deqn{AIC = 2L + 2df}{AIC = 2*L + 2*df}
-  \deqn{BIC = 2L + log(n)df}{BIC = 2*L + log(n)*df}
-  \deqn{GCV = 2\frac{L}{(1-df/n)^2}}{GCV= 2*L/((1-df/n)^2)}
-  \deqn{AICc = AIC + 2\frac{df(df+1)}{n-df-1}}{AICc = AIC + 2*df*(df+1)/(n-df-1)}
-  \deqn{EBIC = BIC + 2 \log{p \choose df}}{EBIC = BIC + 2*log(p choose df)}
+  The criteria are defined as follows, where \eqn{L}{L} is the deviance
+  (i.e, -2 times the log-likelihood), \eqn{\nu}{df} is the degrees of
+  freedom, and \eqn{n}{n} is the sample size:
+  
+  \deqn{AIC = L + 2\nu}{AIC = L + 2*df}
+  \deqn{BIC = L + log(n)\nu}{BIC = L + log(n)*df}
+  \deqn{GCV = \frac{L}{(1-\nu/n)^2}}{GCV= L/((1-df/n)^2)}
+  \deqn{AICc = AIC + 2\frac{\nu(\nu+1)}{n-\nu-1}}{AICc = AIC + 2*df*(df+1)/(n-df-1)}
+  \deqn{EBIC = BIC + 2 \log{p \choose \nu}}{EBIC = BIC + 2*log(p choose df)}
 }
 \value{
   A list containing:
@@ -42,7 +43,7 @@ select(obj,\dots)
   \item{IC}{A vector of the calculated model selection criteria for each
     point on the regularization path.}
   }
-\author{Patrick Breheny <patrick-breheny@uiowa.edu>}
+\author{Patrick Breheny}
 \seealso{\code{grpreg}}
 \examples{
 data(Birthwt)
