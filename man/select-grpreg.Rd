@@ -27,7 +27,7 @@ select(obj,\dots)
   freedom, and \eqn{n}{n} is the sample size:
   
   \deqn{AIC = L + 2\nu}{AIC = L + 2*df}
-  \deqn{BIC = L + log(n)\nu}{BIC = L + log(n)*df}
+  \deqn{BIC = L + \log(n)\nu}{BIC = L + log(n)*df}
   \deqn{GCV = \frac{L}{(1-\nu/n)^2}}{GCV= L/((1-df/n)^2)}
   \deqn{AICc = AIC + 2\frac{\nu(\nu+1)}{n-\nu-1}}{AICc = AIC + 2*df*(df+1)/(n-df-1)}
   \deqn{EBIC = BIC + 2 \log{p \choose \nu}}{EBIC = BIC + 2*log(p choose df)}

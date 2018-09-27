@@ -43,8 +43,9 @@ data(Birthwt)
       category.}
   }
 }
-\source{\code{MASS}.  \code{R} package.  Available at
-  \code{http://cran.r-project.org}.}
+\source{\code{MASS}.  \code{R} package.
+  \url{https://cran.r-project.org/package=MASS}
+}
 \references{
   \itemize{
     \item Venables, W. N. and Ripley, B. D. (2002) \emph{Modern Applied
