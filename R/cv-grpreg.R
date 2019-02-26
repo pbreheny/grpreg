@@ -19,23 +19,32 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
   # Set up folds
   if (!missing(seed)) set.seed(seed)
   n <- length(y)
+  
+  
   if (missing(fold)) {
     if (m > 1) {
       nn <- n/m
-      fold <- rep(ceiling(sample(1:nn)/nn*nfolds), each=m)
-    } else if (fit$family=="binomial" & (min(table(y)) > nfolds)) {
+      fold_ <- sample(1:nn %% (nfolds))
+      fold_[fold_==0] <- nfolds
+      fold <- rep(fold_, each=m)
+    } else if (fit$family=="binomial") {
       ind1 <- which(y==1)
       ind0 <- which(y==0)
       n1 <- length(ind1)
       n0 <- length(ind0)
-      fold1 <- ceiling(sample(1:n1)/n1*nfolds)
-      fold0 <- ceiling(sample(1:n0)/n0*nfolds)
+      fold1 <- 1:n1 %% nfolds
+      fold0 <- (n1 + 1:n0) %% nfolds
+      fold1[fold1==0] <- nfolds
+      fold0[fold0==0] <- nfolds
       fold <- numeric(n)
-      fold[y==1] <- fold1
-      fold[y==0] <- fold0
+      fold[y==1] <- sample(fold1)
+      fold[y==0] <- sample(fold0)
     } else {
-      fold <- ceiling(sample(1:n)/n*nfolds)
+      fold <- sample(1:n %% nfolds)
+      fold[fold==0] <- nfolds
     }
+  } else {
+    nfolds <- max(fold)
   }
 
   # Do cross-validation
@@ -81,7 +90,7 @@ cvf <- function(i, X, y, fold, cv.args) {
 
   X2 <- X[fold==i, , drop=FALSE]
   y2 <- y[fold==i]
-  yhat <- predict(fit.i, X2, type="response")
+  yhat <- matrix(predict(fit.i, X2, type="response"), length(y2))
   loss <- loss.grpreg(y2, yhat, fit.i$family)
   pe <- if (fit.i$family=="binomial") {(yhat < 0.5) == y2} else NULL
   list(loss=loss, pe=pe, nl=length(fit.i$lambda), yhat=yhat)

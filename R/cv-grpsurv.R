@@ -18,7 +18,21 @@ cv.grpsurv <- function(X, y, group, ..., nfolds=10, seed, fold, se=c('quick', 'b
   # Set up folds
   n <- nrow(X)
   if (!missing(seed)) set.seed(seed)
-  if (missing(fold)) fold <- ceiling(sample(1:n)/n*nfolds)
+  if (missing(fold)) {
+    ind1 <- which(fit$fail==1)
+    ind0 <- which(fit$fail==0)
+    n1 <- length(ind1)
+    n0 <- length(ind0)
+    fold1 <- 1:n1 %% nfolds
+    fold0 <- (n1 + 1:n0) %% nfolds
+    fold1[fold1==0] <- nfolds
+    fold0[fold0==0] <- nfolds
+    fold <- numeric(n)
+    fold[fit$fail==1] <- sample(fold1)
+    fold[fit$fail==0] <- sample(fold0)
+  } else {
+    nfolds <- max(fold)
+  }
   Y <- matrix(NA, nrow=n, ncol=length(fit$lambda))
 
   cv.args <- list(...)

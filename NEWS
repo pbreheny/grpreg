@@ -1,4 +1,10 @@
-# grpreg 3.2-0 (2018-XX-XX)
+# grpreg 3.2-1 (2019-02-26)
+  * Change: Cross-validation now balances censoring across folds for survival
+    models
+  * Fixed: Leave-one-out cross-validation now works correctly for logistic
+    regression
+
+# grpreg 3.2-0 (2018-09-27)
   * New: cv.grpsurv now calculates SE, with bootstrap option
   * Change: R^2 now consistently uses the Cox-Snell definition for all types
     of models

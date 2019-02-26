@@ -16,7 +16,7 @@ setupG <- function(group, m, bilevel) {
   } else {
     #if (all.equal(sort(names(m)), sort(group)))
     TRY <- try(as.integer(group)==g)
-    if (class(TRY)=='try-error' || !TRY) stop('Attempting to set group.multiplier is ambiguous if group is not a factor')
+    if (class(TRY)=='try-error' || any(!TRY)) stop('Attempting to set group.multiplier is ambiguous if group is not a factor')
     if (length(m) != length(lev)) stop("Length of group.multiplier must equal number of penalized groups")
     if (storage.mode(m) != "double") storage.mode(m) <- "double"
   }

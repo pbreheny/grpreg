@@ -1,5 +1,5 @@
-![version](http://www.r-pkg.org/badges/version/grpreg)
-![downloads](http://cranlogs.r-pkg.org/badges/grpreg)
+[![version](http://www.r-pkg.org/badges/version/grpreg)](https://cran.r-project.org/package=grpreg)
+[![downloads](http://cranlogs.r-pkg.org/badges/grpreg)](https://cran.r-project.org/package=grpreg)
 [![codecov.io](https://codecov.io/github/pbreheny/grpreg/coverage.svg?branch=master)](https://codecov.io/github/pbreheny/grpreg?branch=master)
 
 # Regularization Paths for Regression Models with Grouped Covariates
