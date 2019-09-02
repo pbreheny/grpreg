@@ -28,8 +28,8 @@ loss.grpsurv <- function(y, eta, total=TRUE) {
     eta <- eta[ind, , drop=FALSE]
     r <- apply(eta, 2, function(x) rev(cumsum(rev(exp(x)))))
   } else {
-    eta <- eta[ind]
-    r <- rev(cumsum(rev(exp(eta))))
+    eta <- as.matrix(eta[ind])
+    r <- as.matrix(rev(cumsum(rev(exp(eta)))))
   }
   if (total) {
     return(-2*(crossprod(d, eta) - crossprod(d, log(r))))
