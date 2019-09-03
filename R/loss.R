@@ -34,6 +34,6 @@ loss.grpsurv <- function(y, eta, total=TRUE) {
   if (total) {
     return(-2*(crossprod(d, eta) - crossprod(d, log(r))))
   } else {
-    return(-2*(eta[d==1,] - log(r)[d==1,]))
+    return(-2*(eta[d==1, , drop=FALSE] - log(r)[d==1, , drop=FALSE]))
   }
 }
