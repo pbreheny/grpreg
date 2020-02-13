@@ -1,5 +1,5 @@
 AUC.cv.grpsurv <- function(obj, ...) {
-  if (!("Y" %in% names(obj))) stop("Must run cv.grpsurv with 'returnY=TRUE' in order to calculate AUC")
+  if (!("Y" %in% names(obj))) stop("Must run cv.grpsurv with 'returnY=TRUE' in order to calculate AUC", call.=FALSE)
   if (!requireNamespace("survival", quietly = TRUE)) {
     stop("The 'survival' package is needed for AUC() to work. Please install it.", call. = FALSE)
   }  

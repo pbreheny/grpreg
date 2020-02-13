@@ -8,7 +8,7 @@ plot.grpreg <- function(x, alpha=1, legend.loc, label=FALSE, log.l=FALSE, norm=F
   } else {
     if (length(dim(x$beta))==3) {
       beta <- matrix(x$beta[,-1,,drop=FALSE], ncol=dim(x$beta)[3])
-    } else if (class(x)[1]=="grpsurv") {
+    } else if (inherits(x, "grpsurv")) {
       beta <- x$beta
     } else {
       beta <- x$beta[-1,,drop=FALSE]
@@ -17,7 +17,7 @@ plot.grpreg <- function(x, alpha=1, legend.loc, label=FALSE, log.l=FALSE, norm=F
     nonzero <- which(apply(abs(beta),1,sum)!=0)
     ind <- intersect(penalized, nonzero)
     Y <- beta[ind,,drop=FALSE]
-    g <- as.numeric(as.factor(x$group[ind]))
+    g <- as.integer(as.factor(x$group[ind]))
   }
   p <- nrow(Y)
   l <- x$lambda

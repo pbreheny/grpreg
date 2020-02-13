@@ -1,6 +1,6 @@
 summary.cv.grpreg <- function(object, ...) {
   S <- pmax(object$null.dev - object$cve, 0)
-  if (!('cv.grpsurv' %in% class(object)) && object$fit$family=="gaussian") {
+  if (!inherits(object, 'cv.grpsurv') && object$fit$family=="gaussian") {
     rsq <- pmin(pmax(1 - object$cve/object$null.dev, 0), 1)
   } else {
     rsq <- pmin(pmax(1 - exp(object$cve-object$null.dev), 0), 1)
@@ -8,7 +8,7 @@ summary.cv.grpreg <- function(object, ...) {
   snr <- S/object$cve
   nvars <- predict(object$fit, type="nvars")
   ngroups <- predict(object$fit, type="ngroups")
-  if ('cv.grpsurv' %in% class(object)) {
+  if (inherits(object, 'cv.grpsurv')) {
     model <- 'Cox'
   } else {
     model <- switch(object$fit$family, gaussian="linear", binomial="logistic", poisson="Poisson")
@@ -35,8 +35,8 @@ summary.cv.grpreg <- function(object, ...) {
               nvars=nvars,
               ngroups=ngroups,
               d=d)
-  if (!('cv.grpsurv' %in% class(object)) && object$fit$family=="gaussian") val$sigma <- sqrt(object$cve)
-  if (!('cv.grpsurv' %in% class(object)) && object$fit$family=="binomial") val$pe <- object$pe
+  if (!inherits(object, 'cv.grpsurv') && object$fit$family=="gaussian") val$sigma <- sqrt(object$cve)
+  if (!inherits(object, 'cv.grpsurv') && object$fit$family=="binomial") val$pe <- object$pe
   structure(val, class="summary.cv.grpreg")
 }
 print.summary.cv.grpreg <- function(x, digits, ...) {

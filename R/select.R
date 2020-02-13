@@ -2,7 +2,7 @@ select.grpreg <- function(obj, criterion=c("BIC","AIC","GCV","AICc","EBIC"), df.
   criterion <- match.arg(criterion)
   df.method <- match.arg(df.method)
   ll <- logLik(obj, df.method=df.method, ...)
-  df <- as.numeric(attr(ll,"df"))
+  df <- as.double(attr(ll,"df"))
   d <- dim(obj$beta)
   p <- if (length(d)==2) d[1]-1 else d[2]-1
   j <- if(obj$family=="gaussian") df-2 else df-1
@@ -10,7 +10,7 @@ select.grpreg <- function(obj, criterion=c("BIC","AIC","GCV","AICc","EBIC"), df.
   IC <- switch(criterion,
                AIC = AIC(ll),
                BIC = BIC(ll),
-               GCV = (1/obj$n) * (-2) * as.numeric(ll) / (1-df/obj$n)^2,
+               GCV = (1/obj$n) * (-2) * as.double(ll) / (1-df/obj$n)^2,
                AICc = AIC(ll) + 2*df*(df+1)/(obj$n-df-1),
                EBIC = BIC(ll) + 2*(lgamma(p+1) - lgamma(j+1) - lgamma(p-j+1)))
   n.l <- length(obj$lambda)

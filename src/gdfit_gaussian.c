@@ -48,7 +48,7 @@ void gd_gaussian(double *b, double *x, double *r, int g, int *K1, int *K,
 }
 
 // Scan for violations in rest set
-int check_rest_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, int *K, double lam, int n, int J) {
+int check_rest_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, int *K, double lam, double *m, int n, int J) {
   int violations = 0;
   double TOLERANCE = 1e-8;
   for (int g = 0; g < J; g++) {
@@ -58,7 +58,7 @@ int check_rest_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, 
         z[j-K1[g]] = crossprod(X, r, n, j) / n;
       }
       xTr[g] = norm(z, K[g]);
-      if (xTr[g] + TOLERANCE > lam * sqrt(K[g])) {
+      if (xTr[g] + TOLERANCE > lam * m[g] * sqrt(K[g])) {
         e[g] = e2[g] = 1;
         violations++;
       }
@@ -69,7 +69,7 @@ int check_rest_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, 
 }
 
 // Scan for violations in strong set
-int check_strong_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, int *K, double lam, int n, int J) {
+int check_strong_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, int *K, double lam, double *m, int n, int J) {
   int violations = 0;
   for (int g = 0; g < J; g++) {
     if (e[g] == 0 && e2[g] == 1) {
@@ -78,7 +78,7 @@ int check_strong_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1
         z[j-K1[g]] = crossprod(X, r, n, j) / n;
       }
       xTr[g] = norm(z, K[g]);
-      if (xTr[g] > lam * sqrt(K[g])) {
+      if (xTr[g] > lam * m[g] * sqrt(K[g])) {
         e[g] = 1;
         violations++;
       }
@@ -264,6 +264,9 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
   int dfmax = INTEGER(dfmax_)[0];
   int gmax = INTEGER(gmax_)[0];
   int user = INTEGER(user_)[0];
+  for (int g=0; g<J; g++) {
+    if (m[g] != 1) user = 1;
+  }
 
   // Outcome
   SEXP res, beta, iter, df, loss, rejections, safe_rejections;
@@ -399,7 +402,7 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
 	  if (maxChange < eps*sdy) break;
         }
         // Scan for violations in strong set
-        violations = check_strong_set(e2, e, xTr, X, r, K1, K, lam[l], n, J);
+        violations = check_strong_set(e2, e, xTr, X, r, K1, K, lam[l], m, n, J);
         if (violations == 0) break;
       }
 
@@ -407,7 +410,7 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
       if (bedpp_flag) {
         violations = check_rest_set_ssr_bedpp(e2, e, e3, xTr, X, r, K1, K, lam[l], n, J);
       } else {
-        violations = check_rest_set(e2, e, xTr, X, r, K1, K, lam[l], n, J);
+        violations = check_rest_set(e2, e, xTr, X, r, K1, K, lam[l], m, n, J);
       }
       if (violations == 0) {
         REAL(loss)[l] = gLoss(r, n);

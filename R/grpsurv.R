@@ -38,7 +38,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   ## Fit
   n <- length(Y$time)
   p <- ncol(XG$X)
-  K <- as.numeric(table(XG$g))
+  K <- as.integer(table(XG$g))
   K0 <- as.integer(if (min(XG$g)==0) K[1] else 0)
   K1 <- as.integer(if (min(XG$g)==0) cumsum(K) else c(0, cumsum(K)))
   if (bilevel) {

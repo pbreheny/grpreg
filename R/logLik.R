@@ -1,6 +1,6 @@
 logLik.grpreg <- function(object, df.method=c("default","active"), REML=FALSE, ...) {
   df.method <- match.arg(df.method)
-  n <- as.numeric(object$n)
+  n <- as.integer(object$n)
   df <- if (df.method=="active") apply(coef(object)!=0, 2, sum) else object$df
   if (object$family=="gaussian") {
     rdf <- if (REML) n-df else n
@@ -14,20 +14,11 @@ logLik.grpreg <- function(object, df.method=c("default","active"), REML=FALSE, .
   } else {
     l <- -object$loss/2
   }
-
-  val <- l
-  attr(val,"df") <- df
-  attr(val,"nobs") <- n
-  class(val) <- "logLik"
-  return(val)
+  structure(l, df=df, nobs=n, class='logLik')
 }
 logLik.grpsurv <- function(object, df.method=c("default","active"), ...) {
   df.method <- match.arg(df.method)
-  n <- as.numeric(object$n)
+  n <- as.integer(object$n)
   df <- if (df.method=="active") apply(coef(object)!=0, 2, sum) else object$df
-  val <- -1*object$loss
-  attr(val,"df") <- df
-  attr(val,"nobs") <- n
-  class(val) <- "logLik"
-  val
+  structure(-1*object$loss, df=df, nobs=n, class='logLik')
 }

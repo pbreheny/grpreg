@@ -36,7 +36,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
       fold0 <- (n1 + 1:n0) %% nfolds
       fold1[fold1==0] <- nfolds
       fold0[fold0==0] <- nfolds
-      fold <- numeric(n)
+      fold <- integer(n)
       fold[y==1] <- sample(fold1)
       fold[y==0] <- sample(fold0)
     } else {
@@ -87,6 +87,7 @@ cvf <- function(i, X, y, fold, cv.args) {
   cv.args$X <- X[fold!=i, , drop=FALSE]
   cv.args$y <- y[fold!=i]
   fit.i <- do.call("grpreg", cv.args)
+  if (length(fit.i$lambda) == 1) browser()
 
   X2 <- X[fold==i, , drop=FALSE]
   y2 <- y[fold==i]

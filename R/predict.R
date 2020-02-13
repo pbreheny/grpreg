@@ -1,5 +1,5 @@
 predict.grpreg <- function(object, X, type=c("link", "response", "class", "coefficients", "vars", "groups", "nvars", "ngroups", "norm"), lambda, which=1:length(object$lambda), ...) {
-  if (!missing(X) && class(X)=="character") {
+  if (!missing(X) && is.character(X)) {
     type <- X
     X <- NULL
   }
@@ -7,7 +7,9 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
   beta <- coef.grpreg(object, lambda=lambda, which=which, drop=FALSE)
   if (type=="coefficients") return(beta)
   d <- length(dim(beta))
-  if (class(object)[1]=='grpreg') {
+  if (inherits(object, 'grpsurv')) {
+    beta <- beta
+  } else {
     if (d==3) {
       alpha <- beta[,1,]
       beta <- beta[,-1,,drop=FALSE]
@@ -15,15 +17,13 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
       alpha <- beta[1,]
       beta <- beta[-1,,drop=FALSE]
     }
-  } else {
-    beta <- beta
   }
   if (d == 2) {
     if (type=="vars") return(drop(apply(beta!=0, 2, FUN=which)))
     if (type=="groups") return(drop(apply(beta!=0, 2, function(x) unique(object$group[x]))))
     if (type=="nvars") {
       v <- drop(apply(beta!=0, 2, FUN=which))
-      if (class(v)=="list") {
+      if (is.list(v)) {
         res <- sapply(v, length)
       } else {
         res <- length(v)
@@ -32,7 +32,7 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
     }
     if (type=="ngroups") {
       g <- drop(apply(beta!=0, 2, function(x) unique(object$group[x])))
-      if (class(g)=="list") {
+      if (is.list(g)) {
         res <- sapply(g, length)
       } else {
         res <- length(g)

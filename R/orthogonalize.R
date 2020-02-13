@@ -4,7 +4,7 @@ orthogonalize <- function(X, group) {
   T <- vector("list", J)
   XX <- matrix(0, nrow=nrow(X), ncol=ncol(X))
   XX[,which(group==0)] <- X[,which(group==0)]
-  for (j in seq_along(numeric(J))) {
+  for (j in seq_along(integer(J))) {
     ind <- which(group==j)
     if (length(ind)==0) next
     SVD <- svd(X[, ind, drop=FALSE], nu=0)
