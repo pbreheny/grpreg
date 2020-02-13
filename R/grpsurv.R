@@ -5,7 +5,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
                    group.multiplier, warn=TRUE, returnX=FALSE, ...) {
 
   # Deprecation support / error checking
-  if (penalty[1]=="gBridge") stop("gBridge has been divorced from the grpreg function; use the gBridge() function instead")
+  if (penalty[1]=="gBridge") stop("gBridge has been divorced from the grpreg function; use the gBridge() function instead", call.=FALSE)
   if (penalty[1]=="gMCP") {
     writeLines(strwrap("penalty='gMCP' is deprecated and may not be supported in future versions.  Use penalty='cMCP' instead."))
     penalty <- "cMCP"
@@ -15,16 +15,16 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
     penalty <- "grLasso"
   }
   penalty <- match.arg(penalty)
-  if (gamma <= 1 & penalty %in% c("grMCP", "cMCP")) stop("gamma must be greater than 1 for the MC penalty")
-  if (gamma <= 2 & penalty=="grSCAD") stop("gamma must be greater than 2 for the SCAD penalty")
-  if (nlambda < 2) stop("nlambda must be at least 2")
-  if (alpha > 1 | alpha <= 0) stop("alpha must be in (0,1]")
+  if (gamma <= 1 & penalty %in% c("grMCP", "cMCP")) stop("gamma must be greater than 1 for the MC penalty", call.=FALSE)
+  if (gamma <= 2 & penalty=="grSCAD") stop("gamma must be greater than 2 for the SCAD penalty", call.=FALSE)
+  if (nlambda < 2) stop("nlambda must be at least 2", call.=FALSE)
+  if (alpha > 1 | alpha <= 0) stop("alpha must be in (0, 1]", call.=FALSE)
 
   # Construct XG, Y
-  bilevel <- strtrim(penalty,2) != "gr"
+  bilevel <- strtrim(penalty, 2) != "gr"
   Y <- newS(y)
   XG <- newXG(X[Y$ind,], group, group.multiplier, 1, bilevel)
-  if (nrow(XG$X) != length(Y$fail)) stop("X and y do not have the same number of observations")
+  if (nrow(XG$X) != length(Y$fail)) stop("X and y do not have the same number of observations", call.=FALSE)
 
   # Set up lambda
   if (missing(lambda)) {
@@ -70,7 +70,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   beta[XG$nz,] <- b / XG$scale[XG$nz]
 
   # Names
-  dimnames(beta) <- list(XG$names, round(lambda,digits=4))
+  dimnames(beta) <- list(XG$names, round(lambda, digits=4))
 
   # Output
   val <- structure(list(beta = beta,

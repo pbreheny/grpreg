@@ -56,7 +56,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
   cv.args$group.multiplier <- XG$m
   cv.args$warn <- FALSE
   for (i in 1:nfolds) {
-    if (trace) cat("Starting CV fold #",i,sep="","\n")
+    if (trace) cat("Starting CV fold #", i, sep="","\n")
     res <- cvf(i, X, y, fold, cv.args)
     Y[fold==i, 1:res$nl] <- res$yhat
     E[fold==i, 1:res$nl] <- res$loss
@@ -66,7 +66,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
   # Eliminate saturated lambda values, if any
   ind <- which(apply(is.finite(E), 2, all))
   E <- E[, ind, drop=FALSE]
-  Y <- Y[,ind]
+  Y <- Y[, ind]
   lambda <- fit$lambda[ind]
 
   # Return
@@ -76,7 +76,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
   null.dev <- calcNullDev(X, y, group=XG$g, family=fit$family)
 
   val <- list(cve=cve, cvse=cvse, lambda=lambda, fit=fit, fold=fold, min=min, lambda.min=lambda[min], null.dev=null.dev)
-  if (fit$family=="binomial") val$pe <- apply(PE[,ind], 2, mean)
+  if (fit$family=="binomial") val$pe <- apply(PE[, ind], 2, mean)
   if (returnY) {
     if (fit$family=="gaussian") val$Y <- Y + attr(y, "mean")
     else val$Y <- Y

@@ -12,10 +12,10 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
   } else {
     if (d==3) {
       alpha <- beta[,1,]
-      beta <- beta[,-1,,drop=FALSE]
+      beta <- beta[, -1, , drop=FALSE]
     } else {
       alpha <- beta[1,]
-      beta <- beta[-1,,drop=FALSE]
+      beta <- beta[-1, , drop=FALSE]
     }
   }
   if (d == 2) {
@@ -40,9 +40,9 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
       return(res)
     }
     if (type=="norm") return(drop(apply(beta, 2, function(x) tapply(x, object$group, function(x){sqrt(sum(x^2))}))))
-    if (missing(X) | is.null(X)) stop("Must supply X")
+    if (missing(X) | is.null(X)) stop("Must supply X", call.=FALSE)
     eta <- sweep(X %*% beta, 2, alpha, "+")
-    if (object$family=="gaussian" & type=="class") stop("type='class' is not applicable for family='gaussian'")
+    if (object$family=="gaussian" & type=="class") stop("type='class' is not applicable for family='gaussian'", call.=FALSE)
     if (object$family=="gaussian" | type=="link") return(drop(eta))
     resp <- switch(object$family,
                    binomial = exp(eta)/(1+exp(eta)),
@@ -52,11 +52,11 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
       if (object$family=="binomial") {
         return(drop(1*(eta>0)))
       } else {
-        stop("type='class' can only be used with family='binomial'")
+        stop("type='class' can only be used with family='binomial'", call.=FALSE)
       }
     }
   } else {
-    if (type=="vars") stop("Predicting type 'vars' not implemented with multivariate outcomes") ##return(apply(beta[,-1, , drop=FALSE], 1, function(x){apply(x!=0, 2, FUN=which)}))
+    if (type=="vars") stop("Predicting type 'vars' not implemented with multivariate outcomes", call.=FALSE)
     if (type=="groups") return(drop(apply(beta, 3, function(x){which(apply(x!=0, 2, any))})))
     if (type=="norm") return(drop(apply(beta, 3, function(x) apply(x, 2, function(x){sqrt(sum(x^2))}))))
     if (type=="nvars") {
@@ -65,11 +65,11 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
     if (type=="ngroups") {
       return(apply(apply(beta!=0, c(2,3), any), 2, sum))
     }
-    if (missing(X)) stop("Must supply X")
+    if (missing(X)) stop("Must supply X", call.=FALSE)
     eta <- apply(beta, 1, function(b){X%*%b})
     eta <- array(eta, dim=c(nrow(X), dim(beta)[1], dim(beta)[3]), dimnames=list(NULL, dimnames(beta)[[1]], dimnames(beta)[[3]]))
     eta <- sweep(eta, 2:3, alpha, "+")
-    if (object$family=="gaussian" & type=="class") stop("type='class' is not applicable for family='gaussian'")
+    if (object$family=="gaussian" & type=="class") stop("type='class' is not applicable for family='gaussian'", call.=FALSE)
     if (object$family=="gaussian" | type=="link") return(drop(eta))
     resp <- switch(object$family,
                    binomial = exp(eta)/(1+exp(eta)),
@@ -79,7 +79,7 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
       if (object$family=="binomial") {
         return(drop(1*(eta>0)))
       } else {
-        stop("type='class' can only be used with family='binomial'")
+        stop("type='class' can only be used with family='binomial'", call.=FALSE)
       }
     }
   }
@@ -91,15 +91,15 @@ coef.grpreg <- function(object, lambda, which=1:length(object$lambda), drop=TRUE
     r <- ceiling(ind)
     w <- ind %% 1
     if (length(dim(object$beta)) == 3) {
-      beta <- (1-w)*object$beta[,,l,drop=FALSE] + w*object$beta[,,r,drop=FALSE]
-      dimnames(beta)[[3]] <- round(lambda,4)
+      beta <- (1-w)*object$beta[, , l, drop=FALSE] + w*object$beta[, , r, drop=FALSE]
+      dimnames(beta)[[3]] <- round(lambda, 4)
     } else {
-      beta <- (1-w)*object$beta[,l,drop=FALSE] + w*object$beta[,r,drop=FALSE]
-      colnames(beta) <- round(lambda,4)
+      beta <- (1-w)*object$beta[, l, drop=FALSE] + w*object$beta[, r, drop=FALSE]
+      colnames(beta) <- round(lambda, 4)
     }
   } else {
     if (length(dim(object$beta)) == 3) {
-      beta <- object$beta[,,which, drop=FALSE]
+      beta <- object$beta[, , which, drop=FALSE]
     } else {
       beta <- object$beta[, which, drop=FALSE]
     }

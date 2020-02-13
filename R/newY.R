@@ -22,7 +22,7 @@ newY <- function(y, family) {
   if (typeof(y) != "double") {
     tryCatch(storage.mode(y) <- "double", warning=function(w) {stop("y must be numeric or able to be coerced to numeric", call.=FALSE)})
   }
-  if (any(is.na(y))) stop("Missing data (NA's) detected in outcome y.  You must eliminate missing data (e.g., by removing cases or imputation) before passing y to grpreg")
+  if (any(is.na(y))) stop("Missing data (NA's) detected in outcome y.  You must eliminate missing data (e.g., by removing cases or imputation) before passing y to grpreg", call.=FALSE)
 
   # Handle multi
   if (is.matrix(y)) {

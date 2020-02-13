@@ -7,16 +7,16 @@ plot.grpreg <- function(x, alpha=1, legend.loc, label=FALSE, log.l=FALSE, norm=F
     g <- 1:nrow(Y)
   } else {
     if (length(dim(x$beta))==3) {
-      beta <- matrix(x$beta[,-1,,drop=FALSE], ncol=dim(x$beta)[3])
+      beta <- matrix(x$beta[, -1, , drop=FALSE], ncol=dim(x$beta)[3])
     } else if (inherits(x, "grpsurv")) {
       beta <- x$beta
     } else {
-      beta <- x$beta[-1,,drop=FALSE]
+      beta <- x$beta[-1, , drop=FALSE]
     }
     penalized <- which(x$group!=0)
-    nonzero <- which(apply(abs(beta),1,sum)!=0)
+    nonzero <- which(apply(abs(beta), 1, sum)!=0)
     ind <- intersect(penalized, nonzero)
-    Y <- beta[ind,,drop=FALSE]
+    Y <- beta[ind, , drop=FALSE]
     g <- as.integer(as.factor(x$group[ind]))
   }
   p <- nrow(Y)
@@ -39,9 +39,9 @@ plot.grpreg <- function(x, alpha=1, legend.loc, label=FALSE, log.l=FALSE, norm=F
     ylab <- if (norm) expression("||"*hat(beta)*"||") else expression(hat(beta))
     mtext(ylab, 2, 3.5, las=1, adj=0)
   }
-  abline(h=0,lwd=0.5,col="gray")
+  abline(h=0, lwd=0.5, col="gray")
 
-  cols <- hcl(h=seq(15,375,len=max(4,n.g+1)),l=60,c=150,alpha=alpha)
+  cols <- hcl(h=seq(15, 375, len=max(4, n.g+1)), l=60, c=150, alpha=alpha)
   cols <- if (n.g==2) cols[c(1,3)] else cols[1:n.g]
   line.args <- list(col=cols, lwd=1+2*exp(-p/20), lty=1, pch="")
   if (length(new.args)) line.args[names(new.args)] <- new.args
@@ -50,7 +50,7 @@ plot.grpreg <- function(x, alpha=1, legend.loc, label=FALSE, log.l=FALSE, norm=F
   line.args$col <- line.args$col[g]
   line.args$lty <- rep(line.args$lty, length.out=max(g))
   line.args$lty <- line.args$lty[g]
-  do.call("matlines",line.args)
+  do.call("matlines", line.args)
 
   if(!missing(legend.loc)) {
     legend.args <- list(col=cols, lwd=line.args$lwd, lty=line.args$lty, legend=names(x$group.multiplier))
@@ -59,10 +59,10 @@ plot.grpreg <- function(x, alpha=1, legend.loc, label=FALSE, log.l=FALSE, norm=F
       legend.args[names(new.legend.args)] <- new.legend.args
     }
     legend.args$x <- legend.loc
-    do.call("legend",legend.args)
+    do.call("legend", legend.args)
   }
   if (label) {
-    ypos <- Y[,ncol(Y)]
-    text(-0.001, ypos, names(ypos), xpd=NA, adj=c(0,NA))
+    ypos <- Y[, ncol(Y)]
+    text(-0.001, ypos, names(ypos), xpd=NA, adj=c(0, NA))
   }
 }

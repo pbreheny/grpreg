@@ -5,9 +5,9 @@ newXG <- function(X, g, m, ncolY, bilevel) {
     if (inherits(tmp, "try-error")) stop("X must be a matrix or able to be coerced to a matrix", call.=FALSE)
   }
   if (storage.mode(X)=="integer") storage.mode(X) <- "double"
-  if (any(is.na(X))) stop("Missing data (NA's) detected in X.  You must eliminate missing data (e.g., by removing cases, removing features, or imputation) before passing X to grpreg")
-  if (length(g) != ncol(X)) stop ("Dimensions of group is not compatible with X")
-  xnames <- if (is.null(colnames(X))) paste("V",1:ncol(X),sep="") else colnames(X)
+  if (any(is.na(X))) stop("Missing data (NA's) detected in X.  You must eliminate missing data (e.g., by removing cases, removing features, or imputation) before passing X to grpreg", call.=FALSE)
+  if (length(g) != ncol(X)) stop ("Dimensions of group is not compatible with X", call.=FALSE)
+  xnames <- if (is.null(colnames(X))) paste("V", 1:ncol(X), sep="") else colnames(X)
 
   # Setup group
   G <- setupG(g, m, bilevel)
@@ -25,13 +25,13 @@ newXG <- function(X, g, m, ncolY, bilevel) {
   scale <- std[[3]]
   nz <- which(scale > 1e-6)                # non-constant columns
   if (length(nz) != ncol(X)) {
-    XX <- XX[ ,nz, drop=FALSE]
+    XX <- XX[, nz, drop=FALSE]
     G <- subsetG(G, nz)
   }
 
   # Reorder groups, if necessary
   G <- reorderG(G, attr(G, 'm'), bilevel)
-  if (attr(G, 'reorder')) XX <- XX[,attr(G, 'ord')]
+  if (attr(G, 'reorder')) XX <- XX[, attr(G, 'ord')]
 
   # Group-level standardization
   if (!bilevel) {

@@ -3,16 +3,16 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
                     max.iter=10000, gamma=0.5, group.multiplier, warn=TRUE) {
   # Error checking
   family <- match.arg(family)
-  if (alpha > 1 | alpha <= 0) stop("alpha must be in (0,1]")
-  if (any(is.na(y)) | any(is.na(X))) stop("Missing data (NA's) detected.  Take actions (e.g., removing cases, removing features, imputation) to eliminate missing data before passing X and y to gBridge")
-  if (length(group)!=ncol(X)) stop("group does not match X")
-  if (delta <= 0) stop("Delta must be a positive number")
+  if (alpha > 1 | alpha <= 0) stop("alpha must be in (0, 1]", call.=FALSE)
+  if (any(is.na(y)) | any(is.na(X))) stop("Missing data (NA's) detected.  Take actions (e.g., removing cases, removing features, imputation) to eliminate missing data before passing X and y to gBridge", call.=FALSE)
+  if (length(group)!=ncol(X)) stop("group does not match X", call.=FALSE)
+  if (delta <= 0) stop("Delta must be a positive number", call.=FALSE)
 
   # Construct XG, yy
   yy <- newY(y, family)
   m <- attr(yy, "m")
   XG <- newXG(X, group, group.multiplier, m, TRUE)
-  if (nrow(XG$X) != length(yy)) stop("X and y do not have the same number of observations")
+  if (nrow(XG$X) != length(yy)) stop("X and y do not have the same number of observations", call.=FALSE)
 
   # Set up lambda
   if (missing(lambda)) {
@@ -57,12 +57,12 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
   # Names
   varnames <- c("(Intercept)", XG$names)
   if (m > 1) {
-    beta[2:m,] <- sweep(beta[2:m,,drop=FALSE], 2, beta[1,], FUN="+")
+    beta[2:m,] <- sweep(beta[2:m, , drop=FALSE], 2, beta[1,], FUN="+")
     beta <- array(beta, dim=c(m, nrow(beta)/m, ncol(beta)))
     group <- group[-(1:(m-1))]
-    dimnames(beta) <- list(colnames(yy), varnames, round(lambda,digits=4))
+    dimnames(beta) <- list(colnames(yy), varnames, round(lambda, digits=4))
   } else {
-    dimnames(beta) <- list(varnames, round(lambda,digits=4))
+    dimnames(beta) <- list(varnames, round(lambda, digits=4))
   }
 
   val <- structure(list(beta = beta,

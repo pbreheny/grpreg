@@ -20,15 +20,13 @@ select.grpreg <- function(obj, criterion=c("BIC","AIC","GCV","AICc","EBIC"), df.
   }
   if (smooth) {
     fit.ss <- smooth.spline(IC[is.finite(IC)])
-    ##plot(obj$lambda,IC,pch=19,xlim=rev(range(obj$lambda)))
-    ##lines(obj$lambda,fit.ss$y)
     d <- diff(fit.ss$y)
     if (all(d<0)) i <- n.l
     else i <- min(which(d>0))-1
     if (i==0) i <- 1
   } else i <- which.min(IC)
   
-  if (min(obj$lambda) == obj$lambda[i]) warning(paste("minimum lambda selected for",obj$penalty))
+  if (min(obj$lambda) == obj$lambda[i]) warning(paste("minimum lambda selected for", obj$penalty))
   else if ((max(obj$lambda) == obj$lambda[i]) & obj$penalty=="gBridge") warning("maximum lambda selected")
   return(list(beta=obj$beta[,i],
               lambda=obj$lambda[i],

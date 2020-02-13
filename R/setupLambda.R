@@ -13,10 +13,10 @@ setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, log.lam
     r <- fit$residuals
   } else {
     w <- fit$weights
-    if (max(w) < 1e-4) stop("Unpenalized portion of model is already saturated; exiting...")
+    if (max(w) < 1e-4) stop("Unpenalized portion of model is already saturated; exiting...", call.=FALSE)
     r <- residuals(fit, "working")*w
   }
-  if (strtrim(penalty,2)=="gr") {
+  if (strtrim(penalty, 2) == "gr") {
     zmax <- .Call("maxgrad", X, r, K1, as.double(group.multiplier)) / n
   } else {
     zmax <- .Call("maxprod", X, r, K1, as.double(group.multiplier)) / n
@@ -52,18 +52,18 @@ setupLambda.gBridge <- function(X, y, group, family, alpha, lambda.min, lambda.m
   ## Guess lambda.max
   if (missing(lambda.max)) {
     if (family=="gaussian") {
-      z <- crossprod(X[,ind], fit$residuals) / n
+      z <- crossprod(X[, ind], fit$residuals) / n
       a <- .35
     } else {
-      z <- crossprod(X[,ind], fit$weights * residuals(fit, "working")) / n
+      z <- crossprod(X[, ind], fit$weights * residuals(fit, "working")) / n
       a <- .2
     }
     lambda.max <- max(abs(z)/group.multiplier[group])*a^(1-gamma)/(gamma*alpha)
   }
   if (lambda.min==0) {
-    lambda <- c(exp(seq(log(lambda.max), log(.001*lambda.max), len=nlambda-1)),0)
+    lambda <- c(exp(seq(log(lambda.max), log(.001*lambda.max), len=nlambda-1)), 0)
   } else {
-    lambda <- exp(seq(log(lambda.max),log(lambda.min*lambda.max),len=nlambda))
+    lambda <- exp(seq(log(lambda.max), log(lambda.min*lambda.max), len=nlambda))
   }
   return(rev(lambda))
 }

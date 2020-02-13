@@ -21,8 +21,8 @@ int sum_rejections(int *x, int n) {
 
 // Group descent update
 void gd_gaussian(double *b, double *x, double *r, int g, int *K1, int *K,
-                       int n, int l, int p, const char *penalty, double lam1, double lam2,
-                       double gamma, SEXP df, double *a, double *maxChange) {
+                 int n, int l, int p, const char *penalty, double lam1, double lam2,
+                 double gamma, SEXP df, double *a, double *maxChange) {
   // Calculate z
   double *z = Calloc(K[g], double);
   for (int j=K1[g]; j<K1[g+1]; j++) z[j-K1[g]] = crossprod(x, r, n, j)/n + a[j];
@@ -237,9 +237,9 @@ int check_rest_set_ssr_bedpp(int *e2, int *e, int *e3, double *xTr, double *X,
 
 
 SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, 
-                        SEXP lambda, SEXP lam_max_, SEXP alpha_, SEXP eps_, 
-                        SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, 
-                        SEXP dfmax_, SEXP gmax_, SEXP user_) {
+                    SEXP lambda, SEXP lam_max_, SEXP alpha_, SEXP eps_, 
+                    SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, 
+                    SEXP dfmax_, SEXP gmax_, SEXP user_) {
 
   // Lengths/dimensions
   int n = length(y_);
@@ -344,10 +344,10 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
       ng = 0;
       nv = 0;
       for (int g=0; g<J; g++) {
-      	if (a[K1[g]] != 0) {
-      	  ng++;
-      	  nv = nv + (K1[g+1]-K1[g]);
-      	}
+        if (a[K1[g]] != 0) {
+          ng++;
+          nv = nv + (K1[g+1]-K1[g]);
+        }
       }
       if (ng > gmax || nv > dfmax || tot_iter == max_iter) {
         for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
@@ -398,8 +398,8 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
           }
           
           // Check convergence
-	  for (int j=0; j<p; j++) a[j] = b[l*p+j];
-	  if (maxChange < eps*sdy) break;
+          for (int j=0; j<p; j++) a[j] = b[l*p+j];
+          if (maxChange < eps*sdy) break;
         }
         // Scan for violations in strong set
         violations = check_strong_set(e2, e, xTr, X, r, K1, K, lam[l], m, n, J);

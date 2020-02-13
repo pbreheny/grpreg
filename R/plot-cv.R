@@ -46,7 +46,7 @@ plot.cv.grpreg <- function(x, log.l=TRUE, type=c("cve", "rsq", "scale", "snr", "
       ylab <- "Signal-to-noise ratio"
     }
   } else if (type=="scale") {
-    if (x$fit$family == "binomial") stop("Scale parameter for binomial family fixed at 1")
+    if (x$fit$family == "binomial") stop("Scale parameter for binomial family fixed at 1", call.=FALSE)
     y <- sqrt(x$cve)
     L <- sqrt(L.cve)
     U <- sqrt(U.cve)
@@ -67,7 +67,7 @@ plot.cv.grpreg <- function(x, log.l=TRUE, type=c("cve", "rsq", "scale", "snr", "
   new.args = list(...)
   if (length(new.args)) plot.args[names(new.args)] = new.args
   do.call("plot", plot.args)
-  if (vertical.line) abline(v=l[x$min],lty=2,lwd=.5)
+  if (vertical.line) abline(v=l[x$min], lty=2, lwd=.5)
   suppressWarnings(arrows(x0=l[aind], x1=l[aind], y0=L[aind], y1=U[aind], code=3, angle=90, col="gray80", length=.05))
   points(l[ind], y[ind], col=col, pch=19, cex=.5)
   if (selected) {

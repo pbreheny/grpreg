@@ -12,8 +12,8 @@ double Fs(double z, double l1, double l2, double gamma);
 
 // Group descent update -- cox
 void gd_cox(double *b, double *x, double *r, double *eta, double v, int g,
-	    int *K1, int n, int l, int p, const char *penalty, double lam1,
-	    double lam2, double gamma, SEXP df, double *a, double *maxChange) {
+            int *K1, int n, int l, int p, const char *penalty, double lam1,
+            double lam2, double gamma, SEXP df, double *a, double *maxChange) {
 
   // Calculate z
   int K = K1[g+1] - K1[g];
@@ -33,9 +33,9 @@ void gd_cox(double *b, double *x, double *r, double *eta, double v, int g,
       double shift = b[l*p+j]-a[j];
       if (fabs(shift) > maxChange[0]) maxChange[0] = fabs(shift);
       for (int i=0; i<n; i++) {
-	double si = shift*x[j*n+i];
-	r[i] -= si;
-	eta[i] += si;
+        double si = shift*x[j*n+i];
+        r[i] -= si;
+        eta[i] += si;
       }
     }
   }
@@ -123,10 +123,10 @@ SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda,
       ng = 0;
       nv = 0;
       for (int g=0; g<J; g++) {
-	if (a[K1[g]] != 0) {
-	  ng++;
-	  nv = nv + (K1[g+1]-K1[g]);
-	}
+        if (a[K1[g]] != 0) {
+          ng++;
+          nv = nv + (K1[g+1]-K1[g]);
+        }
       }
       if (ng > gmax || nv > dfmax || tot_iter == max_iter) {
         for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
@@ -136,65 +136,65 @@ SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda,
 
     while (tot_iter < max_iter) {
       while (tot_iter < max_iter) {
-	INTEGER(iter)[l]++;
+        INTEGER(iter)[l]++;
         tot_iter++;
-	REAL(Loss)[l] = 0;
-	REAL(df)[l] = 0;
-	
-	// Calculate haz, risk
-	for (int i=0; i<n; i++) haz[i] = exp(eta[i]);
-	rsk[n-1] = haz[n-1];
-	for (int i=n-2; i>=0; i--) {
-	  rsk[i] = rsk[i+1] + haz[i];
-	}
-	for (int i=0; i<n; i++) {
-	  REAL(Loss)[l] += d[i]*eta[i] - d[i]*log(rsk[i]);
-	}
-	  
-	// Approximate L
-	h[0] = d[0]/rsk[0];
-	v = 1;
-	for (int i=1; i<n; i++) {
-	  h[i] = h[i-1] + d[i]/rsk[i];
-	}
-	for (int i=0; i<n; i++) {
-	  h[i] = h[i]*haz[i];
-	  s = d[i] - h[i];
-	  if (h[i]==0) r[i]=0;
-	  else r[i] = s/v;
-	}
+        REAL(Loss)[l] = 0;
+        REAL(df)[l] = 0;
+ 
+        // Calculate haz, risk
+        for (int i=0; i<n; i++) haz[i] = exp(eta[i]);
+        rsk[n-1] = haz[n-1];
+        for (int i=n-2; i>=0; i--) {
+          rsk[i] = rsk[i+1] + haz[i];
+        }
+        for (int i=0; i<n; i++) {
+          REAL(Loss)[l] += d[i]*eta[i] - d[i]*log(rsk[i]);
+        }
+   
+        // Approximate L
+        h[0] = d[0]/rsk[0];
+        v = 1;
+        for (int i=1; i<n; i++) {
+          h[i] = h[i-1] + d[i]/rsk[i];
+        }
+        for (int i=0; i<n; i++) {
+          h[i] = h[i]*haz[i];
+          s = d[i] - h[i];
+          if (h[i]==0) r[i]=0;
+          else r[i] = s/v;
+        }
 
-	// Check for saturation
-	if (REAL(Loss)[l]/nullDev < .01) {
-	  if (warn) warning("Model saturated; exiting...");
-	  for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
+        // Check for saturation
+        if (REAL(Loss)[l]/nullDev < .01) {
+          if (warn) warning("Model saturated; exiting...");
+          for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
           tot_iter = max_iter;
           break;
-	}
+        }
 
-	// Update unpenalized covariates
+        // Update unpenalized covariates
         maxChange = 0;
-	for (int j=0; j<K0; j++) {
-	  shift = crossprod(X, r, n, j)/n;
+        for (int j=0; j<K0; j++) {
+          shift = crossprod(X, r, n, j)/n;
           if (fabs(shift) > maxChange) maxChange = fabs(shift);
-	  b[l*p+j] = shift + a[j];
-	  for (int i=0; i<n; i++) {
-	    double si = shift * X[n*j+i];
-	    r[i] -= si;
-	    eta[i] += si;
-	  }
-	  REAL(df)[l]++;
-	}
+          b[l*p+j] = shift + a[j];
+          for (int i=0; i<n; i++) {
+            double si = shift * X[n*j+i];
+            r[i] -= si;
+            eta[i] += si;
+          }
+          REAL(df)[l]++;
+        }
 
-	// Update penalized groups
-	for (int g=0; g<J; g++) {
-	  l1 = lam[l] * m[g] * alpha;
-	  l2 = lam[l] * m[g] * (1-alpha);
-	  if (e[g]) gd_cox(b, X, r, eta, v, g, K1, n, l, p, penalty, l1, l2,
-			   gamma, df, a, &maxChange);
-	}
+        // Update penalized groups
+        for (int g=0; g<J; g++) {
+          l1 = lam[l] * m[g] * alpha;
+          l2 = lam[l] * m[g] * (1-alpha);
+          if (e[g]) gd_cox(b, X, r, eta, v, g, K1, n, l, p, penalty, l1, l2,
+                           gamma, df, a, &maxChange);
+        }
 
-	// Check convergence
+        // Check convergence
         for (int j=0; j<p; j++) a[j] = b[l*p+j];
         if (maxChange < eps) break;
       }
@@ -202,20 +202,20 @@ SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda,
       // Scan for violations
       violations = 0;
       for (int g=0; g<J; g++) {
-	if (e[g]==0) {
-	  l1 = lam[l] * m[g] * alpha;
-	  l2 = lam[l] * m[g] * (1-alpha);
-	  gd_cox(b, X, r, eta, v, g, K1, n, l, p, penalty, l1, l2, gamma, df, a, &maxChange);
-	  if (b[l*p+K1[g]] != 0) {
-	    e[g] = 1;
-	    violations++;
-	  }
-	}
+        if (e[g]==0) {
+          l1 = lam[l] * m[g] * alpha;
+          l2 = lam[l] * m[g] * (1-alpha);
+          gd_cox(b, X, r, eta, v, g, K1, n, l, p, penalty, l1, l2, gamma, df, a, &maxChange);
+          if (b[l*p+K1[g]] != 0) {
+            e[g] = 1;
+            violations++;
+          }
+        }
       }
 
       if (violations==0) {
-	for (int i=0; i<n; i++) ETA[l*n+i] = eta[i];
-	break;
+        for (int i=0; i<n; i++) ETA[l*n+i] = eta[i];
+        break;
       }
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }

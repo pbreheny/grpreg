@@ -36,9 +36,9 @@ void gd_glm(double *b, double *x, double *r, double v, double *eta, int g, int *
       double shift = b[l*p+j]-a[j];
       if (fabs(shift) > maxChange[0]) maxChange[0] = fabs(shift);
       for (int i=0; i<n; i++) {
-	double si = shift*x[j*n+i];
-	r[i] -= si;
-	eta[i] += si;
+        double si = shift*x[j*n+i];
+        r[i] -= si;
+        eta[i] += si;
       }
     }
   }
@@ -137,24 +137,24 @@ SEXP gdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0_
       ng = 0;
       nv = 0;
       for (int g=0; g<J; g++) {
-	if (a[K1[g]] != 0) {
-	  ng++;
-	  nv = nv + (K1[g+1]-K1[g]);
-	}
+        if (a[K1[g]] != 0) {
+          ng++;
+          nv = nv + (K1[g+1]-K1[g]);
+        }
       }
       if (ng > gmax || nv > dfmax || tot_iter == max_iter) {
-	for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
+        for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
         break;
       }
     }
 
     while (tot_iter < max_iter) {
       while (tot_iter < max_iter) {
-	INTEGER(iter)[l]++;
+        INTEGER(iter)[l]++;
         tot_iter++;
 
-	// Approximate L
-	REAL(Dev)[l] = 0;
+        // Approximate L
+        REAL(Dev)[l] = 0;
         if (strcmp(family, "binomial")==0) {
           v = 0.25;
           for (int i=0; i<n; i++) {
@@ -173,62 +173,62 @@ SEXP gdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0_
           }
         }
 
-	// Check for saturation
-	if (REAL(Dev)[l]/nullDev < .01) {
-	  if (warn) warning("Model saturated; exiting...");
-	  for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
+        // Check for saturation
+        if (REAL(Dev)[l]/nullDev < .01) {
+          if (warn) warning("Model saturated; exiting...");
+          for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
           tot_iter = max_iter;
           break;
-	}
+        }
 
-	// Update intercept
-	shift = sum(r, n)/n;
-	b0[l] = shift + a0;
-	for (int i=0; i<n; i++) {
-	  r[i] -= shift;
-	  eta[i] += shift;
-	}
-	REAL(df)[l] = 1;
+        // Update intercept
+        shift = sum(r, n)/n;
+        b0[l] = shift + a0;
+        for (int i=0; i<n; i++) {
+          r[i] -= shift;
+          eta[i] += shift;
+        }
+        REAL(df)[l] = 1;
         maxChange = fabs(shift);
 
-	// Update unpenalized covariates
-	for (int j=0; j<K0; j++) {
-	  shift = crossprod(X, r, n, j)/n;
+        // Update unpenalized covariates
+        for (int j=0; j<K0; j++) {
+          shift = crossprod(X, r, n, j)/n;
           if (fabs(shift) > maxChange) maxChange = fabs(shift);
-	  b[l*p+j] = shift + a[j];
-	  for (int i=0; i<n; i++) {
-	    double si = shift * X[n*j+i];
-	    r[i] -= si;
-	    eta[i] += si;
-	  }
-	  REAL(df)[l]++;
-	}
+          b[l*p+j] = shift + a[j];
+          for (int i=0; i<n; i++) {
+            double si = shift * X[n*j+i];
+            r[i] -= si;
+            eta[i] += si;
+          }
+          REAL(df)[l]++;
+        }
 
-	// Update penalized groups
-	for (int g=0; g<J; g++) {
-	  l1 = lam[l] * m[g] * alpha;
-	  l2 = lam[l] * m[g] * (1-alpha);
-	  if (e[g]) gd_glm(b, X, r, v, eta, g, K1, n, l, p, penalty, l1, l2, gamma, df, a, &maxChange);
-	}
+        // Update penalized groups
+        for (int g=0; g<J; g++) {
+          l1 = lam[l] * m[g] * alpha;
+          l2 = lam[l] * m[g] * (1-alpha);
+          if (e[g]) gd_glm(b, X, r, v, eta, g, K1, n, l, p, penalty, l1, l2, gamma, df, a, &maxChange);
+        }
 
-	// Check convergence
-	a0 = b0[l];
-	for (int j=0; j<p; j++) a[j] = b[l*p+j];
+        // Check convergence
+        a0 = b0[l];
+        for (int j=0; j<p; j++) a[j] = b[l*p+j];
         if (maxChange < eps) break;
       }
 
       // Scan for violations
       violations = 0;
       for (int g=0; g<J; g++) {
-	if (e[g]==0) {
-	  l1 = lam[l] * m[g] * alpha;
-	  l2 = lam[l] * m[g] * (1-alpha);
-	  gd_glm(b, X, r, v, eta, g, K1, n, l, p, penalty, l1, l2, gamma, df, a, &maxChange);
-	  if (b[l*p+K1[g]] != 0) {
-	    e[g] = 1;
-	    violations++;
-	  }
-	}
+        if (e[g]==0) {
+          l1 = lam[l] * m[g] * alpha;
+          l2 = lam[l] * m[g] * (1-alpha);
+          gd_glm(b, X, r, v, eta, g, K1, n, l, p, penalty, l1, l2, gamma, df, a, &maxChange);
+          if (b[l*p+K1[g]] != 0) {
+            e[g] = 1;
+            violations++;
+          }
+        }
       }
 
       if (violations==0) break;

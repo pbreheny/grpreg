@@ -42,14 +42,14 @@ cv.grpsurv <- function(X, y, group, ..., nfolds=10, seed, fold, se=c('quick', 'b
   cv.args$warn <- FALSE
 
   for (i in 1:nfolds) {
-    if (trace) cat("Starting CV fold #",i,sep="","\n")
+    if (trace) cat("Starting CV fold #", i, sep="","\n")
     res <- cvf.surv(i, X, y, fold, cv.args)
     Y[fold==i, 1:res$nl] <- res$yhat
   }
 
   # Eliminate saturated lambda values, if any
   ind <- which(apply(is.finite(Y), 2, all))
-  Y <- Y[,ind]
+  Y <- Y[, ind]
   lambda <- fit$lambda[ind]
 
   # Return

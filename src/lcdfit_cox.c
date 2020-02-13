@@ -14,8 +14,8 @@ double dMCP(double theta, double l, double a);
 
 // Groupwise local coordinate descent updates -- Cox
 void gLCD_cox(double *b, const char *penalty, double *X, double *r, double *eta,
-	      double *h, int g, int *K1, int n, int l, int p, double lam1, double lam2,
-	      double gamma, double tau, SEXP df, double *a, double delta, int *e, double *maxChange) {
+              double *h, int g, int *K1, int n, int l, int p, double lam1, double lam2,
+              double gamma, double tau, SEXP df, double *a, double delta, int *e, double *maxChange) {
 
   // Pre-calculcate v
   int K = K1[g+1] - K1[g];
@@ -44,10 +44,10 @@ void gLCD_cox(double *b, const char *penalty, double *X, double *r, double *eta,
     if (sG==0) return;
     if (sG < delta) {
       for (int j=K1[g]; j<K1[g+1]; j++) {
-	b[l*p+j] = 0;
+        b[l*p+j] = 0;
         shift = b[l*p+j] - a[j];
         if (fabs(shift) > maxChange[0]) maxChange[0] = fabs(shift);
-	for (int i=0; i<n; i++) r[i] = r[i] - shift * X[n*j+i];
+        for (int i=0; i<n; i++) r[i] = r[i] - shift * X[n*j+i];
       }
       return;
     }
@@ -64,9 +64,9 @@ void gLCD_cox(double *b, const char *penalty, double *X, double *r, double *eta,
       // Update b
       double ljk=0;
       if (lam1 != 0) {
-	if (strcmp(penalty, "cMCP")==0) ljk = dMCP(sG, lam1, (K*gamma*pow(lam1,2))/(2*lam1)) * dMCP(b[l*p+j], lam1, gamma);
-	if (strcmp(penalty, "gel")==0) ljk = lam1*exp(-tau/lam1*sG);
-	if (strcmp(penalty, "gBridge")==0) ljk = lam1 * gamma * pow(sG, gamma-1);
+        if (strcmp(penalty, "cMCP")==0) ljk = dMCP(sG, lam1, (K*gamma*pow(lam1,2))/(2*lam1)) * dMCP(b[l*p+j], lam1, gamma);
+        if (strcmp(penalty, "gel")==0) ljk = lam1*exp(-tau/lam1*sG);
+        if (strcmp(penalty, "gBridge")==0) ljk = lam1 * gamma * pow(sG, gamma-1);
       }
       b[l*p+j] = S(u, ljk) / (v[j-K1[g]]*(1+lam2));
 
@@ -74,14 +74,14 @@ void gLCD_cox(double *b, const char *penalty, double *X, double *r, double *eta,
       shift = b[l*p+j] - a[j];
       if (shift != 0) {
         if (fabs(shift) > maxChange[0]) maxChange[0] = fabs(shift);
-	for (int i=0; i<n; i++) {
-	  double si = shift*X[j*n+i];
-	  r[i] -= si;
-	  eta[i] += si;
-	}
-	if (strcmp(penalty, "gBridge")==0) sG = sG + fabs(b[l*p+j]) - fabs(a[j]);
-	if (strcmp(penalty, "gel")==0) sG = sG + fabs(b[l*p+j]) - fabs(a[j]);
-	if (strcmp(penalty, "cMCP")==0) sG = sG + MCP(b[l*p+j], lam1, gamma) - MCP(a[j], lam1, gamma);
+        for (int i=0; i<n; i++) {
+          double si = shift*X[j*n+i];
+          r[i] -= si;
+          eta[i] += si;
+        }
+        if (strcmp(penalty, "gBridge")==0) sG = sG + fabs(b[l*p+j]) - fabs(a[j]);
+        if (strcmp(penalty, "gel")==0) sG = sG + fabs(b[l*p+j]) - fabs(a[j]);
+        if (strcmp(penalty, "cMCP")==0) sG = sG + MCP(b[l*p+j], lam1, gamma) - MCP(a[j], lam1, gamma);
       }
       REAL(df)[l] += fabs(b[l*p+j]) / fabs(u);
     }
@@ -91,8 +91,8 @@ void gLCD_cox(double *b, const char *penalty, double *X, double *r, double *eta,
 
 // KKT check
 int gLCD_cCheck(double *b, const char *penalty, double *X, double *r, double *eta,
-		double *h, int g, int *K1, int n, int l, int p, double lam1, double lam2,
-		double gamma, double tau, double *a,  int *e) {
+                double *h, int g, int *K1, int n, int l, int p, double lam1, double lam2,
+                double gamma, double tau, double *a,  int *e) {
 
   // Make initial local approximation
   int K = K1[g+1] - K1[g];
@@ -115,18 +115,18 @@ int gLCD_cCheck(double *b, const char *penalty, double *X, double *r, double *et
   Free(v);
 
   // Check
- int violations = 0;
- for (int j=K1[g]; j<K1[g+1]; j++) {
+  int violations = 0;
+  for (int j=K1[g]; j<K1[g+1]; j++) {
     if (e[j]==0) {
       double xwr = wcrossprod(X, r, h, n, j)/n;
       double ljk=0;
       if (lam1 != 0) {
-	if (strcmp(penalty, "cMCP")==0) ljk = dMCP(sG, lam1, (K*gamma*pow(lam1,2))/(2*lam1)) * dMCP(b[l*p+j], lam1, gamma);
-	if (strcmp(penalty, "gel")==0) ljk = lam1*exp(-tau/lam1*sG);
+        if (strcmp(penalty, "cMCP")==0) ljk = dMCP(sG, lam1, (K*gamma*pow(lam1,2))/(2*lam1)) * dMCP(b[l*p+j], lam1, gamma);
+        if (strcmp(penalty, "gel")==0) ljk = lam1*exp(-tau/lam1*sG);
       }
       if (fabs(xwr) > ljk) {
-	e[j] = 1;
-	violations++;
+        e[j] = 1;
+        violations++;
       }
     }
   }
@@ -134,9 +134,9 @@ int gLCD_cCheck(double *b, const char *penalty, double *X, double *r, double *et
 }
 
 SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
-		SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_,
-		SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_,
-		SEXP gmax_, SEXP warn_, SEXP user_) {
+                SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_,
+                SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_,
+                SEXP gmax_, SEXP warn_, SEXP user_) {
 
   // Lengths/dimensions
   int n = length(d_);
@@ -231,14 +231,14 @@ SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
       ng = 0;
       nv = 0;
       for (int g=0; g<J; g++) {
-	int nv_old = nv;
-	for (int j=K1[g]; j<K1[g+1]; j++) {
-	  if (a[j] != 0) nv++;
-	}
-	if (nv != nv_old) ng++;
+        int nv_old = nv;
+        for (int j=K1[g]; j<K1[g+1]; j++) {
+          if (a[j] != 0) nv++;
+        }
+        if (nv != nv_old) ng++;
       }
       if (ng > gmax || nv > dfmax || tot_iter == max_iter) {
-	for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
+        for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
         break;
       }
     }
@@ -281,47 +281,47 @@ SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
           break;
         }
 
-	// Update unpenalized covariates
+        // Update unpenalized covariates
         maxChange = 0;
-	for (int j=0; j<K0; j++) {
-	  xwr = wcrossprod(X, r, h, n, j);
-	  xwx = wsqsum(X, h, n, j);
-	  u = xwr/n;
-	  v = xwx/n;
-	  shift = u/v;
+        for (int j=0; j<K0; j++) {
+          xwr = wcrossprod(X, r, h, n, j);
+          xwx = wsqsum(X, h, n, j);
+          u = xwr/n;
+          v = xwx/n;
+          shift = u/v;
           if (fabs(shift) > maxChange) maxChange = fabs(shift);
-	  b[l*p+j] = shift + a[j];
-	  for (int i=0; i<n; i++) {
-	    double si = shift * X[n*j+i];
-	    r[i] -= si;
-	    eta[i] += si;
-	  }
-	  REAL(df)[l]++;
-	}
+          b[l*p+j] = shift + a[j];
+          for (int i=0; i<n; i++) {
+            double si = shift * X[n*j+i];
+            r[i] -= si;
+            eta[i] += si;
+          }
+          REAL(df)[l]++;
+        }
 
-	// Update penalized groups
-	for (int g=0; g<J; g++) {
-	  l1 = lam[l] * m[g] * alpha;
-	  l2 = lam[l] * m[g] * (1-alpha);
-	  gLCD_cox(b, penalty, X, r, eta, h, g, K1, n, l, p, l1, l2, gamma, tau, df, a, delta, e, &maxChange);
-	}
+        // Update penalized groups
+        for (int g=0; g<J; g++) {
+          l1 = lam[l] * m[g] * alpha;
+          l2 = lam[l] * m[g] * (1-alpha);
+          gLCD_cox(b, penalty, X, r, eta, h, g, K1, n, l, p, l1, l2, gamma, tau, df, a, delta, e, &maxChange);
+        }
 
-	// Check convergence
-	for (int j=0; j<p; j++) a[j] = b[l*p+j];
+        // Check convergence
+        for (int j=0; j<p; j++) a[j] = b[l*p+j];
         if (maxChange < eps) break;        
       }
 
       // Scan for violations
       violations = 0;
       for (int g=0; g<J; g++) {
-	l1 = lam[l] * m[g] * alpha;
-	l2 = lam[l] * m[g] * (1-alpha);
-	violations += gLCD_cCheck(b, penalty, X, r, eta, h, g, K1, n, l, p, l1, l2, gamma, tau, a, e);
+        l1 = lam[l] * m[g] * alpha;
+        l2 = lam[l] * m[g] * (1-alpha);
+        violations += gLCD_cCheck(b, penalty, X, r, eta, h, g, K1, n, l, p, l1, l2, gamma, tau, a, e);
       }
 
       if (violations==0) {
-	for (int i=0; i<n; i++) ETA[l*n+i] = eta[i];
-	break;
+        for (int i=0; i<n; i++) ETA[l*n+i] = eta[i];
+        break;
       }
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }

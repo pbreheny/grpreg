@@ -32,10 +32,10 @@ void gLCD_glm(double *b, const char *penalty, double *x, double *r, double v, do
     if (sG==0) return;
     if (sG < delta) {
       for (int j=K1[g]; j<K1[g+1]; j++) {
-	b[l*p+j] = 0;
+        b[l*p+j] = 0;
         shift = b[l*p+j] - a[j];
         if (fabs(shift) > maxChange[0]) maxChange[0] = fabs(shift);
-	for (int i=0; i<n; i++) r[i] = r[i] - shift * x[n*j+i];
+        for (int i=0; i<n; i++) r[i] = r[i] - shift * x[n*j+i];
       }
       return;
     }
@@ -48,9 +48,9 @@ void gLCD_glm(double *b, const char *penalty, double *x, double *r, double v, do
       double u = crossprod(x, r, n, j)/n + a[j];
       double ljk=0;
       if (lam1 != 0) {
-	if (strcmp(penalty, "cMCP")==0) ljk = dMCP(sG, lam1, (K*gamma*pow(lam1,2))/(2*lam1)) * dMCP(b[l*p+j], lam1, gamma);
-	if (strcmp(penalty, "gel")==0) ljk = lam1*exp(-tau/lam1*sG);
-	if (strcmp(penalty, "gBridge")==0) ljk = lam1 * gamma * pow(sG, gamma-1);
+        if (strcmp(penalty, "cMCP")==0) ljk = dMCP(sG, lam1, (K*gamma*pow(lam1,2))/(2*lam1)) * dMCP(b[l*p+j], lam1, gamma);
+        if (strcmp(penalty, "gel")==0) ljk = lam1*exp(-tau/lam1*sG);
+        if (strcmp(penalty, "gBridge")==0) ljk = lam1 * gamma * pow(sG, gamma-1);
       }
       b[l*p+j] = S(v*u, ljk) / (v*(1+lam2));
 
@@ -58,14 +58,14 @@ void gLCD_glm(double *b, const char *penalty, double *x, double *r, double v, do
       shift = b[l*p+j] - a[j];
       if (shift != 0) {
         if (fabs(shift) > maxChange[0]) maxChange[0] = fabs(shift);
-	for (int i=0; i<n; i++) {
-	  double si = shift*x[j*n+i];
-	  r[i] -= si;
-	  eta[i] += si;
-	}
-	if (strcmp(penalty, "gBridge")==0) sG = sG + fabs(b[l*p+j]) - fabs(a[j]);
-	if (strcmp(penalty, "gel")==0) sG = sG + fabs(b[l*p+j]) - fabs(a[j]);
-	if (strcmp(penalty, "cMCP")==0) sG = sG + MCP(b[l*p+j], lam1, gamma) - MCP(a[j], lam1, gamma);
+        for (int i=0; i<n; i++) {
+          double si = shift*x[j*n+i];
+          r[i] -= si;
+          eta[i] += si;
+        }
+        if (strcmp(penalty, "gBridge")==0) sG = sG + fabs(b[l*p+j]) - fabs(a[j]);
+        if (strcmp(penalty, "gel")==0) sG = sG + fabs(b[l*p+j]) - fabs(a[j]);
+        if (strcmp(penalty, "cMCP")==0) sG = sG + MCP(b[l*p+j], lam1, gamma) - MCP(a[j], lam1, gamma);
       }
       REAL(df)[l] += fabs(b[l*p+j]) / fabs(u);
     }
@@ -93,22 +93,22 @@ int gLCD_glm_check(double *b, const char *penalty, double *x, double *r, double 
       double u = crossprod(x, r, n, j)/n;
       double ljk=0;
       if (lam1 != 0) {
-	if (strcmp(penalty, "cMCP")==0) ljk = dMCP(sG, lam1, (K*gamma*pow(lam1,2))/(2*lam1)) * dMCP(b[l*p+j], lam1, gamma);
-	if (strcmp(penalty, "gel")==0) ljk = lam1*exp(-tau*v/lam1*sG);
+        if (strcmp(penalty, "cMCP")==0) ljk = dMCP(sG, lam1, (K*gamma*pow(lam1,2))/(2*lam1)) * dMCP(b[l*p+j], lam1, gamma);
+        if (strcmp(penalty, "gel")==0) ljk = lam1*exp(-tau*v/lam1*sG);
       }
 
       // Update if necessary
       if (v*fabs(u) > ljk) {
-	e[j] = 1;
-	violations++;
-	b[l*p+j] = S(v*u, ljk) / (v*(1+lam2));
-	for (int i=0; i<n; i++) {
-	  double si = b[l*p+j] * x[j*n+i];
-	  r[i] -= si;
-	  eta[i] += si;
-	}
-	if (strcmp(penalty, "gel")==0) sG = sG + fabs(b[l*p+j]) - fabs(a[j]);
-	if (strcmp(penalty, "cMCP")==0) sG = sG + MCP(b[l*p+j], lam1, gamma) - MCP(a[j], lam1, gamma);
+        e[j] = 1;
+        violations++;
+        b[l*p+j] = S(v*u, ljk) / (v*(1+lam2));
+        for (int i=0; i<n; i++) {
+          double si = b[l*p+j] * x[j*n+i];
+          r[i] -= si;
+          eta[i] += si;
+        }
+        if (strcmp(penalty, "gel")==0) sG = sG + fabs(b[l*p+j]) - fabs(a[j]);
+        if (strcmp(penalty, "cMCP")==0) sG = sG + MCP(b[l*p+j], lam1, gamma) - MCP(a[j], lam1, gamma);
       }
     }
   }
@@ -191,9 +191,9 @@ SEXP lcdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0
       a[j] = z/n;
       e[j] = 1;
       for (int i=0; i<n; i++) {
-	double si = a[j] * X[j*n+i];
-	r[i] -= si;
-	eta[i] += si;
+        double si = a[j] * X[j*n+i];
+        r[i] -= si;
+        eta[i] += si;
       }
     }
   } else {
@@ -220,25 +220,25 @@ SEXP lcdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0
       ng = 0;
       nv = 0;
       for (int g=0; g<J; g++) {
-	int nv_old = nv;
-	for (int j=K1[g]; j<K1[g+1]; j++) {
-	  if (a[j] != 0) nv++;
-	}
-	if (nv != nv_old) ng++;
+        int nv_old = nv;
+        for (int j=K1[g]; j<K1[g+1]; j++) {
+          if (a[j] != 0) nv++;
+        }
+        if (nv != nv_old) ng++;
       }
       if (ng > gmax || nv > dfmax || tot_iter == max_iter) {
-	for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
+        for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
         break;
       }
     }
 
     while (tot_iter < max_iter) {
       while (tot_iter < max_iter) {
-	INTEGER(iter)[l]++;
+        INTEGER(iter)[l]++;
         tot_iter++;
 
-	// Approximate L
-	REAL(Dev)[l] = 0;
+        // Approximate L
+        REAL(Dev)[l] = 0;
         if (strcmp(family, "binomial")==0) {
           v = 0.25;
           for (int i=0; i<n; i++) {
@@ -257,56 +257,56 @@ SEXP lcdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0
           }
         }
 
-	// Check for saturation
-	if (REAL(Dev)[l]/nullDev < .01) {
-	  if (warn) warning("Model saturated; exiting...");
-	  for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
+        // Check for saturation
+        if (REAL(Dev)[l]/nullDev < .01) {
+          if (warn) warning("Model saturated; exiting...");
+          for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
           tot_iter = max_iter;
           break;
-	}
+        }
 
-	// Update intercept
-	shift = sum(r, n)/n;
-	b0[l] = shift + a0;
-	for (int i=0; i<n; i++) {
-	  r[i] -= shift;
-	  eta[i] += shift;
-	}
-	REAL(df)[l] = 1;
+        // Update intercept
+        shift = sum(r, n)/n;
+        b0[l] = shift + a0;
+        for (int i=0; i<n; i++) {
+          r[i] -= shift;
+          eta[i] += shift;
+        }
+        REAL(df)[l] = 1;
         maxChange = fabs(shift);
 
-	// Update unpenalized covariates
-	for (int j=0; j<K0; j++) {
-	  shift = crossprod(X, r, n, j)/n;
+        // Update unpenalized covariates
+        for (int j=0; j<K0; j++) {
+          shift = crossprod(X, r, n, j)/n;
           if (fabs(shift) > maxChange) maxChange = fabs(shift);
-	  b[l*p+j] = shift + a[j];
-	  for (int i=0; i<n; i++) {
-	    double si = shift * X[n*j+i];
-	    r[i] -= si;
-	    eta[i] += si;
-	  }
-	  REAL(df)[l]++;
-	}
+          b[l*p+j] = shift + a[j];
+          for (int i=0; i<n; i++) {
+            double si = shift * X[n*j+i];
+            r[i] -= si;
+            eta[i] += si;
+          }
+          REAL(df)[l]++;
+        }
 
-	// Update penalized groups
-	for (int g=0; g<J; g++) {
-	  l1 = lam[l] * m[g] * alpha;
-	  l2 = lam[l] * m[g] * (1-alpha);
-	  gLCD_glm(b, penalty, X, r, v, eta, g, K1, n, l, p, l1, l2, gamma, tau, df, a, delta, e, &maxChange);
-	}
+        // Update penalized groups
+        for (int g=0; g<J; g++) {
+          l1 = lam[l] * m[g] * alpha;
+          l2 = lam[l] * m[g] * (1-alpha);
+          gLCD_glm(b, penalty, X, r, v, eta, g, K1, n, l, p, l1, l2, gamma, tau, df, a, delta, e, &maxChange);
+        }
 
-	// Check convergence
-	a0 = b0[l];
-	for (int j=0; j<p; j++) a[j] = b[l*p+j];
+        // Check convergence
+        a0 = b0[l];
+        for (int j=0; j<p; j++) a[j] = b[l*p+j];
         if (maxChange < eps) break;
       }
 
       // Scan for violations
       violations = 0;
       for (int g=0; g<J; g++) {
-	l1 = lam[l] * m[g] * alpha;
-	l2 = lam[l] * m[g] * (1-alpha);
-	violations += gLCD_glm_check(b, penalty, X, r, v, eta, g, K1, n, l, p, l1, l2, gamma, tau, a, e);
+        l1 = lam[l] * m[g] * alpha;
+        l2 = lam[l] * m[g] * (1-alpha);
+        violations += gLCD_glm_check(b, penalty, X, r, v, eta, g, K1, n, l, p, l1, l2, gamma, tau, a, e);
       }
 
       if (violations==0) break;

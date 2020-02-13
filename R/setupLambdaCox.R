@@ -18,14 +18,14 @@ setupLambdaCox <- function(X, y, Delta, group, penalty, alpha, lambda.min, nlamb
   }
 
   ## Determine lambda.max
-  if (strtrim(penalty,2)=="gr") {
+  if (strtrim(penalty, 2) == "gr") {
     zmax <- .Call("maxgrad", X, s, K1, as.double(group.multiplier)) / n
   } else {
     zmax <- .Call("maxprod", X, s, K1, as.double(group.multiplier)) / n
   }
   lambda.max <- zmax/alpha
 
-  if (lambda.min==0) lambda <- c(exp(seq(log(lambda.max),log(.001*lambda.max),len=nlambda-1)),0)
-  else lambda <- exp(seq(log(lambda.max),log(lambda.min*lambda.max),len=nlambda))
+  if (lambda.min==0) lambda <- c(exp(seq(log(lambda.max), log(.001*lambda.max), len=nlambda-1)), 0)
+  else lambda <- exp(seq(log(lambda.max), log(lambda.min*lambda.max), len=nlambda))
   lambda
 }

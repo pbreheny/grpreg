@@ -30,10 +30,10 @@ void gLCD_gaussian(double *b, const char *penalty, double *x, double *r, int g, 
     if (sG==0) return;
     if (sG < delta) {
       for (int j=K1[g]; j<K1[g+1]; j++) {
-	b[l*p+j] = 0;
+        b[l*p+j] = 0;
         shift = b[l*p+j] - a[j];
         if (fabs(shift) > maxChange[0]) maxChange[0] = fabs(shift);
-	for (int i=0; i<n; i++) r[i] = r[i] - shift * x[n*j+i];
+        for (int i=0; i<n; i++) r[i] = r[i] - shift * x[n*j+i];
       }
       return;
     }
@@ -47,9 +47,9 @@ void gLCD_gaussian(double *b, const char *penalty, double *x, double *r, int g, 
       double z = crossprod(x, r, n, j)/n + a[j];
       double ljk=0;
       if (lam1 != 0) {
-	if (strcmp(penalty, "cMCP")==0) ljk = dMCP(sG, lam1, (K*gamma*pow(lam1,2))/(2*lam1)) * dMCP(b[l*p+j], lam1, gamma);
-	if (strcmp(penalty, "gel")==0) ljk = lam1*exp(-tau/lam1*sG);
-	if (strcmp(penalty, "gBridge")==0) ljk = lam1 * gamma * pow(sG, gamma-1);
+        if (strcmp(penalty, "cMCP")==0) ljk = dMCP(sG, lam1, (K*gamma*pow(lam1,2))/(2*lam1)) * dMCP(b[l*p+j], lam1, gamma);
+        if (strcmp(penalty, "gel")==0) ljk = lam1*exp(-tau/lam1*sG);
+        if (strcmp(penalty, "gBridge")==0) ljk = lam1 * gamma * pow(sG, gamma-1);
       }
       b[l*p+j] = S(z, ljk) / (1+lam2);
 
@@ -57,10 +57,10 @@ void gLCD_gaussian(double *b, const char *penalty, double *x, double *r, int g, 
       shift = b[l*p+j] - a[j];
       if (shift != 0) {
         if (fabs(shift) > maxChange[0]) maxChange[0] = fabs(shift);
-	for (int i=0; i<n; i++) r[i] -= shift*x[n*j+i];
-	if (strcmp(penalty, "gBridge")==0) sG = sG + fabs(b[l*p+j]) - fabs(a[j]);
-	if (strcmp(penalty, "gel")==0) sG = sG + fabs(b[l*p+j]) - fabs(a[j]);
-	if (strcmp(penalty, "cMCP")==0) sG = sG + MCP(b[l*p+j], lam1, gamma) - MCP(a[j], lam1, gamma);
+        for (int i=0; i<n; i++) r[i] -= shift*x[n*j+i];
+        if (strcmp(penalty, "gBridge")==0) sG = sG + fabs(b[l*p+j]) - fabs(a[j]);
+        if (strcmp(penalty, "gel")==0) sG = sG + fabs(b[l*p+j]) - fabs(a[j]);
+        if (strcmp(penalty, "cMCP")==0) sG = sG + MCP(b[l*p+j], lam1, gamma) - MCP(a[j], lam1, gamma);
       }
 
       // Update df
@@ -89,16 +89,16 @@ int gLCD_gCheck(double *b, const char *penalty, double *x, double *r, int g, int
       double z = crossprod(x, r, n, j)/n;
       double ljk=0;
       if (lam1 != 0) {
-	if (strcmp(penalty, "cMCP")==0) ljk = dMCP(sG, lam1, (K*gamma*pow(lam1,2))/(2*lam1)) * dMCP(b[l*p+j], lam1, gamma);
-	if (strcmp(penalty, "gel")==0) ljk = lam1*exp(-tau/lam1*sG);
+        if (strcmp(penalty, "cMCP")==0) ljk = dMCP(sG, lam1, (K*gamma*pow(lam1,2))/(2*lam1)) * dMCP(b[l*p+j], lam1, gamma);
+        if (strcmp(penalty, "gel")==0) ljk = lam1*exp(-tau/lam1*sG);
       }
       if (fabs(z) > ljk) {
-	e[j] = 1;
-	violations++;
-	b[l*p+j] = S(z, ljk) / (1+lam2);
-	for (int i=0; i<n; i++) r[i] = r[i] - b[l*p+j] * x[n*j+i];
-	if (strcmp(penalty, "gel")==0) sG = sG + fabs(b[l*p+j]) - fabs(a[j]);
-	if (strcmp(penalty, "cMCP")==0) sG = sG + MCP(b[l*p+j], lam1, gamma) - MCP(a[j], lam1, gamma);
+        e[j] = 1;
+        violations++;
+        b[l*p+j] = S(z, ljk) / (1+lam2);
+        for (int i=0; i<n; i++) r[i] = r[i] - b[l*p+j] * x[n*j+i];
+        if (strcmp(penalty, "gel")==0) sG = sG + fabs(b[l*p+j]) - fabs(a[j]);
+        if (strcmp(penalty, "cMCP")==0) sG = sG + MCP(b[l*p+j], lam1, gamma) - MCP(a[j], lam1, gamma);
       }
     }
   }
@@ -184,42 +184,42 @@ SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
       ng = 0;
       nv = 0;
       for (int g=0; g<J; g++) {
-	int nv_old = nv;
-	for (int j=K1[g]; j<K1[g+1]; j++) {
-	  if (a[j] != 0) nv++;
-	}
-	if (nv != nv_old) ng++;
+        int nv_old = nv;
+        for (int j=K1[g]; j<K1[g+1]; j++) {
+          if (a[j] != 0) nv++;
+        }
+        if (nv != nv_old) ng++;
       }
       if (ng > gmax || nv > dfmax || tot_iter == max_iter) {
-	for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
+        for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
         break;
       }
     }
 
     while (tot_iter < max_iter) {
       while (tot_iter < max_iter) {
-	INTEGER(iter)[l]++;
+        INTEGER(iter)[l]++;
         tot_iter++;
-	REAL(df)[l] = 0;
+        REAL(df)[l] = 0;
 
-	// Update unpenalized covariates
+        // Update unpenalized covariates
         maxChange = 0;
-	for (int j=0; j<K0; j++) {
-	  shift = crossprod(X, r, n, j)/n;
+        for (int j=0; j<K0; j++) {
+          shift = crossprod(X, r, n, j)/n;
           if (fabs(shift) > maxChange) maxChange = fabs(shift);
-	  b[l*p+j] = shift + a[j];
-	  for (int i=0; i<n; i++) r[i] -= shift * X[n*j+i];
-	  REAL(df)[l]++;
-	}
+          b[l*p+j] = shift + a[j];
+          for (int i=0; i<n; i++) r[i] -= shift * X[n*j+i];
+          REAL(df)[l]++;
+        }
 
-	// Update penalized groups
-	for (int g=0; g<J; g++) {
-	  l1 = lam[l] * m[g] * alpha;
-	  l2 = lam[l] * m[g] * (1-alpha);
-	  gLCD_gaussian(b, penalty, X, r, g, K1, n, l, p, l1, l2, gamma, tau, df, a, delta, e, &maxChange);
-	}
+        // Update penalized groups
+        for (int g=0; g<J; g++) {
+          l1 = lam[l] * m[g] * alpha;
+          l2 = lam[l] * m[g] * (1-alpha);
+          gLCD_gaussian(b, penalty, X, r, g, K1, n, l, p, l1, l2, gamma, tau, df, a, delta, e, &maxChange);
+        }
 
-	// Check for convergence      
+        // Check for convergence      
         for (int j=0; j<p; j++) a[j] = b[l*p+j];
         if (maxChange < eps*sdy) break;
       }
@@ -227,14 +227,14 @@ SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
       // Scan for violations
       violations = 0;
       for (int g=0; g<J; g++) {
-	l1 = lam[l] * m[g] * alpha;
-	l2 = lam[l] * m[g] * (1-alpha);
-	violations += gLCD_gCheck(b, penalty, X, r, g, K1, n, l, p, l1, l2, gamma, tau, a, e);
+        l1 = lam[l] * m[g] * alpha;
+        l2 = lam[l] * m[g] * (1-alpha);
+        violations += gLCD_gCheck(b, penalty, X, r, g, K1, n, l, p, l1, l2, gamma, tau, a, e);
       }
 
       if (violations==0) {
-	REAL(loss)[l] = gLoss(r, n);
-	break;
+        REAL(loss)[l] = gLoss(r, n);
+        break;
       }
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }
