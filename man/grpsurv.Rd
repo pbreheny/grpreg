@@ -133,7 +133,7 @@ not correspond to the ith row of \code{X}):
     \item Breheny, P. and Huang, J. (2015) Group descent algorithms for
     nonconvex penalized linear and logistic regression models with grouped
     predictors.  \emph{Statistics and Computing}, \strong{25}: 173-187.
-    \url{http://www.springerlink.com/openurl.asp?genre=article&id=doi:10.1007/s11222-013-9424-2}
+    \url{http://dx.doi.org/10.1007/s11222-013-9424-2}
 
     \item Breheny, P. (2015) The group exponential lasso for bi-level
     variable selection. \emph{Biometrics}, \strong{71}: 731-740.

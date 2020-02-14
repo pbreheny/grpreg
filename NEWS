@@ -1,3 +1,9 @@
+# ncvreg 3.2.2 (2020-02-14)
+  * Change: Better error detection for ill-conditioned, unpenalized matrices
+  * Fixed: loss.grpsurv now works for total=FALSE
+  * Internal: Lots of internal changes for cleaner, more reliable code
+  * New version numbering system
+
 # grpreg 3.2-1 (2019-02-26)
   * Change: Cross-validation now balances censoring across folds for survival
     models

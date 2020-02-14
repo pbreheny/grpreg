@@ -3,7 +3,7 @@ Title: Regularization Paths for Regression Models with Grouped Covariates
 Version: 3.2.2
 Date: 2020-02-14
 Authors@R: c(
-  person("Patrick", "Breheny", role=c("aut","cre"), email="patrick-breheny@uiowa.edu", comment=c(ORCID="000-0002-0650-1119")),
+  person("Patrick", "Breheny", role=c("aut","cre"), email="patrick-breheny@uiowa.edu", comment=c(ORCID="0000-0002-0650-1119")),
   person("Yaohui", "Zeng", role="ctb"))
 Depends: R (>= 3.1.0)
 Imports: Matrix
@@ -18,4 +18,5 @@ BugReports: http://github.com/pbreheny/grpreg/issues
 License: GPL-3
 URL: http://pbreheny.github.io/grpreg, https://github.com/pbreheny/grpreg
 LazyData: TRUE
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
+Encoding: UTF-8

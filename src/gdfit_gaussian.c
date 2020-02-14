@@ -292,7 +292,7 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
   for (int j=0; j<p; j++) a[j] = 0;
   int *e = Calloc(J, int); // ever-active set
   for (int g=0; g<J; g++) e[g] = 0;
-  int converged, lstart = 0, ng, nv, violations;
+  int lstart = 0, ng, nv, violations;
   double shift, l1, l2, maxChange;
 
   // variables for screening
@@ -373,7 +373,6 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
     while (tot_iter < max_iter) {
       while (tot_iter < max_iter) {
         while (tot_iter < max_iter) {
-          converged = 0;
           INTEGER(iter)[l]++;
           tot_iter++;
           REAL(df)[l] = 0;

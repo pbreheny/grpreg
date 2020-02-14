@@ -189,7 +189,7 @@ SEXP lcdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
     for (int j=0; j<p; j++) a[j] = 0;
     for (int j=0; j<p; j++) e[j] = 0;
   }
-  int converged, lstart, ng, nv, violations;
+  int lstart, ng, nv, violations;
   double shift, l1, l2, maxChange;
 
   // If lam[0]=lam_max, skip lam[0] -- closed form sol'n available
@@ -226,7 +226,6 @@ SEXP lcdfit_binomial(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
 
     while (tot_iter < max_iter) {
       while (tot_iter < max_iter) {
-        converged = 0;
         INTEGER(iter)[l]++;
         tot_iter++;
 
