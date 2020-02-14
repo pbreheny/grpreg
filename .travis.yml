@@ -1,3 +1,5 @@
 language: r
+r_packages:
+  - glmnet
 cache: packages
 r_check_args: --test-dir=tests/run
