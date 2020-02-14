@@ -48,7 +48,8 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
   lambda <- lambda[ind]
   df <- df[ind]
   loss <- loss[ind]
-  if (warn & any(iter==max.iter)) warning("Algorithm failed to converge for all values of lambda")
+  if (iter[1] == max.iter) stop("Algorithm failed to converge for any values of lambda.  This indicates a combination of (a) an ill-conditioned feature matrix X and (b) insufficient penalization.  You must fix one or the other for your model to be identifiable.", call.=FALSE)
+  if (warn & any(iter==max.iter)) warning("Algorithm failed to converge for all values of lambda", call.=FALSE)
 
   # Unstandardize
   if (XG$reorder) b[-1,] <- b[1+XG$ord.inv,]

@@ -4,8 +4,8 @@ select.grpreg <- function(obj, criterion=c("BIC","AIC","GCV","AICc","EBIC"), df.
   ll <- logLik(obj, df.method=df.method, ...)
   df <- as.double(attr(ll,"df"))
   d <- dim(obj$beta)
-  p <- if (length(d)==2) d[1]-1 else d[2]-1
-  j <- if(obj$family=="gaussian") df-2 else df-1
+  p <- if (length(d)==2) d[1] - 1 else d[2] - 1
+  j <- if(obj$family=="gaussian") df - 2 else df - 1
   
   IC <- switch(criterion,
                AIC = AIC(ll),
@@ -16,7 +16,7 @@ select.grpreg <- function(obj, criterion=c("BIC","AIC","GCV","AICc","EBIC"), df.
   n.l <- length(obj$lambda)
   if (smooth & (n.l < 4)) {
     smooth <- FALSE
-    warning("Need at least 4 points to use smooth=TRUE")
+    warning("Need at least 4 points to use smooth=TRUE", call.=FALSE)
   }
   if (smooth) {
     fit.ss <- smooth.spline(IC[is.finite(IC)])
@@ -26,8 +26,11 @@ select.grpreg <- function(obj, criterion=c("BIC","AIC","GCV","AICc","EBIC"), df.
     if (i==0) i <- 1
   } else i <- which.min(IC)
   
-  if (min(obj$lambda) == obj$lambda[i]) warning(paste("minimum lambda selected for", obj$penalty))
-  else if ((max(obj$lambda) == obj$lambda[i]) & obj$penalty=="gBridge") warning("maximum lambda selected")
+  if (min(obj$lambda) == obj$lambda[i]) {
+    warning(paste("minimum lambda selected for", obj$penalty), call.=FALSE)
+  } else if ((max(obj$lambda) == obj$lambda[i]) & obj$penalty=="gBridge") {
+    warning("maximum lambda selected", call.=FALSE)
+  }
   return(list(beta=obj$beta[,i],
               lambda=obj$lambda[i],
               df=df[i],

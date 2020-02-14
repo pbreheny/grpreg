@@ -87,7 +87,6 @@ cvf <- function(i, X, y, fold, cv.args) {
   cv.args$X <- X[fold!=i, , drop=FALSE]
   cv.args$y <- y[fold!=i]
   fit.i <- do.call("grpreg", cv.args)
-  if (length(fit.i$lambda) == 1) browser()
 
   X2 <- X[fold==i, , drop=FALSE]
   y2 <- y[fold==i]
