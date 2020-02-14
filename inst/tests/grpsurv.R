@@ -43,6 +43,7 @@ fit <- grpsurv(as.data.frame(X), y)
 .test = "loss works for grpsurv"
 eta <- predict(fit, X, 'link', lambda=0.1)
 grpreg:::loss.grpsurv(y, eta)
+grpreg:::loss.grpsurv(y, eta, total=FALSE)
 
 .test = "cross-validation works for grpsurv"
 cvfit <- cv.grpsurv(X, y, g, lambda.min=0)
