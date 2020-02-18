@@ -24,4 +24,4 @@ Follow the links under "Learn more" at the [grpreg website](http://pbreheny.gith
 ### Details of the algorithms used
 
 * [Breheny, P. and Huang, J. (2009) Penalized methods for bi-level variable selection.  *Statistics and its interface*, **2**: 369-380.](http://myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf)
-* [Breheny, P. and Huang, J. (2015) Group descent algorithms for nonconvex penalized linear and logistic regression models with grouped predictors. *Statistics and Computing*, **25**: 173-187.](http://www.springerlink.com/openurl.asp?genre=article&id=doi:10.1007/s11222-013-9424-2)
+* [Breheny, P. and Huang, J. (2015) Group descent algorithms for nonconvex penalized linear and logistic regression models with grouped predictors. *Statistics and Computing*, **25**: 173-187.](http://dx.doi.org/10.1007/s11222-013-9424-2)
