@@ -11,7 +11,7 @@ status](https://travis-ci.org/pbreheny/grpreg.svg?branch=master)](https://travis
 ### Install
 
 * To install the latest release version from CRAN: `install.packages("grpreg")`
-* To install the latest development version from GitHub: `devtools::install_github("pbreheny/grpreg")`
+* To install the latest development version from GitHub: `remotes::install_github("pbreheny/grpreg")`
 
 ### Get started
 
