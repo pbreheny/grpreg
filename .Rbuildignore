@@ -2,3 +2,4 @@
 ^docs$
 ^index.Rmd$
 ^\.travis\.yml$
+^\.version\.json$
