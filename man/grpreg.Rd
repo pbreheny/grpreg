@@ -158,9 +158,7 @@ tau = 1/3, group.multiplier, warn=TRUE, returnX = FALSE, ...)
   \code{y} prior to fitting, in order to apply the penalization equally
   across columns.
 
-  \code{grpreg} requires groups to be non-overlapping; for model fitting
-  involving overlapping groups, see the companion package
-  \code{grpregOverlap}.
+  \code{grpreg} requires groups to be non-overlapping.
 }
 \value{
   An object with S3 class \code{"grpreg"} containing:
@@ -259,14 +257,4 @@ fit <- grpreg(X, y)
 # Note that group is set up automatically
 fit$group
 plot(fit)
-
-# Overlapping groups
-\dontrun{
-library(grpregOverlap)
-data(pathway.dat)
-X <- pathway.dat$expression
-group <- pathway.dat$pathways
-y <- pathway.dat$mutation
-fit <- grpregOverlap(X, y, group, family='binomial')
-plot(fit)}
 }

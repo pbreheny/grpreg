@@ -44,9 +44,6 @@
   out group selection, meaning that within a group, coefficients will
   either all be zero or all nonzero.  A variety of supporting methods
   for selecting lambda and plotting the paths are provided also.
-
-  For group penalization involving overlapping groups, see the
-  companion package \code{grpregOverlap}.
 }
 \references{
   \itemize{
