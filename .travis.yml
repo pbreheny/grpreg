@@ -3,4 +3,3 @@ r_packages:
   - glmnet
   - ncvreg
 cache: packages
-r_check_args: --test-dir=tests/run
