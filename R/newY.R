@@ -12,7 +12,7 @@ newY <- function(y, family) {
     tab <- table(y)
     if (length(tab) > 2) stop("Attemping to use family='binomial' with non-binary data", call.=FALSE)
     if (!identical(names(tab), c("0", "1"))) {
-      print(paste0("Logistic regression modeling Pr(y=", names(tab)[2], ")"))
+      message(paste0("Logistic regression modeling Pr(y=", names(tab)[2], ")"))
       y <- as.double(as.character(y) == names(tab)[2])
       if (d[2] > 1) attr(y, "dim") <- d
     }
