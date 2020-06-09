@@ -48,7 +48,7 @@ void gd_gaussian(double *b, double *x, double *r, int g, int *K1, int *K,
 }
 
 // Scan for violations in rest set
-int check_rest_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, int *K, double lam, double *m, int n, int J) {
+int check_rest_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, int *K, double lam, int n, int J, double *m) {
   int violations = 0;
   double TOLERANCE = 1e-8;
   for (int g = 0; g < J; g++) {
@@ -58,7 +58,7 @@ int check_rest_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, 
         z[j-K1[g]] = crossprod(X, r, n, j) / n;
       }
       xTr[g] = norm(z, K[g]);
-      if (xTr[g] + TOLERANCE > lam * m[g] * sqrt(K[g])) {
+      if (xTr[g] + TOLERANCE > lam * m[g]) {
         e[g] = e2[g] = 1;
         violations++;
       }
@@ -69,7 +69,7 @@ int check_rest_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, 
 }
 
 // Scan for violations in strong set
-int check_strong_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, int *K, double lam, double *m, int n, int J) {
+int check_strong_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, int *K, double lam, int n, int J, double *m) {
   int violations = 0;
   for (int g = 0; g < J; g++) {
     if (e[g] == 0 && e2[g] == 1) {
@@ -78,7 +78,7 @@ int check_strong_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1
         z[j-K1[g]] = crossprod(X, r, n, j) / n;
       }
       xTr[g] = norm(z, K[g]);
-      if (xTr[g] > lam * m[g] * sqrt(K[g])) {
+      if (xTr[g] > lam * m[g]) {
         e[g] = 1;
         violations++;
       }
@@ -89,14 +89,14 @@ int check_strong_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1
 }
 
 // sequential strong rule
-void ssr_glasso(int *e2, double *xTr, int *K1, int *K, double *lam, double lam_max, int l, int J) {
+void ssr_glasso(int *e2, double *xTr, int *K1, int *K, double *lam, double lam_max, int l, int J, double *m) {
   double cutoff;
   double TOLERANCE = 1e-8;
   for (int g = 0; g < J; g++) {
     if (l != 0) {
-      cutoff = sqrt(K[g]) * (2 * lam[l] - lam[l-1]);
+      cutoff = m[g] * (2 * lam[l] - lam[l-1]);
     } else {
-      if (lam_max > 0) cutoff = sqrt(K[g]) * (2 * lam[l] - lam_max);
+      if (lam_max > 0) cutoff = m[g] * (2 * lam[l] - lam_max);
       else cutoff = 0;
     }
     if (xTr[g] + TOLERANCE > cutoff) {
@@ -110,7 +110,7 @@ void ssr_glasso(int *e2, double *xTr, int *K1, int *K, double *lam, double lam_m
 // BEDPP initialization
 void bedpp_init(double *yTxxTv1, double *xTv1_sq, double *xTy_sq, double *xTr,
                 double *X, double *y, int *K1, int *K, int *g_star_ptr, 
-                int *K_star_ptr, int K1_len, int n, int J) {
+                int *K_star_ptr, int K1_len, int n, int J, double *m) {
 
   // compute Xj^T * y
   double tmp = 0;
@@ -121,8 +121,8 @@ void bedpp_init(double *yTxxTv1, double *xTv1_sq, double *xTy_sq, double *xTr,
       xTy_sq[g] += pow(XTy[j-K1[0]], 2);
     }
     xTr[g] = sqrt(xTy_sq[g]) / n;
-    if (xTr[g] / sqrt(K[g]) > tmp) {
-      tmp = xTr[g] / sqrt(K[g]);
+    if (xTr[g] / m[g] > tmp) {
+      tmp = xTr[g] / m[g];
       *g_star_ptr = g;
       *K_star_ptr = K[g];
     }
@@ -157,7 +157,7 @@ void bedpp_init(double *yTxxTv1, double *xTv1_sq, double *xTy_sq, double *xTr,
 // basic EDPP screening
 void bedpp_glasso(int *e3, double *yTxxTv1, double *xTv1_sq, double *xTy_sq, 
                   double y_norm_sq, int *K, double lam, double lam_max, 
-                  int K_star, int n, int J) {
+                  int K_star, int n, int J, double *m) {
   double TOLERANCE = 1e-8;
   double LHS, RHS, LHS_temp, tmp;
   for (int g = 0; g < J; g++) {
@@ -170,7 +170,7 @@ void bedpp_glasso(int *e3, double *yTxxTv1, double *xTv1_sq, double *xTy_sq,
     }
     tmp = n * y_norm_sq - pow(n * lam_max, 2) * K_star;
     if (tmp < 0.0) tmp = 0.0;
-    RHS = 2 * n * lam * lam_max * sqrt(K[g]) - (lam_max - lam) * sqrt(tmp);
+    RHS = 2 * n * lam * lam_max * m[g] - (lam_max - lam) * sqrt(tmp);
     
     if (LHS + TOLERANCE > RHS) {
       e3[g] = 1; // not reject, thus in BEDPP set
@@ -181,14 +181,14 @@ void bedpp_glasso(int *e3, double *yTxxTv1, double *xTv1_sq, double *xTy_sq,
 }
 
 // hybrid sequential safe-strong rule: SSR-BEDPP
-void ssr_bedpp_glasso(int *e2, int *e3, double *xTr, int *K1, int *K, double *lam, double lam_max, int l, int J) {
+void ssr_bedpp_glasso(int *e2, int *e3, double *xTr, int *K1, int *K, double *lam, double lam_max, int l, int J, double *m) {
   double cutoff;
   for (int g = 0; g < J; g++) {
     if (e3[g] == 1) { // only check SSR in BEDPP set
       if (l != 0) {
-        cutoff = sqrt(K[g]) * (2 * lam[l] - lam[l-1]);
+        cutoff = m[g] * (2 * lam[l] - lam[l-1]);
       } else {
-        cutoff = sqrt(K[g]) * (2 * lam[l] - lam_max);
+        cutoff = m[g] * (2 * lam[l] - lam_max);
       }
       if (xTr[g] > cutoff) {
         e2[g] = 1; // not reject
@@ -216,7 +216,7 @@ void update_xTr(int *e3, int *e3_old, double *xTr, double *X, double *r, int *K1
 
 // check rest set with SSR-BEDPP screening
 int check_rest_set_ssr_bedpp(int *e2, int *e, int *e3, double *xTr, double *X, 
-                             double *r, int *K1, int *K, double lam, int n, int J) {
+                             double *r, int *K1, int *K, double lam, int n, int J, double *m) {
   int violations = 0;
   for (int g = 0; g < J; g++) {
     if (e3[g] == 1 && e2[g] == 0) { // check groups not rejected by BEDPP but by SSR
@@ -225,7 +225,7 @@ int check_rest_set_ssr_bedpp(int *e2, int *e, int *e3, double *xTr, double *X,
         z[j-K1[g]] = crossprod(X, r, n, j) / n;
       }
       xTr[g] = norm(z, K[g]);
-      if (xTr[g] > lam * sqrt(K[g])) {
+      if (xTr[g] > lam * m[g]) {
         e[g] = e2[g] = 1;
         violations++;
       }
@@ -264,9 +264,6 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
   int dfmax = INTEGER(dfmax_)[0];
   int gmax = INTEGER(gmax_)[0];
   int user = INTEGER(user_)[0];
-  for (int g=0; g<J; g++) {
-    if (m[g] != 1) user = 1;
-  }
 
   // Outcome
   SEXP res, beta, iter, df, loss, rejections, safe_rejections;
@@ -318,12 +315,12 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
   bedpp_flag = 0;
   if ((strcmp(penalty, "grLasso")==0) & !user) {
     bedpp_flag = 1;
-    bedpp_init(yTxxTv1, xTv1_sq, xTy_sq, xTr, X, y, K1, K, g_star_ptr, K_star_ptr, K1_len, n, J);
+    bedpp_init(yTxxTv1, xTv1_sq, xTy_sq, xTr, X, y, K1, K, g_star_ptr, K_star_ptr, K1_len, n, J, m);
   }
   else bedpp_flag = 0;
   
   // If lam[0]=lam_max, skip lam[0] -- closed form sol'n available
-  double rss = gLoss(r,n);
+  double rss = gLoss(r, n);
   if (user) {
     lstart = 0;
   } else {
@@ -356,16 +353,16 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
     }
     if (bedpp_flag) { //SSR-BEDPP screening
       // BEDPP screening
-      bedpp_glasso(e3, yTxxTv1, xTv1_sq, xTy_sq, y_norm_sq, K, lam[l], lam_max, K_star, n, J);
+      bedpp_glasso(e3, yTxxTv1, xTv1_sq, xTy_sq, y_norm_sq, K, lam[l], lam_max, K_star, n, J, m);
       INTEGER(safe_rejections)[l] = J - sum_rejections(e3, J);
       // update xTr[g] for groups which are rejected at previous lambda but accepted at current one.
       update_xTr(e3, e3_old, xTr, X, r, K1, K, n, J);
       for (int g=0; g<J; g++) e3_old[g] = e3[g]; // reset e3_old to be new e3;
       // SSR screening
-      ssr_bedpp_glasso(e2, e3, xTr, K1, K, lam, lam_max, l, J);
+      ssr_bedpp_glasso(e2, e3, xTr, K1, K, lam, lam_max, l, J, m);
     } else { // only SSR screening
       INTEGER(safe_rejections)[l] = 0;
-      ssr_glasso(e2, xTr, K1, K, lam, lam_max, l, J);
+      ssr_glasso(e2, xTr, K1, K, lam, lam_max, l, J, m);
     }
     INTEGER(rejections)[l] = J - sum_rejections(e2, J);
     if (INTEGER(safe_rejections)[l] <= 0) bedpp_flag = 0; // BEDPP not effective, turn it off for next lambda.
@@ -401,15 +398,15 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
           if (maxChange < eps*sdy) break;
         }
         // Scan for violations in strong set
-        violations = check_strong_set(e2, e, xTr, X, r, K1, K, lam[l], m, n, J);
+        violations = check_strong_set(e2, e, xTr, X, r, K1, K, lam[l], n, J, m);
         if (violations == 0) break;
       }
 
       // Scan for violations in rest set
       if (bedpp_flag) {
-        violations = check_rest_set_ssr_bedpp(e2, e, e3, xTr, X, r, K1, K, lam[l], n, J);
+        violations = check_rest_set_ssr_bedpp(e2, e, e3, xTr, X, r, K1, K, lam[l], n, J, m);
       } else {
-        violations = check_rest_set(e2, e, xTr, X, r, K1, K, lam[l], m, n, J);
+        violations = check_rest_set(e2, e, xTr, X, r, K1, K, lam[l], n, J, m);
       }
       if (violations == 0) {
         REAL(loss)[l] = gLoss(r, n);
