@@ -1,4 +1,10 @@
-# ncvreg 3.2.2 (2020-02-14)
+# grpreg 3.3.0 (2020-06-10)
+  * Fixed: sqrt(K) no longer hard-coded into discarding rules (thank you to Dan
+    Kessler for pointing this out)
+  * Testing: Now uses the tinytest package
+  * Documentation: Removing references to grpregOverlap (hope to merge)
+
+# grpreg 3.2.2 (2020-02-14)
   * Change: Better error detection for ill-conditioned, unpenalized matrices
   * Fixed: loss.grpsurv now works for total=FALSE
   * Internal: Lots of internal changes for cleaner, more reliable code
