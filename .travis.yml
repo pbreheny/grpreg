@@ -2,4 +2,7 @@ language: r
 r_packages:
   - glmnet
   - ncvreg
-cache: packages
+
+script:
+  - R CMD build .
+  - R CMD check "${PKG_TARBALL}"; CHECK_RET=$?
