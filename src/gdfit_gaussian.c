@@ -210,6 +210,7 @@ void update_xTr(int *e3, int *e3_old, double *xTr, double *X, double *r, int *K1
         z[j-K1[g]] = crossprod(X, r, n, j) / n;
       }
       xTr[g] = norm(z, K[g]);
+      Free(z);
     }
   }
 }

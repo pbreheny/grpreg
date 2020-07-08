@@ -78,5 +78,7 @@
 }
 \author{Patrick Breheny}
 \examples{
+\dontrun{
 vignette("getting-started", "grpreg")
+}
 }
