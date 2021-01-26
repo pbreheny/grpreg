@@ -7,7 +7,7 @@ Authors@R: c(
   person("Yaohui", "Zeng", role="ctb"))
 Depends: R (>= 3.1.0)
 Imports: Matrix
-Suggests: knitr, survival, tinytest
+Suggests: knitr, splines, survival, tinytest
 VignetteBuilder: knitr
 Description: Efficient algorithms for fitting the regularization path of linear
   regression, GLM, and Cox regression models with grouped penalties.  This
