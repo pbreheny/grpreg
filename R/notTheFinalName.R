@@ -1,5 +1,5 @@
-library(splines)
-
+# library(splines)
+# 
 notTheFinalName <- function(x, df = 4, degree = 3){
   n <- nrow(x)
   p <- ncol(x)
@@ -17,19 +17,19 @@ notTheFinalName <- function(x, df = 4, degree = 3){
   
   return(structure(list(x = finalx, groups = groups), class='grouped_hat'))
 }
-
-n <- 100
-p <- 1000
-x <- matrix(runif(100), n, p, byrow = TRUE)
-hat <- notTheFinalName(x)
-hat
-
-x <- matrix(1:20, 10,2)
-
-system.time(x_list <- split(x, col(x, as.factor = TRUE))
-x_list <- lapply(x_list, FUN = bs, df = 4, degree = 3)
-matrix(unlist(x_list), ncol = 2*4))
-
-system.time(for(i in 0:(p-1)){
-  finalx[,(4*i+1):(4*i+df)] <- bs(x[,i+1], df = df, knots = knots, degree = degree)
-})
+# 
+# n <- 100
+# p <- 1000
+# x <- matrix(runif(100), n, p, byrow = TRUE)
+# hat <- notTheFinalName(x)
+# hat
+# 
+# x <- matrix(1:20, 10,2)
+# 
+# system.time(x_list <- split(x, col(x, as.factor = TRUE))
+# x_list <- lapply(x_list, FUN = bs, df = 4, degree = 3)
+# matrix(unlist(x_list), ncol = 2*4))
+# 
+# system.time(for(i in 0:(p-1)){
+#   finalx[,(4*i+1):(4*i+df)] <- bs(x[,i+1], df = df, knots = knots, degree = degree)
+# })
