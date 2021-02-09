@@ -15,5 +15,7 @@ mu <- apply(eta,1,sum)
 y <- rnorm(n, mean=mu)
 
 # Basic setup
-X <- notTheFinalName(X.raw, df=4)
+X <- grpmat(X.raw, df=4)
 expect_equal(ncol(X$x), ncol(X.raw)*4)
+expect_equal(length(X$groups), ncol(X.raw)*4)
+expect_equal(any(is.na(X)), FALSE) #expect_false
