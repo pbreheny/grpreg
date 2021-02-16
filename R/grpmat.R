@@ -1,3 +1,30 @@
+#' Spline Basis for Multiple Variables
+#'
+#' \code{grpmat} Performs a basis expansion for many variables at once for 
+#' later use with the grpreg function. Fuction returns one large matrix 
+#' and a vector that describes its grouping.
+#'
+#' \code{grpmat} is based on the function [splines::bs()]. It takes each
+#' column of \code{x} and generates a basis matrix. These basis 
+#' matrices represent the family of piecewise polynomials with the specified 
+#' degree evaluated at the column values of \code{x}. These matrices are then 
+#' column-bound to form a single grouped design matrix. A vector that describes 
+#' the grouping present in the resulting matrix is also generated. The resulting 
+#' object can be passed to [grpreg()].
+#'
+#' @param x the design matrix. Columns must represent numeric variables.
+#' @param df degrees of freedom; default is 4.
+#' @param degree degree of the piecewise polynomial; default is 3 for cubic 
+#' splines.
+#' @return A \code{grouped_hat} object composed of a matrix of dimension 
+#' \code{c(nrow(x), df*ncol(x))} and a vector of length 
+#' \code{df*ncol(x)}
+#'
+#' @examples
+#' grpmat(examplestuff)
+#'
+#'
+
 grpmat <- function(x, df = 4, degree = 3){
   n <- nrow(x)
   p <- ncol(x)
