@@ -16,22 +16,47 @@
 #' @param df degrees of freedom; default is 4.
 #' @param degree degree of the piecewise polynomial; default is 3 for cubic 
 #' splines.
+#' @param type specifies type of splines, default is \code{"bs"}
 #' @return A \code{grouped_hat} object composed of a matrix of dimension 
 #' \code{c(nrow(x), df*ncol(x))} and a vector of length 
 #' \code{df*ncol(x)}
 #'
 #' @examples
-#' grpmat(examplestuff)
+#' 
+#' X <- grpmat(attitude[-1], df = 3)
+#' fit <- grpreg(X, attitude$rating, penalty="grLasso")
+#' plot(fit)
 #'
 #'
 
-grpmat <- function(x, df = 4, degree = 3){
+grpmat <- function(x, df = 4, degree = 3, type = "bs"){
+  #if(type == "ns"){
+  #  degree <- 3 #provide warning
+  #}
   n <- nrow(x)
   p <- ncol(x)
-  finalx <- matrix(1:40, n, (p*df))
+  finalx <- matrix(NA, n, (p*df))
+  knots <- rep(list(rep(NA, (df-degree))), p)
+  boundary <- rep(list(rep(NA, 2)), p)
   
-  for(i in 0:(p-1)){
-    finalx[,(4*i+1):(4*i+df)] <- splines::bs(x[,i+1], df = df, degree = degree)
+  if(type == "bs"){
+    for(i in 0:(p-1)){
+      bs <- splines::bs(x[,i+1], df = df, degree = degree)
+      finalx[,(df*i+1):(df*i+df)] <- bs
+      boundary[[i+1]] <- attr(bs, "Boundary.knots")
+      knots[[i+1]] <- attr(bs, "knots")
+    }
+  }
+  else if(type == "ns"){
+    for(i in 0:(p-1)){
+      ns <- splines::ns(x[,i+1], df = df, degree = degree)
+      finalx[,(df*i+1):(df*i+df)] <- ns
+      boundary[[i+1]] <- attr(ns, "Boundary.knots")
+      knots[[i+1]] <- attr(ns, "knots")
+    }
+  }
+  else{
+    stop(paste(type, "is not a valid type"))
   }
   
   if(length(colnames(x)) == p){
@@ -43,5 +68,11 @@ grpmat <- function(x, df = 4, degree = 3){
     colnames(finalx) <- paste(groups, 1:df, sep = "_")
   }
   
-  return(structure(list(x = finalx, groups = groups), class='grouped_hat'))
+  return(structure(list(x = finalx, 
+                        groups = groups, 
+                        knots = knots,
+                        boundary = boundary,
+                        degree = degree,
+                        originalx = x), class='grouped_mat'))
 }
+  
