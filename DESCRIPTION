@@ -1,7 +1,7 @@
 Package: grpreg
 Title: Regularization Paths for Regression Models with Grouped Covariates
-Version: 3.3.0.2
-Date: 2020-07-08
+Version: 3.3.1
+Date: 2021-03-26
 Authors@R: c(
   person("Patrick", "Breheny", role=c("aut","cre"), email="patrick-breheny@uiowa.edu", comment=c(ORCID="0000-0002-0650-1119")),
   person("Yaohui", "Zeng", role="ctb"))
@@ -14,9 +14,9 @@ Description: Efficient algorithms for fitting the regularization path of linear
   includes group selection methods such as group lasso, group MCP, and
   group SCAD as well as bi-level selection methods such as the group
   exponential lasso, the composite MCP, and the group bridge.
-BugReports: http://github.com/pbreheny/grpreg/issues
+BugReports: https://github.com/pbreheny/grpreg/issues
 License: GPL-3
-URL: http://pbreheny.github.io/grpreg, https://github.com/pbreheny/grpreg
+URL: https://pbreheny.github.io/grpreg/, https://github.com/pbreheny/grpreg
 LazyData: TRUE
 RoxygenNote: 7.0.2
 Encoding: UTF-8

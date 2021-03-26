@@ -2,6 +2,7 @@ language: r
 r_packages:
   - glmnet
   - ncvreg
+  - survival
 
 script:
   - R CMD build .

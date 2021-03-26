@@ -1,3 +1,7 @@
+# grpreg 3.3.1 (2021-03-26)
+  * Fixed: AUC() now compatible with survival 3.2.10
+  * Internal: Fixed memory leak
+
 # grpreg 3.3.0 (2020-06-10)
   * Fixed: sqrt(K) no longer hard-coded into discarding rules (thank you to Dan
     Kessler for pointing this out)
