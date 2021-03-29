@@ -1,13 +1,13 @@
 Package: grpreg
 Title: Regularization Paths for Regression Models with Grouped Covariates
 Version: 3.3.1
-Date: 2021-03-26
+Date: 2021-03-29
 Authors@R: c(
   person("Patrick", "Breheny", role=c("aut","cre"), email="patrick-breheny@uiowa.edu", comment=c(ORCID="0000-0002-0650-1119")),
   person("Yaohui", "Zeng", role="ctb"))
 Depends: R (>= 3.1.0)
 Imports: Matrix
-Suggests: knitr, survival, tinytest
+Suggests: knitr, rmarkdown, survival, tinytest
 VignetteBuilder: knitr
 Description: Efficient algorithms for fitting the regularization path of linear
   regression, GLM, and Cox regression models with grouped penalties.  This
@@ -18,5 +18,5 @@ BugReports: https://github.com/pbreheny/grpreg/issues
 License: GPL-3
 URL: https://pbreheny.github.io/grpreg/, https://github.com/pbreheny/grpreg
 LazyData: TRUE
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 Encoding: UTF-8
