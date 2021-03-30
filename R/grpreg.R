@@ -25,7 +25,14 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   if (alpha > 1 | alpha <= 0) stop("alpha must be in (0, 1]", call.=FALSE)
   
   # Check for grouped_hat object
-  if (class(X) == "grouped_mat"){
+  grpmat <- 0
+  if(inherits(X, "grouped_mat")){
+    grpmat <- 1
+    knots <- X$knots
+    boundary <- X$boundary
+    degree <- X$degree
+    originalx <- X$originalx
+    type <- X$type
     group <- X$groups
     X <- X$x
   }
@@ -118,9 +125,16 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   } else if (family=="poisson") {
     val$y <- y
   } 
-  if (class(X) == "grouped_mat"){
+  if (grpmat == 1){
     val$X <- X
     val$y <- y
+    grpmat <- list(knots = knots,
+                   boundary = boundary,
+                   degree = degree,
+                   originalx = originalx,
+                   type = type)
+    val$grpmat <- grpmat
+    attr(val, "grpmat") <- TRUE
   }
   val
 }

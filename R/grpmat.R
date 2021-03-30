@@ -30,9 +30,9 @@
 #'
 
 grpmat <- function(x, df = 4, degree = 3, type = "bs"){
-  #if(type == "ns"){
-  #  degree <- 3 #provide warning
-  #}
+  if(type == "ns" && degree != 3){
+    warning("Degree has been set to 3 for natural splines")
+  }
   n <- nrow(x)
   p <- ncol(x)
   finalx <- matrix(NA, n, (p*df))
@@ -49,7 +49,7 @@ grpmat <- function(x, df = 4, degree = 3, type = "bs"){
   }
   else if(type == "ns"){
     for(i in 0:(p-1)){
-      ns <- splines::ns(x[,i+1], df = df, degree = degree)
+      ns <- splines::ns(x[,i+1], df = df)
       finalx[,(df*i+1):(df*i+df)] <- ns
       boundary[[i+1]] <- attr(ns, "Boundary.knots")
       knots[[i+1]] <- attr(ns, "knots")
@@ -73,6 +73,7 @@ grpmat <- function(x, df = 4, degree = 3, type = "bs"){
                         knots = knots,
                         boundary = boundary,
                         degree = degree,
-                        originalx = x), class='grouped_mat'))
+                        originalx = x,
+                        type = type), class='grouped_mat'))
 }
   
