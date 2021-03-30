@@ -43,7 +43,7 @@ cv.grpsurv(X, y, group, ..., nfolds=10, seed, fold, se=c('quick',
   The function calls \code{grpreg}/\code{cv.grpsurv} \code{nfolds}
   times, each time leaving out 1/\code{nfolds} of the data.    The
   cross-validation error is based on the deviance;
-  \href{http://pbreheny.github.io/grpreg/articles/web/models.html}{see
+  \href{https://pbreheny.github.io/grpreg/articles/web/models.html}{see
     here for more details}.
 
   For Gaussian and Poisson responses, the folds are chosen according to

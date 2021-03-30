@@ -34,7 +34,7 @@ These penalties are sparse at the group level -- the coefficients within a group
 
 If you use any of these penalties, please cite
 
-* Breheny P and Huang J (2015). Group descent algorithms for nonconvex penalized linear and logistic regression models with grouped predictors. *Statistics and Computing*, **25**: 173-187. [[pdf](http://myweb.uiowa.edu/pbreheny/pdf/group-computing.pdf)].
+* Breheny P and Huang J (2015). Group descent algorithms for nonconvex penalized linear and logistic regression models with grouped predictors. *Statistics and Computing*, **25**: 173-187. [[pdf](https://myweb.uiowa.edu/pbreheny/pdf/group-computing.pdf)].
 
 The article goes into more mathematical details, discusses issues of standardization in the group sense, and provides references.
 
@@ -98,7 +98,7 @@ $$
 
 If you use the GEL penalty, please cite
 
-* Breheny P (2015). The group exponential lasso for bi-level variable selection. *Biometrics*, **71**: 731-740. [[pdf](http://onlinelibrary.wiley.com/doi/10.1111/biom.12300/pdf)].
+* Breheny P (2015). The group exponential lasso for bi-level variable selection. *Biometrics*, **71**: 731-740. [[pdf](https://onlinelibrary.wiley.com/doi/10.1111/biom.12300/pdf)].
 
 ### Composite MCP
 
@@ -114,8 +114,8 @@ where $\textrm{MCP}_{\lam, \gamma}(\cdot)$ denotes the MCP penalty with regulari
 
 If you use the composite MCP penalty, please cite either of the following papers:
 
-* Breheny P and Huang J (2009). Penalized methods for bi-level variable selection. *Statistics and Its Interface*, **2**: 369-380. [[pdf](http://myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf)]
-* Huang J, Breheny P and Ma S (2012). A selective review of group selection in high-dimensional models. *Statistical Science*, **27**: 481-499. [[pdf](http://myweb.uiowa.edu/pbreheny/pdf/Huang2012.pdf)]
+* Breheny P and Huang J (2009). Penalized methods for bi-level variable selection. *Statistics and Its Interface*, **2**: 369-380. [[pdf](https://myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf)]
+* Huang J, Breheny P and Ma S (2012). A selective review of group selection in high-dimensional models. *Statistical Science*, **27**: 481-499. [[pdf](https://myweb.uiowa.edu/pbreheny/pdf/Huang2012.pdf)]
 
 Please note that there is some confusion around the name "group MCP".  In the first paper above (2009), the composite MCP penalty was referred to as the "group MCP" penalty; the second paper (2012), in reviewing the various kinds of group penalties that had been proposed, recommended changing the name to "composite MCP" to avoid confusion with the "group MCP" [defined above](#group-mcp).
 
@@ -136,7 +136,7 @@ Please note that the group bridge penalty uses a very different algorithm from t
 If you use the group bridge penalty, please cite either of the following papers:
 
 * Huang J, Ma S, Xie H and Zhang C (2009). A group bridge approach for variable selection. *Biometrika*, **96**: 339-355.
-* Breheny P and Huang J (2009). Penalized methods for bi-level variable selection. *Statistics and Its Interface*, **2**: 369-380. [[pdf](\href{http://myweb.uiowa.edu/pbreheny/publications/Breheny2009.pdf)]
+* Breheny P and Huang J (2009). Penalized methods for bi-level variable selection. *Statistics and Its Interface*, **2**: 369-380. [[pdf](\href{https://myweb.uiowa.edu/pbreheny/publications/Breheny2009.pdf)]
 
 The first paper proposed the method; the second paper proposed the algorithm that is used in the `grpreg` package.
 

@@ -42,8 +42,8 @@ lambda, which=1:length(object$lambda), ...)
 \value{The object returned depends on type.}
 \references{
   \itemize{
-    \item Kalbfleish JD and Prentice RL (2002). The Statistical Analysis of
-      Failure Time Data, 2nd edition. Wiley.
+    \item Kalbfleish JD and Prentice RL (2002). \emph{The Statistical
+      Analysis of Failure Time Data}, 2nd edition. Wiley.
   }
 }
 \author{Patrick Breheny}

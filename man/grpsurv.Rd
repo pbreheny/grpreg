@@ -79,7 +79,7 @@ group.multiplier, warn=TRUE, returnX=FALSE, ...)
     P(\beta, \lambda),}
   where the loss function L is the deviance (-2 times the partial
   log-likelihood) from the Cox regression mode.
-  \href{http://pbreheny.github.io/ncvreg/articles/web/models.html}{See
+  \href{https://pbreheny.github.io/ncvreg/articles/web/models.html}{See
     here for more details}.
 
   Presently, ties are not handled by \code{grpsurv} in a particularly
@@ -120,30 +120,27 @@ not correspond to the ith row of \code{X}):
 }
 \references{
   \itemize{
-    \item Breheny, P. and Huang, J. (2009) Penalized methods for
-    bi-level variable selection.  \emph{Statistics and its interface},
-    \strong{2}: 369-380.
-    \url{https://myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf}
-
-    \item Huang J., Breheny, P. and Ma, S. (2012). A selective
-    review of group selection in high dimensional
-    models. \emph{Statistical Science}, \strong{27}: 481-499.
-    \url{https://myweb.uiowa.edu/pbreheny/pdf/Huang2012.pdf}
-
-    \item Breheny, P. and Huang, J. (2015) Group descent algorithms for
-    nonconvex penalized linear and logistic regression models with grouped
-    predictors.  \emph{Statistics and Computing}, \strong{25}: 173-187.
-    \doi{10.1007/s11222-013-9424-2}
-
-    \item Breheny, P. (2015) The group exponential lasso for bi-level
+    \item Breheny P and Huang J. (2009) Penalized methods for bi-level
+    variable selection. \emph{Statistics and its interface}, \strong{2}:
+    369-380. \doi{10.4310/sii.2009.v2.n3.a10}
+    
+    \item Huang J, Breheny P, and Ma S. (2012). A selective review of
+    group selection in high dimensional models. \emph{Statistical
+      Science}, \strong{27}: 481-499. \doi{10.1214/12-sts392}
+    
+    \item Breheny P and Huang J. (2015) Group descent algorithms for
+    nonconvex penalized linear and logistic regression models with
+    grouped predictors. \emph{Statistics and Computing}, \strong{25}:
+    173-187. \doi{10.1007/s11222-013-9424-2}
+    
+    \item Breheny P. (2015) The group exponential lasso for bi-level
     variable selection. \emph{Biometrics}, \strong{71}: 731-740.
     \doi{10.1111/biom.12300}
-
+    
     \item Simon N, Friedman JH, Hastie T, and Tibshirani R. (2011)
     Regularization Paths for Cox's Proportional Hazards Model via
     Coordinate Descent.  \emph{Journal of Statistical Software},
-    \strong{39}: 1-13.
-    \url{https://www.jstatsoft.org/v39/i05}
+    \strong{39}: 1-13. \doi{10.18637/jss.v039.i05}
   }
 }
 \author{Patrick Breheny}

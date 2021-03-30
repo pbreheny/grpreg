@@ -42,7 +42,7 @@ data(Lung)
 \references{
   \itemize{
     \item Kalbfleisch D and Prentice RL (1980), \emph{The Statistical
-  Analysis of Failure Time Data}. Wiley, New York.
+      Analysis of Failure Time Data}. Wiley, New York.
   }
 }
 \seealso{\code{\link[survival]{veteran}}, \code{\link{grpsurv}}}

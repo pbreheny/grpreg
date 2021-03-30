@@ -59,13 +59,15 @@ gamma=0.5, group.multiplier, warn=TRUE)
   \code{grpreg}.}
 \references{
   \itemize{
-    \item Huang, J., Ma, S., Xie, H., and Zhang, C. (2009) A group bridge
+    \item Huang J, Ma S, Xie H, and Zhang C. (2009) A group bridge
     approach for variable selection.  \emph{Biometrika}, \strong{96}:
-    339-355.
-    \item Breheny, P. and Huang, J. (2009) Penalized methods for
-    bi-level variable selection.  \emph{Statistics and its interface},
-    \strong{2}: 369-380.
-    }}
+    339-355. \doi{10.1093/biomet/asp020}
+    
+    \item Breheny P and Huang J. (2009) Penalized methods for bi-level
+    variable selection. \emph{Statistics and its interface}, \strong{2}:
+    369-380. \doi{10.4310/sii.2009.v2.n3.a10}
+  }
+}
 \author{Patrick Breheny}
 \seealso{\code{\link{grpreg}}}
 \examples{

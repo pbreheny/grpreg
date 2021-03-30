@@ -115,7 +115,7 @@ tau = 1/3, group.multiplier, warn=TRUE, returnX = FALSE, ...)
   where the loss function L is the deviance (-2 times the log
   likelihood) for the specified outcome distribution
   (gaussian/binomial/poisson).
-  \href{http://pbreheny.github.io/ncvreg/articles/web/models.html}{See
+  \href{https://pbreheny.github.io/ncvreg/articles/web/models.html}{See
     here for more details}.
 
   For the bi-level selection methods, a locally approximated coordinate
@@ -187,22 +187,20 @@ tau = 1/3, group.multiplier, warn=TRUE, returnX = FALSE, ...)
 }
 \references{
   \itemize{
-    \item Breheny, P. and Huang, J. (2009) Penalized methods for
-    bi-level variable selection.  \emph{Statistics and its interface},
-    \strong{2}: 369-380.
-    \url{https://myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf}
+    \item Breheny P and Huang J. (2009) Penalized methods for bi-level
+    variable selection. \emph{Statistics and its interface}, \strong{2}:
+    369-380. \doi{10.4310/sii.2009.v2.n3.a10}
 
-    \item Huang J., Breheny, P. and Ma, S. (2012). A selective
-    review of group selection in high dimensional
-    models. \emph{Statistical Science}, \strong{27}: 481-499.
-    \url{https://myweb.uiowa.edu/pbreheny/pdf/Huang2012.pdf}
-
-    \item Breheny, P. and Huang, J. (2015) Group descent algorithms for
-    nonconvex penalized linear and logistic regression models with grouped
-    predictors.  \emph{Statistics and Computing}, \strong{25}: 173-187.
-    \doi{10.1007/s11222-013-9424-2}
-
-    \item Breheny, P. (2015) The group exponential lasso for bi-level
+    \item Huang J, Breheny P, and Ma S. (2012). A selective review of
+    group selection in high dimensional models. \emph{Statistical
+      Science}, \strong{27}: 481-499. \doi{10.1214/12-sts392}
+    
+    \item Breheny P and Huang J. (2015) Group descent algorithms for
+    nonconvex penalized linear and logistic regression models with
+    grouped predictors. \emph{Statistics and Computing}, \strong{25}:
+    173-187. \doi{10.1007/s11222-013-9424-2}
+    
+    \item Breheny P. (2015) The group exponential lasso for bi-level
     variable selection. \emph{Biometrics}, \strong{71}: 731-740.
     \doi{10.1111/biom.12300}
   }
