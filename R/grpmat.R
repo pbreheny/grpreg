@@ -27,7 +27,6 @@
 #' fit <- grpreg(X, attitude$rating, penalty="grLasso")
 #' plot(fit)
 #'
-#'
 
 grpmat <- function(x, df = 4, degree = 3, type = "bs"){
   if(type == "ns" && degree != 3){

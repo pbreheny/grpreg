@@ -4,7 +4,7 @@
 \alias{grpmat}
 \title{Spline Basis for Multiple Variables}
 \usage{
-grpmat(x, df = 4, degree = 3)
+grpmat(x, df = 4, degree = 3, type = "bs")
 }
 \arguments{
 \item{x}{the design matrix. Columns must represent numeric variables.}
@@ -13,6 +13,8 @@ grpmat(x, df = 4, degree = 3)
 
 \item{degree}{degree of the piecewise polynomial; default is 3 for cubic
 splines.}
+
+\item{type}{specifies type of splines, default is \code{"bs"}}
 }
 \value{
 A \code{grouped_hat} object composed of a matrix of dimension
@@ -34,7 +36,9 @@ the grouping present in the resulting matrix is also generated. The resulting
 object can be passed to \code{\link[=grpreg]{grpreg()}}.
 }
 \examples{
-grpmat(examplestuff)
 
+X <- grpmat(attitude[-1], df = 3)
+fit <- grpreg(X, attitude$rating, penalty="grLasso")
+plot(fit)
 
 }
