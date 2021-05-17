@@ -7,14 +7,14 @@
 grpmat(x, df = 4, degree = 3, type = "bs")
 }
 \arguments{
-\item{x}{the design matrix. Columns must represent numeric variables.}
+\item{x}{The design matrix. Columns must represent numeric variables.}
 
-\item{df}{degrees of freedom; default is 4.}
+\item{df}{Degrees of freedom; default is 4.}
 
-\item{degree}{degree of the piecewise polynomial; default is 3 for cubic
+\item{degree}{Degree of the piecewise polynomial; default is 3 for cubic
 splines.}
 
-\item{type}{specifies type of splines, default is \code{"bs"}}
+\item{type}{Specifies type of splines; default is \code{"bs"}.}
 }
 \value{
 A \code{grouped_hat} object composed of a matrix of dimension

@@ -19,3 +19,4 @@ X <- grpmat(X.raw, df=4)
 expect_equal(ncol(X$x), ncol(X.raw)*4)
 expect_equal(length(X$groups), ncol(X.raw)*4)
 expect_equal(any(is.na(X)), FALSE) #expect_false
+

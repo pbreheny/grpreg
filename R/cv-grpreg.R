@@ -4,10 +4,10 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
   fit.args <- list(...)
   fit.args$X <- X
   fit.args$y <- y
-  fit.args$group <- group
+  if(!inherits(X, "grouped_mat")){fit.args$group <- group}
   fit.args$returnX <- TRUE
   fit <- do.call("grpreg", fit.args)
-
+  
   # Get standardized X, y
   XG <- fit$XG
   X <- XG$X

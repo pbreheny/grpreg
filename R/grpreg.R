@@ -127,14 +127,14 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   } 
   if (grpmat == 1){
     val$X <- X
-    val$y <- y
+    val$y <- yy
     grpmat <- list(knots = knots,
                    boundary = boundary,
                    degree = degree,
                    originalx = originalx,
                    type = type)
     val$grpmat <- grpmat
-    attr(val, "grpmat") <- TRUE
+    attr(val, "class") <- c("grpreg", "grpmat")
   }
   val
 }

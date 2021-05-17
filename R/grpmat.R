@@ -12,11 +12,11 @@
 #' the grouping present in the resulting matrix is also generated. The resulting 
 #' object can be passed to [grpreg()].
 #'
-#' @param x the design matrix. Columns must represent numeric variables.
-#' @param df degrees of freedom; default is 4.
-#' @param degree degree of the piecewise polynomial; default is 3 for cubic 
+#' @param x The design matrix. Columns must represent numeric variables.
+#' @param df Degrees of freedom; default is 4.
+#' @param degree Degree of the piecewise polynomial; default is 3 for cubic 
 #' splines.
-#' @param type specifies type of splines, default is \code{"bs"}
+#' @param type Specifies type of splines; default is \code{"bs"}.
 #' @return A \code{grouped_hat} object composed of a matrix of dimension 
 #' \code{c(nrow(x), df*ncol(x))} and a vector of length 
 #' \code{df*ncol(x)}
@@ -55,7 +55,7 @@ grpmat <- function(x, df = 4, degree = 3, type = "bs"){
     }
   }
   else{
-    stop(paste(type, "is not a valid type"))
+    stop(paste(type, "is not a valid type"), call. = FALSE)
   }
   
   if(length(colnames(x)) == p){
