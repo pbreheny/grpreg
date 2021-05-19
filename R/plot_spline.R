@@ -1,43 +1,26 @@
-#' Plot Spline Curves
+#' Plot spline curve
 #'
-#' \code{plot.sp} Plots a spline curve for a single variable using a
-#' grpreg object.
+#' Plots a spline curve for a single variable using a grpreg object for which an additive model was fit.
 #'
-#' \code{plot.sp} takes a model fit using both the [grpreg()] and [grpmat()]
-#' functions and plots a spline curve for a given variable.
+#' `plot_spline()` takes a model fit using both the [grpreg()] and [grpmat()] functions and plots a spline curve for a given variable.
 #'
-#' @param fit A \code{grpreg} object. The model must have been fit using a 
-#' \code{grpmat} object.
-#' @param variable The name of the variable which will be plotted.
-#' @param lambda Values of the regularization parameter \code{lambda}
-#' which will be used for the plot. Each value of lambda will produce 
-#' a different curve.
-#' @param which Indices of the penalty parameter \code{lambda} which
-#' will be used for the plot. If \code{lambda} is specified, this will
-#' override \code{which}.
-#' @param scatter If \code{TRUE}, a scatter plot of the partial residuals will
-#' also be produced. Default is \code{FALSE}. If multiple lambdas are 
-#' specified, the largest value will be used to calculate the residuals. 
-#' @param type Type of plot to be produced. Default is \code{contrast}. 
-#' The following options are supported:
-#' * If \code{conditional} is selected, the plot returned shows the value of 
-#' the variable on the x-axis and the change in response on the y-axis, 
-#' holding all other variables constant at their mean value.
-#' * If \code{contrast} is selected, the plot returned shows the effect 
-#' on the expected value of the response by moving the x variable away 
-#' from the mean on the x-axis. 
-#' @param warnings If \code{FALSE}, warnings will be supressed. Default is
-#' \code{TRUE}.
+#' @param fit        A \code{grpreg} object. The model must have been fit using a \code{grpmat} object.
+#' @param variable   The name of the variable which will be plotted.
+#' @param lambda     Values of the regularization parameter \code{lambda} which will be used for the plot. Each value of lambda will produce a different curve.
+#' @param which      Indices of the penalty parameter \code{lambda} which will be used for the plot. If both `lambda` and `which` are specified, `lambda` takes precedence.
+#' @param scatter    If \code{TRUE}, a scatter plot of the partial residuals will also be produced. Default is \code{FALSE}. If multiple lambdas are specified, the largest value will be used to calculate the residuals. 
+#' @param type       Type of plot to be produced. Default is \code{contrast}.  The following options are supported:
+#'                     * If \code{conditional} is selected, the plot returned shows the value of the variable on the x-axis and the change in response on the y-axis, holding all other variables constant at their mean value.
+#'                     * If \code{contrast} is selected, the plot returned shows the effect on the expected value of the response by moving the x variable away from the mean on the x-axis. 
+#' @param warnings   If \code{FALSE}, warnings will be suppressed. Default is `TRUE`.
+#' @param ...        Further arguments to be passed to `plot()`
 #'
 #' @examples
-#' 
 #' X <- grpmat(attitude[-1], df = 3)
 #' fit <- grpreg(X, attitude$rating, penalty="grLasso")
-#' plot.sp(fit, "complaints", which = c(45, 50))
-#'
-#'
+#' plot_spline(fit, "complaints", which = c(5, 90))
 
-plot.sp.grpreg <- function(fit, variable, lambda, which = NULL, scatter = FALSE, 
+plot_spline <- function(fit, variable, lambda, which = NULL, scatter = FALSE, 
                            type = "contrast", warnings = TRUE, ...){
   if(inherits(fit, "cv.grpreg")){
     fit <- fit$fit

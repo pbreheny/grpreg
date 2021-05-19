@@ -18,5 +18,26 @@ y <- rnorm(n, mean=mu)
 X <- grpmat(X.raw, df=4)
 expect_equal(ncol(X$x), ncol(X.raw)*4)
 expect_equal(length(X$groups), ncol(X.raw)*4)
-expect_equal(any(is.na(X)), FALSE) #expect_false
+expect_false(any(is.na(X)))
 
+# Fit
+fit <- grpreg(X, y, penalty='grLasso')
+expect_equal(length(fit$group), ncol(X.raw)*4)
+fit2 <- grpreg(X$x, y, rep(1:ncol(X.raw), each=4), penalty='grLasso')
+#expect_equivalent(coef(fit), coef(fit2))  # Slightly different, not sure why
+fit <- grpreg(X, y, penalty='grLasso', eps=1e-12)
+fit2 <- grpreg(X$x, y, rep(1:ncol(X.raw), each=4), penalty='grLasso', eps=1e-12)
+expect_equivalent(coef(fit), coef(fit2))  # Passes
+
+# Plot
+plot_spline(fit, 'V2', lambda=0.1)
+plot_spline(fit, 'V2', which=50)
+plot_spline(fit, 'V2', which=50)
+plot_spline(fit, 'V2', which=50)
+plot_spline(fit, 'V2', which=50)
+
+# Cross-validation
+B <- grpmat(X.raw, type='ns')
+cvfit <- cv.grpreg(B, y)
+
+#NAMESPACE
