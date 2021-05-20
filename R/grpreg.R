@@ -25,16 +25,17 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   if (alpha > 1 | alpha <= 0) stop("alpha must be in (0, 1]", call.=FALSE)
   
   # Check for grouped_hat object
-  grpmat <- 0
-  if(inherits(X, "grouped_mat")){
-    grpmat <- 1
+  if(inherits(X, "expandedMatrix")){
+    expanded <- TRUE
     knots <- X$knots
     boundary <- X$boundary
     degree <- X$degree
     originalx <- X$originalx
     type <- X$type
-    group <- X$groups
-    X <- X$x
+    group <- X$group
+    X <- X$X
+  } else {
+    expanded <- FALSE
   }
   
   # Construct XG, yy
@@ -119,22 +120,21 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
                         iter = iter,
                         group.multiplier = XG$m),
                    class = "grpreg")
-  if (returnX ) {
+  if (returnX) {
     val$XG = XG
     val$y = yy
   } else if (family=="poisson") {
     val$y <- y
   } 
-  if (grpmat == 1){
-    val$X <- X
+  if (expanded){
+    val$XG <- XG
     val$y <- yy
-    grpmat <- list(knots = knots,
-                   boundary = boundary,
-                   degree = degree,
-                   originalx = originalx,
-                   type = type)
-    val$grpmat <- grpmat
-    attr(val, "class") <- c("grpreg", "grpmat")
+    val$meta <- list(knots = knots,
+                 boundary = boundary,
+                 degree = degree,
+                 originalx = originalx,
+                 type = type)
+    attr(val, "class") <- c("grpreg", "expanded")
   }
   val
 }

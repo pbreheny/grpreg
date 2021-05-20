@@ -16,7 +16,7 @@ plot_spline(
 )
 }
 \arguments{
-\item{fit}{A \code{grpreg} object. The model must have been fit using a \code{grpmat} object.}
+\item{fit}{A \code{grpreg} object. The model must have been fit using a \code{expand_spline} object.}
 
 \item{variable}{The name of the variable which will be plotted.}
 
@@ -38,10 +38,10 @@ plot_spline(
 Plots a spline curve for a single variable using a grpreg object for which an additive model was fit.
 }
 \details{
-\code{plot_spline()} takes a model fit using both the \code{\link[=grpreg]{grpreg()}} and \code{\link[=grpmat]{grpmat()}} functions and plots a spline curve for a given variable.
+\code{plot_spline()} takes a model fit using both the \code{\link[=grpreg]{grpreg()}} and \code{\link[=expand_spline]{expand_spline()}} functions and plots a spline curve for a given variable.
 }
 \examples{
-X <- grpmat(attitude[-1], df = 3)
+X <- expand_spline(attitude[-1], df = 3)
 fit <- grpreg(X, attitude$rating, penalty="grLasso")
 plot_spline(fit, "complaints", which = c(5, 90))
 }

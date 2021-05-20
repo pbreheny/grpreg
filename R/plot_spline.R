@@ -2,9 +2,9 @@
 #'
 #' Plots a spline curve for a single variable using a grpreg object for which an additive model was fit.
 #'
-#' `plot_spline()` takes a model fit using both the [grpreg()] and [grpmat()] functions and plots a spline curve for a given variable.
+#' `plot_spline()` takes a model fit using both the [grpreg()] and [expand_spline()] functions and plots a spline curve for a given variable.
 #'
-#' @param fit        A \code{grpreg} object. The model must have been fit using a \code{grpmat} object.
+#' @param fit        A \code{grpreg} object. The model must have been fit using a \code{expand_spline} object.
 #' @param variable   The name of the variable which will be plotted.
 #' @param lambda     Values of the regularization parameter \code{lambda} which will be used for the plot. Each value of lambda will produce a different curve.
 #' @param which      Indices of the penalty parameter \code{lambda} which will be used for the plot. If both `lambda` and `which` are specified, `lambda` takes precedence.
@@ -16,62 +16,50 @@
 #' @param ...        Further arguments to be passed to `plot()`
 #'
 #' @examples
-#' X <- grpmat(attitude[-1], df = 3)
+#' X <- expand_spline(attitude[-1], df = 3)
 #' fit <- grpreg(X, attitude$rating, penalty="grLasso")
 #' plot_spline(fit, "complaints", which = c(5, 90))
 
 plot_spline <- function(fit, variable, lambda, which = NULL, scatter = FALSE, 
                            type = "contrast", warnings = TRUE, ...){
-  if(inherits(fit, "cv.grpreg")){
+  if (inherits(fit, "cv.grpreg")) {
     fit <- fit$fit
   }
-  if(!inherits(fit, "grpmat")){
-    stop("Model must have been fit using a grpmat object",call. = FALSE)
+  if (!inherits(fit, "expanded")) stop("Model must have been fit using a expand_spline object", call. = FALSE)
+  if (!inherits(fit, "grpreg")) stop("Model must have been fit using the grpreg function", call. = FALSE)
+  if (missing(lambda)) {
+    if(missing(which)) stop("Lambda not specified",call. = FALSE)
+    lambda <- fit$lambda[which]
   }
-  if(!inherits(fit, "grpreg")){
-    stop("Model must have been fit using the grpreg function",call. = FALSE)
-  }
-  if(missing(lambda)){
-    if(missing(which)){
-      stop("Lambda not specified",call. = FALSE)
-    }
-    else{
-      lambda <- fit$lambda[which]
-    }
-  }
-  if(length(which(fit$group == variable)) == 0){
-    stop(paste("Cannot find variable", variable),call. = FALSE)
-  }
-  if(scatter == TRUE && length(lambda) > 1 && warnings == TRUE){
-    warning("Scatter plot represents largest value of lambda imputed")
-  }
+  if (length(which(fit$group == variable)) == 0) stop(paste("Cannot find variable", variable), call. = FALSE)
+  if (scatter == TRUE && length(lambda) > 1 && warnings == TRUE) warning("Scatter plot represents largest value of lambda imputed")
   
-  grpmat <- fit$grpmat
+  meta <- fit$meta
   fit$y <- fit$y + attr(fit$y, "mean")
-  df <- length(grpmat$knots[[1]])+grpmat$degree
-  j <- which(fit$group == variable) 
+  df <- length(meta$knots[[1]]) + meta$degree
+  j <- which(fit$group == variable)
   i <- j[df]/df
   l <- length(lambda)
-  p <- ncol(grpmat$originalx)
-  n <- nrow(grpmat$originalx)
-  mat <- fit$X[,j]
-  attr(mat, "degree") <- grpmat$degree
-  attr(mat, "knots") <- grpmat$knots[[i]]
-  attr(mat, "Boundary.knots") <- grpmat$boundary[[i]]
+  p <- ncol(meta$originalx)
+  n <- nrow(meta$originalx)
+  mat <- fit$XG$X[,j]
+  attr(mat, "degree") <- meta$degree
+  attr(mat, "knots") <- meta$knots[[i]]
+  attr(mat, "Boundary.knots") <- meta$boundary[[i]]
   attr(mat, "intercept") <- FALSE
-  attr(mat, "class") <- c(grpmat$type, "basis", "matrix")
+  attr(mat, "class") <- c(meta$type, "basis", "matrix")
   
   #create sequence and basis and calculate y's and residuals
-  min <- grpmat$boundary[[i]][1]
-  max <- grpmat$boundary[[i]][2]
+  min <- meta$boundary[[i]][1]
+  max <- meta$boundary[[i]][2]
   newx <- seq(min, max, length.out = 200) 
   if(type == "conditional"){
-    xmeans <- matrix(colMeans(grpmat$originalx), 200, p, byrow = TRUE)
+    xmeans <- matrix(colMeans(meta$originalx), 200, p, byrow = TRUE)
     xmeans[,i] <- newx
     y <- predict(fit, xmeans, lambda = lambda)
     if(scatter == TRUE){
-      xmeans <- matrix(colMeans(grpmat$originalx), n, p, byrow = TRUE)
-      xmeans[,i] <- grpmat$originalx[,i]
+      xmeans <- matrix(colMeans(meta$originalx), n, p, byrow = TRUE)
+      xmeans[,i] <- meta$originalx[,i]
       const <- predict(fit, xmeans, lambda = max(lambda))
       betas <- coef.grpreg(fit, lambda = max(lambda))
       parresid <- fit$y - cbind(1, fit$X)%*%betas + const
@@ -79,7 +67,7 @@ plot_spline <- function(fit, variable, lambda, which = NULL, scatter = FALSE,
   } else if(type == "contrast"){
     newxbs <- predict(mat, newx)
     betas <- matrix(coef.grpreg(fit, lambda = lambda), ncol = l)
-    newxmean <- predict(mat, mean(grpmat$originalx[,i]))
+    newxmean <- predict(mat, mean(meta$originalx[,i]))
     y <- newxbs%*%betas[j+1,] - matrix(newxmean%*%betas[j+1,],200,l, byrow = TRUE)
     if(scatter == TRUE){
       betas <- coef.grpreg(fit, lambda = max(lambda))
@@ -120,6 +108,6 @@ plot_spline <- function(fit, variable, lambda, which = NULL, scatter = FALSE,
   }
   do.call("matplot", plot.args)
   if(scatter == TRUE){
-    points(grpmat$originalx[,i], parresid)
+    points(meta$originalx[,i], parresid)
   }
 }

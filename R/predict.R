@@ -41,23 +41,7 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
     }
     if (type=="norm") return(drop(apply(beta, 2, function(x) tapply(x, object$group, function(x){sqrt(sum(x^2))}))))
     if (missing(X) | is.null(X)) stop("Must supply X", call.=FALSE)
-    if (inherits(object, "grpmat")){
-      p <- length(unique(object$group))
-      grpmat <- object$grpmat
-      df <- length(grpmat$knots[[1]])+grpmat$degree
-      bsX <- matrix(NA, nrow(matrix(X, ncol = p)), (p*df))
-      i <- 1
-      for(i in 0:(p-1)){
-        mat <- object$X[,(df*i+1):(df*i+df)]
-        attr(mat, "degree") <- grpmat$degree
-        attr(mat, "knots") <- grpmat$knots[[i+1]]
-        attr(mat, "Boundary.knots") <- grpmat$boundary[[i+1]]
-        attr(mat, "intercept") <- FALSE
-        attr(mat, "class") <- c(grpmat$type, "basis", "matrix")
-        bsX[,(df*i+1):(df*i+df)] <- predict(mat, X[,i+1])
-      }
-      X <- bsX
-    }
+    if (inherits(object, "expanded")) X <- predict_spline(object, X)
     eta <- sweep(X %*% beta, 2, alpha, "+")
     if (object$family=="gaussian" & type=="class") stop("type='class' is not applicable for family='gaussian'", call.=FALSE)
     if (object$family=="gaussian" | type=="link") return(drop(eta))
