@@ -41,7 +41,9 @@ Plots a spline curve for a single variable using a grpreg object for which an ad
 \code{plot_spline()} takes a model fit using both the \code{\link[=grpreg]{grpreg()}} and \code{\link[=expand_spline]{expand_spline()}} functions and plots a spline curve for a given variable.
 }
 \examples{
-X <- expand_spline(attitude[-1], df = 3)
-fit <- grpreg(X, attitude$rating, penalty="grLasso")
-plot_spline(fit, "complaints", which = c(5, 90))
+Data <- gen_nonlinear_data()
+X <- expand_spline(Data$X)
+fit <- grpreg(X, Data$y)
+plot_spline(fit, "V05", which = c(5, 90))
+#plot_spline(fit, "V05", which = 50, scatter=TRUE)
 }

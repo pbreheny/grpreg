@@ -16,9 +16,11 @@
 #' @param ...        Further arguments to be passed to `plot()`
 #'
 #' @examples
-#' X <- expand_spline(attitude[-1], df = 3)
-#' fit <- grpreg(X, attitude$rating, penalty="grLasso")
-#' plot_spline(fit, "complaints", which = c(5, 90))
+#' Data <- gen_nonlinear_data()
+#' X <- expand_spline(Data$X)
+#' fit <- grpreg(X, Data$y)
+#' plot_spline(fit, "V05", which = c(5, 90))
+#' #plot_spline(fit, "V05", which = 50, scatter=TRUE)
 
 plot_spline <- function(fit, variable, lambda, which = NULL, scatter = FALSE, 
                            type = "contrast", warnings = TRUE, ...){
