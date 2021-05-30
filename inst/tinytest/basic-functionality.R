@@ -85,7 +85,7 @@ plot(fit, main=fit$penalty)
 expect_equivalent(grSCAD, reg, tolerance=1e-7)
 
 # grpreg() reproduces logistic regression
-n <- 50
+n <- 100
 group <- rep(0:3,1:4)
 p <- length(group)
 X <- matrix(rnorm(n*p),ncol=p)

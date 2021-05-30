@@ -4,15 +4,15 @@
 #'
 #' `plot_spline()` takes a model fit using both the [grpreg()] and [expand_spline()] functions and plots a spline curve for a given variable.
 #'
-#' @param fit        A \code{grpreg} object. The model must have been fit using a \code{expand_spline} object.
+#' @param fit        A `grpreg` object. The model must have been fit using a `expand_spline` object.
 #' @param variable   The name of the variable which will be plotted.
-#' @param lambda     Values of the regularization parameter \code{lambda} which will be used for the plot. Each value of lambda will produce a different curve.
-#' @param which      Indices of the penalty parameter \code{lambda} which will be used for the plot. If both `lambda` and `which` are specified, `lambda` takes precedence.
-#' @param scatter    If \code{TRUE}, a scatter plot of the partial residuals will also be produced. Default is \code{FALSE}. If multiple lambdas are specified, the largest value will be used to calculate the residuals. 
-#' @param type       Type of plot to be produced. Default is \code{contrast}.  The following options are supported:
-#'                     * If \code{conditional} is selected, the plot returned shows the value of the variable on the x-axis and the change in response on the y-axis, holding all other variables constant at their mean value.
-#'                     * If \code{contrast} is selected, the plot returned shows the effect on the expected value of the response by moving the x variable away from the mean on the x-axis. 
-#' @param warnings   If \code{FALSE}, warnings will be suppressed. Default is `TRUE`.
+#' @param lambda     Values of the regularization parameter `lambda` which will be used for the plot. Each value of lambda will produce a different curve.
+#' @param which      Indices of the penalty parameter `lambda` which will be used for the plot. If both `lambda` and `which` are specified, `lambda` takes precedence.
+#' @param partial    If `TRUE`, a scatter plot of the partial residuals is superimposed on the curve. Default: `FALSE`. If multiple lambdas are specified, the largest value is used to calculate the residuals.
+#' @param type       Type of plot to be produced. Default is `contrast`.  The following options are supported:
+#'                     * If `"conditional"` is selected, the plot returned shows the value of the variable on the x-axis and the change in response on the y-axis, holding all other variables constant at their mean value.
+#'                     * If `"contrast"` is selected, the plot returned shows the effect on the expected value of the response by moving the x variable away from the mean on the x-axis. 
+#' @param warnings   If `FALSE`, warnings will be suppressed. Default is `TRUE`.
 #' @param ...        Further arguments to be passed to `plot()`
 #'
 #' @examples
@@ -20,9 +20,9 @@
 #' X <- expand_spline(Data$X)
 #' fit <- grpreg(X, Data$y)
 #' plot_spline(fit, "V05", which = c(5, 90))
-#' #plot_spline(fit, "V05", which = 50, scatter=TRUE)
+#' plot_spline(fit, "V05", which = 50, partial=TRUE)
 
-plot_spline <- function(fit, variable, lambda, which = NULL, scatter = FALSE, 
+plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE, 
                            type = "contrast", warnings = TRUE, ...){
   if (inherits(fit, "cv.grpreg")) {
     fit <- fit$fit
@@ -30,11 +30,11 @@ plot_spline <- function(fit, variable, lambda, which = NULL, scatter = FALSE,
   if (!inherits(fit, "expanded")) stop("Model must have been fit using a expand_spline object", call. = FALSE)
   if (!inherits(fit, "grpreg")) stop("Model must have been fit using the grpreg function", call. = FALSE)
   if (missing(lambda)) {
-    if(missing(which)) stop("Lambda not specified",call. = FALSE)
+    if (missing(which)) stop("Lambda not specified",call. = FALSE)
     lambda <- fit$lambda[which]
   }
   if (length(which(fit$group == variable)) == 0) stop(paste("Cannot find variable", variable), call. = FALSE)
-  if (scatter == TRUE && length(lambda) > 1 && warnings == TRUE) warning("Scatter plot represents largest value of lambda imputed")
+  if (partial == TRUE && length(lambda) > 1 && warnings == TRUE) warning("Scatter plot represents largest value of lambda imputed")
   
   meta <- fit$meta
   fit$y <- fit$y + attr(fit$y, "mean")
@@ -55,46 +55,48 @@ plot_spline <- function(fit, variable, lambda, which = NULL, scatter = FALSE,
   min <- meta$boundary[[i]][1]
   max <- meta$boundary[[i]][2]
   newx <- seq(min, max, length.out = 200) 
-  if(type == "conditional"){
+  if (type == "conditional"){
     xmeans <- matrix(colMeans(meta$originalx), 200, p, byrow = TRUE)
     xmeans[,i] <- newx
     y <- predict(fit, xmeans, lambda = lambda)
-    if(scatter == TRUE){
+    if (partial == TRUE){
       xmeans <- matrix(colMeans(meta$originalx), n, p, byrow = TRUE)
       xmeans[,i] <- meta$originalx[,i]
       const <- predict(fit, xmeans, lambda = max(lambda))
       betas <- coef.grpreg(fit, lambda = max(lambda))
       parresid <- fit$y - cbind(1, fit$X)%*%betas + const
     }
-  } else if(type == "contrast"){
+  } else if (type == "contrast") {
     newxbs <- predict(mat, newx)
     betas <- matrix(coef.grpreg(fit, lambda = lambda), ncol = l)
     newxmean <- predict(mat, mean(meta$originalx[,i]))
     y <- newxbs%*%betas[j+1,] - matrix(newxmean%*%betas[j+1,],200,l, byrow = TRUE)
-    if(scatter == TRUE){
+    if (partial == TRUE){
       betas <- coef.grpreg(fit, lambda = max(lambda))
-      parresid <- fit$y - cbind(1, fit$X)%*%betas + fit$X[,j]%*%betas[j+1] - rep(newxmean%*%betas[j+1], length = length(fit$y))
+      r <- fit$y - cbind(1, fit$XG$X) %*% betas
+      offset <- rep(newxmean%*%betas[j+1], length = length(fit$y))
+      parresid <- r + fit$XG$X[,j]%*%betas[j+1] - offset
     }
   } else {
     stop(paste(type, "is not a valid type"), call. = FALSE)
   }
   
   #check for selection
-  if(warnings == TRUE){
+  if (warnings == TRUE){
     notselected <- NULL
     for(q in 1:length(lambda)){
       if (all(coef.grpreg(fit, lambda = lambda[q])[j+1]==0)){
         notselected <- c(notselected, lambda[q])
       }
     }
-    if(length(notselected) > 0){
+    if (length(notselected) > 0){
       warning(paste(variable, "was not selected at lambda =", notselected, "\n"))
     }
   }
   
   #plot
   cols <- hcl(h=seq(15, 240, len=l), l=60, c=150, alpha=1)
-  if(scatter == TRUE){
+  if (partial == TRUE){
     ymax <- max(max(y), max(parresid))
     ymin <- min(min(y), min(parresid))
   } else {
@@ -109,7 +111,7 @@ plot_spline <- function(fit, variable, lambda, which = NULL, scatter = FALSE,
     plot.args[names(new.plot.args)] <- new.plot.args
   }
   do.call("matplot", plot.args)
-  if(scatter == TRUE){
+  if (partial == TRUE){
     points(meta$originalx[,i], parresid)
   }
 }

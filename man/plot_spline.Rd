@@ -9,7 +9,7 @@ plot_spline(
   variable,
   lambda,
   which = NULL,
-  scatter = FALSE,
+  partial = FALSE,
   type = "contrast",
   warnings = TRUE,
   ...
@@ -24,11 +24,11 @@ plot_spline(
 
 \item{which}{Indices of the penalty parameter \code{lambda} which will be used for the plot. If both \code{lambda} and \code{which} are specified, \code{lambda} takes precedence.}
 
-\item{scatter}{If \code{TRUE}, a scatter plot of the partial residuals will also be produced. Default is \code{FALSE}. If multiple lambdas are specified, the largest value will be used to calculate the residuals.}
+\item{partial}{If \code{TRUE}, a scatter plot of the partial residuals is superimposed on the curve. Default: \code{FALSE}. If multiple lambdas are specified, the largest value is used to calculate the residuals.}
 
 \item{type}{Type of plot to be produced. Default is \code{contrast}.  The following options are supported:
-* If \code{conditional} is selected, the plot returned shows the value of the variable on the x-axis and the change in response on the y-axis, holding all other variables constant at their mean value.
-* If \code{contrast} is selected, the plot returned shows the effect on the expected value of the response by moving the x variable away from the mean on the x-axis.}
+* If \code{"conditional"} is selected, the plot returned shows the value of the variable on the x-axis and the change in response on the y-axis, holding all other variables constant at their mean value.
+* If \code{"contrast"} is selected, the plot returned shows the effect on the expected value of the response by moving the x variable away from the mean on the x-axis.}
 
 \item{warnings}{If \code{FALSE}, warnings will be suppressed. Default is \code{TRUE}.}
 
@@ -45,5 +45,5 @@ Data <- gen_nonlinear_data()
 X <- expand_spline(Data$X)
 fit <- grpreg(X, Data$y)
 plot_spline(fit, "V05", which = c(5, 90))
-#plot_spline(fit, "V05", which = 50, scatter=TRUE)
+plot_spline(fit, "V05", which = 50, partial=TRUE)
 }

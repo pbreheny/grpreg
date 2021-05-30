@@ -16,7 +16,7 @@ expect_equivalent(coef(fit), coef(fit2))  # Passes
 XX <- gen_nonlinear_data(seed=2, n=20)$X
 expect_warning(predict(fit, XX, type='link'))
 P <- predict(fit, Data$X, type='link')
-L <- apply(loss.grpreg(y, P, 'gaussian'), 2, sum)
+L <- apply(grpreg:::loss.grpreg(y, P, 'gaussian'), 2, sum)
 expect_equivalent(L, fit$loss)
 PP <- predict(fit, Data$X, type='response')
 expect_equivalent(PP, P)
@@ -33,7 +33,7 @@ expect_true(typeof(N) == 'double')
 # Plot
 plot_spline(fit, 'V02', lambda=0.01)
 plot_spline(fit, 'V02', which=50)
-# plot_spline(fit, 'V02', which=50, scatter=TRUE)
+plot_spline(fit, 'V02', which=80, scatter=TRUE)
 
 # Cross-validation
 B <- expand_spline(Data$X, type='ns')
