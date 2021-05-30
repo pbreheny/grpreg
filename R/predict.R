@@ -20,7 +20,10 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
   }
   if (d == 2) {
     if (type=="vars") return(drop(apply(beta!=0, 2, FUN=which)))
-    if (type=="groups") return(drop(apply(beta!=0, 2, function(x) unique(object$group[x]))))
+    if (type=="groups") {
+      if (ncol(beta) == 1) return(unique(object$group[beta != 0]))
+      else return(drop(apply(beta!=0, 2, function(x) unique(object$group[x]))))
+    }
     if (type=="nvars") {
       v <- drop(apply(beta!=0, 2, FUN=which))
       if (is.list(v)) {
