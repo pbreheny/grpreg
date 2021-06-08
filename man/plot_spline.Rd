@@ -12,6 +12,7 @@ plot_spline(
   partial = FALSE,
   type = "contrast",
   warnings = TRUE,
+  points.par = NULL,
   ...
 )
 }
@@ -32,6 +33,8 @@ plot_spline(
 
 \item{warnings}{If \code{FALSE}, warnings will be suppressed. Default is \code{TRUE}.}
 
+\item{points.par}{List of parameters (see \code{\link[=par]{par()}} to pass to \code{\link[=points]{points()}} when partial residuals are drawn in the plots.}
+
 \item{...}{Further arguments to be passed to \code{plot()}}
 }
 \description{
@@ -41,9 +44,11 @@ Plots a spline curve for a single variable using a grpreg object for which an ad
 \code{plot_spline()} takes a model fit using both the \code{\link[=grpreg]{grpreg()}} and \code{\link[=expand_spline]{expand_spline()}} functions and plots a spline curve for a given variable.
 }
 \examples{
-Data <- gen_nonlinear_data()
+Data <- gen_nonlinear_data(n=1000)
 X <- expand_spline(Data$X)
 fit <- grpreg(X, Data$y)
-plot_spline(fit, "V05", which = c(5, 90))
-plot_spline(fit, "V05", which = 50, partial=TRUE)
+plot_spline(fit, "V02", lambda = 0.03)
+plot_spline(fit, "V02", which = c(10, 90))
+plot_spline(fit, "V02", lambda = 0.03, partial=TRUE)
+# plot_spline(fit, "V02", lambda = 0.03, partial=TRUE, type='conditional')
 }

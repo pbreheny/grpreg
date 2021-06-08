@@ -12,5 +12,5 @@ predict_spline <- function(object, X) {
     attr(mat, "class") <- c(meta$type, "basis", "matrix")
     bsX[,(df*(i-1)+1):(df*(i-1)+df)] <- predict(mat, X[,i])
   }
-  X <- bsX
+  bsX
 }

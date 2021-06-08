@@ -13,24 +13,27 @@
 #'                     * If `"conditional"` is selected, the plot returned shows the value of the variable on the x-axis and the change in response on the y-axis, holding all other variables constant at their mean value.
 #'                     * If `"contrast"` is selected, the plot returned shows the effect on the expected value of the response by moving the x variable away from the mean on the x-axis. 
 #' @param warnings   If `FALSE`, warnings will be suppressed. Default is `TRUE`.
+#' @param points.par   List of parameters (see [par()] to pass to [points()] when partial residuals are drawn in the plots.
 #' @param ...        Further arguments to be passed to `plot()`
 #'
 #' @examples
-#' Data <- gen_nonlinear_data()
+#' Data <- gen_nonlinear_data(n=1000)
 #' X <- expand_spline(Data$X)
 #' fit <- grpreg(X, Data$y)
-#' plot_spline(fit, "V05", which = c(5, 90))
-#' plot_spline(fit, "V05", which = 50, partial=TRUE)
+#' plot_spline(fit, "V02", lambda = 0.03)
+#' plot_spline(fit, "V02", which = c(10, 90))
+#' plot_spline(fit, "V02", lambda = 0.03, partial=TRUE)
+#' # plot_spline(fit, "V02", lambda = 0.03, partial=TRUE, type='conditional')
 
 plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE, 
-                           type = "contrast", warnings = TRUE, ...){
+                           type = "contrast", warnings = TRUE, points.par = NULL, ...){
   if (inherits(fit, "cv.grpreg")) {
     fit <- fit$fit
   }
   if (!inherits(fit, "expanded")) stop("Model must have been fit using a expand_spline object", call. = FALSE)
   if (!inherits(fit, "grpreg")) stop("Model must have been fit using the grpreg function", call. = FALSE)
   if (missing(lambda)) {
-    if (missing(which)) stop("Lambda not specified",call. = FALSE)
+    if (missing(which)) stop("lambda not specified", call. = FALSE)
     lambda <- fit$lambda[which]
   }
   if (length(which(fit$group == variable)) == 0) stop(paste("Cannot find variable", variable), call. = FALSE)
@@ -59,7 +62,7 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
     xmeans <- matrix(colMeans(meta$originalx), 200, p, byrow = TRUE)
     xmeans[,i] <- newx
     y <- predict(fit, xmeans, lambda = lambda)
-    if (partial == TRUE){
+    if (partial == TRUE) {
       xmeans <- matrix(colMeans(meta$originalx), n, p, byrow = TRUE)
       xmeans[,i] <- meta$originalx[,i]
       const <- predict(fit, xmeans, lambda = max(lambda))
@@ -71,11 +74,12 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
     betas <- matrix(coef.grpreg(fit, lambda = lambda), ncol = l)
     newxmean <- predict(mat, mean(meta$originalx[,i]))
     y <- newxbs%*%betas[j+1,] - matrix(newxmean%*%betas[j+1,],200,l, byrow = TRUE)
-    if (partial == TRUE){
+    if (partial == TRUE) {
       betas <- coef.grpreg(fit, lambda = max(lambda))
-      r <- fit$y - cbind(1, fit$XG$X) %*% betas
-      offset <- rep(newxmean%*%betas[j+1], length = length(fit$y))
-      parresid <- r + fit$XG$X[,j]%*%betas[j+1] - offset
+      X <- sweep(fit$XG$X, 2, fit$XG$scale, FUN='*')
+      r <- fit$y - cbind(1, X) %*% betas
+      offset <- rep(newxmean %*% betas[j+1], length = length(fit$y))
+      parresid <- r + X[,j] %*% betas[j+1] - offset
     }
   } else {
     stop(paste(type, "is not a valid type"), call. = FALSE)
@@ -103,15 +107,27 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
     ymax <- max(y)
     ymin <- min(y)
   }
-  plot.args <- list(x=newx, y=y, xlab=variable, ylab = "y", type="l", 
-                    col = cols, lty = 1, ylim = c(ymin, ymax))
+  plot.args <- list(x=newx, y=y, xlab=variable, ylab = "y", type="l", las = 1, bty='n',
+                    col = cols, lty = 1, ylim = c(ymin, ymax), lwd=2)
   new.args <- list(...)
   if (length(new.args)) {
     new.plot.args <- new.args[names(new.args) %in% c(names(par()), names(formals(plot.default)))]
     plot.args[names(new.plot.args)] <- new.plot.args
   }
   do.call("matplot", plot.args)
-  if (partial == TRUE){
-    points(meta$originalx[,i], parresid)
+  if (partial == TRUE) {
+    points.args <- list(x=meta$originalx[,i], y=parresid, pch=19, cex=0.8, col='gray')
+    if (length(points.par)) {
+      new.points.args <- points.par[names(points.par) %in% c(names(par()), names(formals(points)))]
+      plot.args[names(new.points.args)] <- new.points.args
+    }
+    do.call("points", points.args)
   }
+  # Re-plot line so that it stays on top
+  line.args <- list(x=newx, y=y, col = cols, lty = 1, lwd=2)
+  if (length(new.args)) {
+    new.line.args <- new.args[names(new.args) %in% c(names(par()), names(formals(matlines)))]
+    line.args[names(new.line.args)] <- new.line.args
+  }
+  do.call("matlines", plot.args)
 }
