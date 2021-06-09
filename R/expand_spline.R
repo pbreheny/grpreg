@@ -32,7 +32,8 @@
 #' plot(fit)
 #' plot_spline(fit, "complaints", lambda=0.001)
 
-expand_spline <- function(x, df = 3, degree = 3, type = "bs"){
+expand_spline <- function(x, df = 3, degree = 3, type = c("bs", "ns")) {
+  type <- match.arg(type)
   if(type == "ns" && degree != 3){
     warning("Degree has been set to 3 for natural splines")
   }

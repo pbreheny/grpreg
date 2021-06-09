@@ -23,7 +23,11 @@
 #' plot_spline(fit, "V02", lambda = 0.03)
 #' plot_spline(fit, "V02", which = c(10, 90))
 #' plot_spline(fit, "V02", lambda = 0.03, partial=TRUE)
-#' # plot_spline(fit, "V02", lambda = 0.03, partial=TRUE, type='conditional')
+#' plot_spline(fit, "V02", lambda = 0.03, partial=TRUE, type='conditional')
+#' 
+#' op <- par(mfrow=c(3,2))
+#' for (i in 1:6) plot_spline(fit, sprintf("V%02d", i), lambda = 0.03, partial=TRUE)
+#' par(op)
 
 plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE, 
                            type = "contrast", warnings = TRUE, points.par = NULL, ...){
@@ -47,12 +51,6 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
   l <- length(lambda)
   p <- ncol(meta$originalx)
   n <- nrow(meta$originalx)
-  mat <- fit$XG$X[,j]
-  attr(mat, "degree") <- meta$degree
-  attr(mat, "knots") <- meta$knots[[i]]
-  attr(mat, "Boundary.knots") <- meta$boundary[[i]]
-  attr(mat, "intercept") <- FALSE
-  attr(mat, "class") <- c(meta$type, "basis", "matrix")
   
   #create sequence and basis and calculate y's and residuals
   min <- meta$boundary[[i]][1]
@@ -67,19 +65,24 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
       xmeans[,i] <- meta$originalx[,i]
       const <- predict(fit, xmeans, lambda = max(lambda))
       betas <- coef.grpreg(fit, lambda = max(lambda))
-      parresid <- fit$y - cbind(1, fit$X)%*%betas + const
+      parresid <- fit$y - betas[1] - fit$meta$X %*% betas[-1] + const
     }
   } else if (type == "contrast") {
+    mat <- fit$meta$X[,j]
+    attr(mat, "degree") <- meta$degree
+    attr(mat, "knots") <- meta$knots[[i]]
+    attr(mat, "Boundary.knots") <- meta$boundary[[i]]
+    attr(mat, "intercept") <- FALSE
+    attr(mat, "class") <- c(meta$type, "basis", "matrix")
     newxbs <- predict(mat, newx)
     betas <- matrix(coef.grpreg(fit, lambda = lambda), ncol = l)
     newxmean <- predict(mat, mean(meta$originalx[,i]))
     y <- newxbs%*%betas[j+1,] - matrix(newxmean%*%betas[j+1,],200,l, byrow = TRUE)
     if (partial == TRUE) {
       betas <- coef.grpreg(fit, lambda = max(lambda))
-      X <- sweep(fit$XG$X, 2, fit$XG$scale, FUN='*')
-      r <- fit$y - cbind(1, X) %*% betas
+      r <- fit$y - betas[1] - fit$meta$X %*% betas[-1]
       offset <- rep(newxmean %*% betas[j+1], length = length(fit$y))
-      parresid <- r + X[,j] %*% betas[j+1] - offset
+      parresid <- r + fit$meta$X[,j] %*% betas[j+1] - offset
     }
   } else {
     stop(paste(type, "is not a valid type"), call. = FALSE)

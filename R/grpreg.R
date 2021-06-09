@@ -24,15 +24,15 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   if (nlambda < 2) stop("nlambda must be at least 2", call.=FALSE)
   if (alpha > 1 | alpha <= 0) stop("alpha must be in (0, 1]", call.=FALSE)
   
-  # Check for grouped_hat object
+  # Check for expandedMatix
   if(inherits(X, "expandedMatrix")){
     expanded <- TRUE
+    group <- X$group
     knots <- X$knots
     boundary <- X$boundary
     degree <- X$degree
     originalx <- X$originalx
     type <- X$type
-    group <- X$group
     X <- X$X
   } else {
     expanded <- FALSE
@@ -126,14 +126,15 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   } else if (family=="poisson") {
     val$y <- y
   } 
-  if (expanded){
+  if (expanded) {
     val$XG <- XG
     val$y <- yy
     val$meta <- list(knots = knots,
                  boundary = boundary,
                  degree = degree,
                  originalx = originalx,
-                 type = type)
+                 type = type,
+                 X = X)
     attr(val, "class") <- c("grpreg", "expanded")
   }
   val

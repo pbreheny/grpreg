@@ -24,6 +24,6 @@ gen_nonlinear_data <- function(n=100, p=16, seed=1) {
   eta <- matrix(NA, nrow=n, ncol=6)
   for (j in 1:6) eta[,j] <- f[[j]](X[,j])
   mu <- apply(eta, 1, sum)
-  y <- rnorm(n, mean=mu, sd=0.01)
+  y <- rnorm(n, mean=mu, sd=0.1)
   list(X=X, y=y, mu=mu)
 }

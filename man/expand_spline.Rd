@@ -4,7 +4,7 @@
 \alias{expand_spline}
 \title{Expand feature matris using basis splines}
 \usage{
-expand_spline(x, df = 3, degree = 3, type = "bs")
+expand_spline(x, df = 3, degree = 3, type = c("bs", "ns"))
 }
 \arguments{
 \item{x}{The design matrix. Columns must represent numeric variables.}
