@@ -45,7 +45,11 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
   
   meta <- fit$meta
   fit$y <- fit$y + attr(fit$y, "mean")
-  df <- length(meta$knots[[1]]) + meta$degree
+  if (meta$type == 'bs') {
+    df <- length(meta$knots[[1]]) + meta$degree
+  } else if (meta$type == 'ns') {
+    df <- length(meta$knots[[1]]) + 1
+  }
   j <- which(fit$group == variable)
   i <- j[df]/df
   l <- length(lambda)
