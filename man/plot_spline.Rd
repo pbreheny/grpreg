@@ -51,8 +51,10 @@ plot_spline(fit, "V02", lambda = 0.03)
 plot_spline(fit, "V02", which = c(10, 90))
 plot_spline(fit, "V02", lambda = 0.03, partial=TRUE)
 plot_spline(fit, "V02", lambda = 0.03, partial=TRUE, type='conditional')
+plot_spline(fit, "V02", lambda = 0.03, partial=TRUE, lwd=6, col='yellow',
+            points.par=list(pch=9, col='blue'))
 
-op <- par(mfrow=c(3,2))
+op <- par(mfrow=c(3,2), mar=c(4.5, 4.5, 0.25, 0.25))
 for (i in 1:6) plot_spline(fit, sprintf("V\%02d", i), lambda = 0.03, partial=TRUE)
 par(op)
 }

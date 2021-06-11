@@ -24,8 +24,10 @@
 #' plot_spline(fit, "V02", which = c(10, 90))
 #' plot_spline(fit, "V02", lambda = 0.03, partial=TRUE)
 #' plot_spline(fit, "V02", lambda = 0.03, partial=TRUE, type='conditional')
+#' plot_spline(fit, "V02", lambda = 0.03, partial=TRUE, lwd=6, col='yellow',
+#'             points.par=list(pch=9, col='blue'))
 #' 
-#' op <- par(mfrow=c(3,2))
+#' op <- par(mfrow=c(3,2), mar=c(4.5, 4.5, 0.25, 0.25))
 #' for (i in 1:6) plot_spline(fit, sprintf("V%02d", i), lambda = 0.03, partial=TRUE)
 #' par(op)
 
@@ -38,6 +40,7 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
   if (!inherits(fit, "grpreg")) stop("Model must have been fit using the grpreg function", call. = FALSE)
   if (missing(lambda)) {
     if (missing(which)) stop("lambda not specified", call. = FALSE)
+    if (!(which %in% 1:length(fit$lambda))) stop("'which' must be an integer between 1 and length(fit$lambda)", call.=FALSE)
     lambda <- fit$lambda[which]
   }
   if (length(which(fit$group == variable)) == 0) stop(paste("Cannot find variable", variable), call. = FALSE)
@@ -95,7 +98,7 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
   #check for selection
   if (warnings == TRUE){
     notselected <- NULL
-    for(q in 1:length(lambda)){
+    for(q in 1:length(lambda)) {
       if (all(coef.grpreg(fit, lambda = lambda[q])[j+1]==0)){
         notselected <- c(notselected, lambda[q])
       }
@@ -126,7 +129,7 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
     points.args <- list(x=meta$originalx[,i], y=parresid, pch=19, cex=0.8, col='gray')
     if (length(points.par)) {
       new.points.args <- points.par[names(points.par) %in% c(names(par()), names(formals(points)))]
-      plot.args[names(new.points.args)] <- new.points.args
+      points.args[names(new.points.args)] <- new.points.args
     }
     do.call("points", points.args)
   }
@@ -136,5 +139,5 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
     new.line.args <- new.args[names(new.args) %in% c(names(par()), names(formals(matlines)))]
     line.args[names(new.line.args)] <- new.line.args
   }
-  do.call("matlines", plot.args)
+  do.call("matlines", line.args)
 }
