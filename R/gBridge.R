@@ -1,6 +1,6 @@
 gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poisson"), nlambda=100, lambda,
                     lambda.min={if (nrow(X) > ncol(X)) .001 else .05}, lambda.max, alpha=1, eps=.001, delta=1e-7,
-                    max.iter=10000, gamma=0.5, group.multiplier, warn=TRUE) {
+                    max.iter=10000, gamma=0.5, group.multiplier, warn=TRUE, returnX=FALSE, ...) {
   # Error checking
   family <- match.arg(family)
   if (alpha > 1 | alpha <= 0) stop("alpha must be in (0, 1]", call.=FALSE)
@@ -78,6 +78,11 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
                         iter = iter,
                         group.multiplier = XG$m),
                    class = "grpreg")
-  if (family=="poisson") val$y <- y
+  if (returnX) {
+    val$XG = XG
+    val$y = yy
+  } else if (family=="poisson") {
+    val$y <- y
+  }
   val
 }

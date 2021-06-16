@@ -3,3 +3,5 @@
 ^index.Rmd$
 ^\.travis\.yml$
 ^\.version\.json$
+^.*\.Rproj$
+^\.Rproj\.user$

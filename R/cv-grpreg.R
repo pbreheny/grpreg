@@ -1,4 +1,4 @@
-cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY=FALSE, trace=FALSE) {
+cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY=FALSE, trace=FALSE, gBridge=FALSE) {
 
   # Complete data fit
   fit.args <- list(...)
@@ -6,7 +6,11 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
   fit.args$y <- y
   fit.args$group <- group
   fit.args$returnX <- TRUE
-  fit <- do.call("grpreg", fit.args)
+  if (gBridge) {
+    fit <- do.call("gBridge", fit.args)
+  } else {
+    fit <- do.call("grpreg", fit.args)
+  }
 
   # Get standardized X, y
   XG <- fit$XG
@@ -19,7 +23,6 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
   # Set up folds
   if (!missing(seed)) set.seed(seed)
   n <- length(y)
-  
   
   if (missing(fold)) {
     if (m > 1) {
@@ -55,6 +58,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
   cv.args$group <- XG$g
   cv.args$group.multiplier <- XG$m
   cv.args$warn <- FALSE
+  cv.args$gBridge <- gBridge
   for (i in 1:nfolds) {
     if (trace) cat("Starting CV fold #", i, sep="","\n")
     res <- cvf(i, X, y, fold, cv.args)
@@ -86,7 +90,11 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
 cvf <- function(i, X, y, fold, cv.args) {
   cv.args$X <- X[fold!=i, , drop=FALSE]
   cv.args$y <- y[fold!=i]
-  fit.i <- do.call("grpreg", cv.args)
+  if (cv.args$gBridge) {
+    fit.i <- do.call("gBridge", cv.args)
+  } else {
+    fit.i <- do.call("grpreg", cv.args)
+  }
 
   X2 <- X[fold==i, , drop=FALSE]
   y2 <- y[fold==i]
