@@ -133,17 +133,19 @@ SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
   int user = INTEGER(user_)[0];
 
   // Outcome
-  SEXP res, beta, iter, df, loss;
-  PROTECT(res = allocVector(VECSXP, 4));
+  SEXP res, beta, loss, Eta, df, iter;
+  PROTECT(res = allocVector(VECSXP, 5));
   PROTECT(beta = allocVector(REALSXP, L*p));
   for (int j=0; j<(L*p); j++) REAL(beta)[j] = 0;
-  PROTECT(iter = allocVector(INTSXP, L));
-  for (int i=0; i<L; i++) INTEGER(iter)[i] = 0;
-  PROTECT(df = allocVector(REALSXP, L));
-  for (int i=0; i<L; i++) REAL(df)[i] = 0;
+  double *b = REAL(beta);
   PROTECT(loss = allocVector(REALSXP, L));
   for (int i=0; i<L; i++) REAL(loss)[i] = 0;
-  double *b = REAL(beta);
+  PROTECT(Eta = allocVector(REALSXP, L*n));
+  for (int j=0; j<(L*n); j++) REAL(Eta)[j] = 0;
+  PROTECT(df = allocVector(REALSXP, L));
+  for (int i=0; i<L; i++) REAL(df)[i] = 0;
+  PROTECT(iter = allocVector(INTSXP, L));
+  for (int i=0; i<L; i++) INTEGER(iter)[i] = 0;
 
   // Intermediate quantities
   double *a = Calloc(p, double);
@@ -169,8 +171,8 @@ SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
   if (user) {
     lstart = 0;
   } else {
-    REAL(loss)[0] = rss;
     lstart = 1;
+    REAL(loss)[0] = rss;
   }
   double sdy = sqrt(rss/n);
 
@@ -234,6 +236,7 @@ SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
 
       if (violations==0) {
         REAL(loss)[l] = gLoss(r, n);
+        for (int i=0; i<n; i++) REAL(Eta)[n*l+i] = y[i] - r[i];
         break;
       }
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
@@ -243,9 +246,10 @@ SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
   Free(r);
   Free(e);
   SET_VECTOR_ELT(res, 0, beta);
-  SET_VECTOR_ELT(res, 1, iter);
-  SET_VECTOR_ELT(res, 2, df);
-  SET_VECTOR_ELT(res, 3, loss);
-  UNPROTECT(5);
+  SET_VECTOR_ELT(res, 1, loss);
+  SET_VECTOR_ELT(res, 2, Eta);
+  SET_VECTOR_ELT(res, 3, df);
+  SET_VECTOR_ELT(res, 4, iter);
+  UNPROTECT(6);
   return(res);
 }

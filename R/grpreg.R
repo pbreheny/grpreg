@@ -69,16 +69,18 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
     if (bilevel) fit <- .Call("lcdfit_gaussian", XG$X, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), XG$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
     else fit <- .Call("gdfit_gaussian", XG$X, yy, penalty, K1, K0, lambda, lam.max, alpha, eps, as.integer(max.iter), gamma, XG$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
     b <- rbind(mean(y), matrix(fit[[1]], nrow=p))
-    iter <- fit[[2]]
-    df <- fit[[3]] + 1 # Intercept
-    loss <- fit[[4]]
+    loss <- fit[[2]]
+    Eta <- matrix(fit[[3]], nrow=n) + mean(y)
+    df <- fit[[4]] + 1 # Intercept
+    iter <- fit[[5]]
   } else {
     if (bilevel) fit <- .Call("lcdfit_glm", XG$X, yy, family, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), XG$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
     else fit <- .Call("gdfit_glm", XG$X, yy, family, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, XG$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
     b <- rbind(fit[[1]], matrix(fit[[2]], nrow=p))
-    iter <- fit[[3]]
-    df <- fit[[4]]
-    loss <- fit[[5]]
+    loss <- fit[[3]]
+    Eta <- matrix(fit[[4]], nrow=n)
+    df <- fit[[5]]
+    iter <- fit[[6]]
   }
 
   # Eliminate saturated lambda values, if any
@@ -114,6 +116,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
                         lambda = lambda,
                         alpha = alpha,
                         loss = loss,
+                        linear.predictor = Eta,
                         n = n,
                         penalty = penalty,
                         df = df,

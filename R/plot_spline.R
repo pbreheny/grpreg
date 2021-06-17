@@ -40,7 +40,7 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
   if (!inherits(fit, "grpreg")) stop("Model must have been fit using the grpreg function", call. = FALSE)
   if (missing(lambda)) {
     if (missing(which)) stop("lambda not specified", call. = FALSE)
-    if (!(which %in% 1:length(fit$lambda))) stop("'which' must be an integer between 1 and length(fit$lambda)", call.=FALSE)
+    if (!all(which %in% 1:length(fit$lambda))) stop("'which' must be an integer between 1 and length(fit$lambda)", call.=FALSE)
     lambda <- fit$lambda[which]
   }
   if (length(which(fit$group == variable)) == 0) stop(paste("Cannot find variable", variable), call. = FALSE)
@@ -72,6 +72,7 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
       xmeans[,i] <- meta$originalx[,i]
       const <- predict(fit, xmeans, lambda = max(lambda))
       betas <- coef.grpreg(fit, lambda = max(lambda))
+      # parresid <- residuals(fit, lambda=max(lambda)) + const
       parresid <- fit$y - betas[1] - fit$meta$X %*% betas[-1] + const
     }
   } else if (type == "contrast") {
@@ -87,6 +88,7 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
     y <- newxbs%*%betas[j+1,] - matrix(newxmean%*%betas[j+1,],200,l, byrow = TRUE)
     if (partial == TRUE) {
       betas <- coef.grpreg(fit, lambda = max(lambda))
+      # r <- residuals(fit, lambda=lambda); remove next line
       r <- fit$y - betas[1] - fit$meta$X %*% betas[-1]
       offset <- rep(newxmean %*% betas[j+1], length = length(fit$y))
       parresid <- r + fit$meta$X[,j] %*% betas[j+1] - offset

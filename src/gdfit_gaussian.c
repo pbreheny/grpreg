@@ -267,17 +267,19 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
   int user = INTEGER(user_)[0];
 
   // Outcome
-  SEXP res, beta, iter, df, loss, rejections, safe_rejections;
-  PROTECT(res = allocVector(VECSXP, 6));
+  SEXP res, beta, loss, Eta, df, iter, rejections, safe_rejections;
+  PROTECT(res = allocVector(VECSXP, 7));
   PROTECT(beta = allocVector(REALSXP, L*p));
   for (int j=0; j<(L*p); j++) REAL(beta)[j] = 0;
-  PROTECT(iter = allocVector(INTSXP, L));
-  for (int i=0; i<L; i++) INTEGER(iter)[i] = 0;
-  PROTECT(df = allocVector(REALSXP, L));
-  for (int i=0; i<L; i++) REAL(df)[i] = 0;
+  double *b = REAL(beta);
   PROTECT(loss = allocVector(REALSXP, L));
   for (int i=0; i<L; i++) REAL(loss)[i] = 0;
-  double *b = REAL(beta);
+  PROTECT(Eta = allocVector(REALSXP, L*n));
+  for (int j=0; j<(L*n); j++) REAL(Eta)[j] = 0;
+  PROTECT(df = allocVector(REALSXP, L));
+  for (int i=0; i<L; i++) REAL(df)[i] = 0;
+  PROTECT(iter = allocVector(INTSXP, L));
+  for (int i=0; i<L; i++) INTEGER(iter)[i] = 0;
   PROTECT(rejections = allocVector(INTSXP, L));
   for (int i=0; i<L; i++) INTEGER(rejections)[i] = 0;
   PROTECT(safe_rejections = allocVector(INTSXP, L)); // # of rejections by BEDPP
@@ -411,6 +413,7 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
       }
       if (violations == 0) {
         REAL(loss)[l] = gLoss(r, n);
+        for (int i=0; i<n; i++) REAL(Eta)[n*l+i] = y[i] - r[i];
         break;
       }
     }
@@ -427,11 +430,12 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
   Free(xTy_sq);
   Free(xTr);
   SET_VECTOR_ELT(res, 0, beta);
-  SET_VECTOR_ELT(res, 1, iter);
-  SET_VECTOR_ELT(res, 2, df);
-  SET_VECTOR_ELT(res, 3, loss);
-  SET_VECTOR_ELT(res, 4, rejections);
-  SET_VECTOR_ELT(res, 5, safe_rejections);
-  UNPROTECT(7);
+  SET_VECTOR_ELT(res, 1, loss);
+  SET_VECTOR_ELT(res, 2, Eta);
+  SET_VECTOR_ELT(res, 3, df);
+  SET_VECTOR_ELT(res, 4, iter);
+  SET_VECTOR_ELT(res, 5, rejections);
+  SET_VECTOR_ELT(res, 6, safe_rejections);
+  UNPROTECT(8);
   return(res);
 }

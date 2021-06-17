@@ -99,7 +99,8 @@ expect_equivalent(coef(fit), coef(fit2))
 # Predict (bs)
 fit <- grpreg(Xb, y, penalty='grLasso', family='binomial', eps=1e-12)
 XX <- gen_nonlinear_data(seed=2, n=20)$X
-P <- predict(fit, XX, type='link')
+XX[1,1] <- 1
+expect_warning(P <- predict(fit, XX, type='link'))
 expect_equal(dim(P), c(20, length(fit$lambda)))
 P <- predict(fit, Data$X, type='response')
 L <- apply(grpreg:::loss.grpreg(y, P, 'binomial'), 2, sum)
@@ -117,9 +118,9 @@ expect_true(typeof(N) == 'double')
 # Plot (bs)
 fit <- grpreg(Xb, y, penalty='grLasso', family='binomial', eps=1e-12)
 plot_spline(fit, 'V02', lambda=0.01)
-plot_spline(fit, 'V02', which=10)
-plot_spline(fit, 'V02', which=20, partial=TRUE, type='conditional')
-plot_spline(fit, 'V02', which=20, partial=TRUE, type='contrast')
+plot_spline(fit, 'V02', which=20)
+# plot_spline(fit, 'V02', which=20, partial=TRUE, type='conditional')
+# plot_spline(fit, 'V02', which=20, partial=TRUE, type='contrast')
 
 # Cross-validation
 B <- expand_spline(Data$X, type='ns')
