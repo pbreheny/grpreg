@@ -47,7 +47,6 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
   if (partial == TRUE && length(lambda) > 1 && warnings == TRUE) warning("Scatter plot represents largest value of lambda imputed")
   
   meta <- fit$meta
-  fit$y <- fit$y + attr(fit$y, "mean")
   if (meta$type == 'bs') {
     df <- length(meta$knots[[1]]) + meta$degree
   } else if (meta$type == 'ns') {

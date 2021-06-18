@@ -47,6 +47,23 @@ expect_equivalent(fit$linear.predictor, predict(fit, X))
 fit <- grpreg(X, yy, group, penalty="gel", lambda.min=0, family="poisson")
 expect_equivalent(fit$linear.predictor, predict(fit, X))
 
+# residuals are correct
+fit.mle <- lm(y ~ X)
+fit <- grpreg(X, y, group, penalty="grLasso", lambda.min=0, eps=1e-12)
+expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle))
+fit <- grpreg(X, y, group, penalty="gel", lambda.min=0, eps=1e-12)
+expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle))
+fit.mle <- glm(yy ~ X, family="binomial")
+fit <- grpreg(X, yy, group, penalty="grLasso", lambda.min=0, family="binomial", eps=1e-12, max.iter=1e6)
+expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle))
+fit <- grpreg(X, yy, group, penalty="gel", lambda.min=0, family="binomial", eps=1e-12, max.iter=1e6)
+expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle))
+fit.mle <- glm(yy ~ X, family="poisson")
+fit <- grpreg(X, yy, group, penalty="grLasso", lambda.min=0, family="poisson", eps=1e-12, max.iter=1e6)
+expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle))
+fit <- grpreg(X, yy, group, penalty="gel", lambda.min=0, family="poisson", eps=1e-12, max.iter=1e6)
+expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle))
+
 # grpreg handles user-specified lambda
 n <- 50
 group <- rep(0:3,4:1)

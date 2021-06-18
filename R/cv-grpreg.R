@@ -8,7 +8,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
   fit.args$returnX <- TRUE
   fit <- do.call("grpreg", fit.args)
   
-  # Get standardized X, y
+  # Get y, standardized X
   XG <- fit$XG
   X <- XG$X
   y <- fit$y
@@ -19,7 +19,6 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
   # Set up folds
   if (!missing(seed)) set.seed(seed)
   n <- length(y)
-  
   
   if (missing(fold)) {
     if (m > 1) {

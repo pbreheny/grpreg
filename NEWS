@@ -1,3 +1,6 @@
+# grpreg 3.4.0 (in development)
+  * Changed: fit$y now returns original y, not centered y
+
 # grpreg 3.3.0 (2020-06-10)
   * Fixed: sqrt(K) no longer hard-coded into discarding rules (thank you to Dan
     Kessler for pointing this out)
