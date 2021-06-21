@@ -82,7 +82,7 @@ cvfit <- cv.grpreg(B, y)
 
 
 Data <- gen_nonlinear_data(n=500)
-y <- Data$y > median(Data$y)
+y <- Data$y > quantile(Data$y, 0.25)
 
 # Basic setup
 Xb <- expand_spline(Data$X, df=4, type='bs')
@@ -119,8 +119,8 @@ expect_true(typeof(N) == 'double')
 fit <- grpreg(Xb, y, penalty='grLasso', family='binomial', eps=1e-12)
 plot_spline(fit, 'V02', lambda=0.01)
 plot_spline(fit, 'V02', which=20)
-# plot_spline(fit, 'V02', which=20, partial=TRUE, type='conditional')
-# plot_spline(fit, 'V02', which=20, partial=TRUE, type='contrast')
+plot_spline(fit, 'V02', which=20, partial=TRUE, type='conditional')
+plot_spline(fit, 'V02', which=20, partial=TRUE, type='contrast')
 
 # Cross-validation
 B <- expand_spline(Data$X, type='ns')
