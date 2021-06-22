@@ -74,8 +74,11 @@ plot_spline(fit, 'V02', which=80, partial=TRUE, type='conditional')
 plot_spline(fit, 'V02', which=80, partial=TRUE, type='contrast')
 
 # Cross-validation
-B <- expand_spline(Data$X, type='ns')
-cvfit <- cv.grpreg(B, y)
+cvfit <- cv.grpreg(Xn, y)
+expect_silent(plot_spline(cvfit, 'V02'))
+expect_warning(plot_spline(cvfit, 'V02', which=3))
+plot_spline(cvfit, 'V02', partial=TRUE, type='conditional')
+plot_spline(cvfit, 'V02', partial=TRUE, type='contrast')
 
 
 # Logistic regression -----------------------------------------------------
@@ -123,5 +126,8 @@ plot_spline(fit, 'V02', which=20, partial=TRUE, type='conditional')
 plot_spline(fit, 'V02', which=20, partial=TRUE, type='contrast')
 
 # Cross-validation
-B <- expand_spline(Data$X, type='ns')
-cvfit <- cv.grpreg(B, y)
+cvfit <- cv.grpreg(Xn, y, family='binomial')
+expect_silent(plot_spline(cvfit, 'V02'))
+expect_warning(plot_spline(cvfit, 'V02', which=2))
+plot_spline(cvfit, 'V02', partial=TRUE, type='conditional')
+plot_spline(cvfit, 'V02', partial=TRUE, type='contrast')

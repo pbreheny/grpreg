@@ -1,12 +1,12 @@
 #' Plot spline curve
 #'
-#' Plots a spline curve for a single variable using a grpreg object for which an additive model was fit.
+#' Plots a spline curve for a single variable using a `grpreg` or `cv.grpreg` object for which an additive model was fit.
 #'
 #' `plot_spline()` takes a model fit using both the [grpreg()] and [expand_spline()] functions and plots a spline curve for a given variable.
 #'
 #' @param fit        A `grpreg` object. The model must have been fit using a `expand_spline` object.
 #' @param variable   The name of the variable which will be plotted.
-#' @param lambda     Values of the regularization parameter `lambda` which will be used for the plot. Each value of lambda will produce a different curve.
+#' @param lambda     Values of the regularization parameter `lambda` which will be used for the plot. If a vector is passed, a curve will be drawn for each value of lambda. If a `cv.grpreg` object is passed, the `lambda` value minimizing cross-validation error will be used as a default; otherwise, there is no default value.
 #' @param which      Indices of the penalty parameter `lambda` which will be used for the plot. If both `lambda` and `which` are specified, `lambda` takes precedence.
 #' @param partial    If `TRUE`, a scatter plot of the partial residuals is superimposed on the curve. Default: `FALSE`. If multiple lambdas are specified, the largest value is used to calculate the residuals.
 #' @param type       Type of plot to be produced. Default is `contrast`.  The following options are supported:
@@ -30,10 +30,15 @@
 #' op <- par(mfrow=c(3,2), mar=c(4.5, 4.5, 0.25, 0.25))
 #' for (i in 1:6) plot_spline(fit, sprintf("V%02d", i), lambda = 0.03, partial=TRUE)
 #' par(op)
+#' 
+#' cvfit <- cv.grpreg(X, Data$y)
+#' plot_spline(cvfit, "V02")
+#' plot_spline(cvfit, "V02", partial=TRUE)
 
 plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE, 
                            type = "contrast", warnings = TRUE, points.par = NULL, ...){
   if (inherits(fit, "cv.grpreg")) {
+    if (missing(lambda) & missing(which)) lambda <- fit$lambda.min
     fit <- fit$fit
   }
   if (!inherits(fit, "expanded")) stop("Model must have been fit using a expand_spline object", call. = FALSE)
