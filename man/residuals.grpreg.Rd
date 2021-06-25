@@ -18,7 +18,7 @@
 \item{...}{Not used.}
 }
 \description{
-Currently, only residuals on the linear predictor scale are supported.
+Currently, only deviance residuals are supported.
 }
 \examples{
 data(Birthwt)
@@ -26,6 +26,6 @@ X <- Birthwt$X
 y <- Birthwt$bwt
 group <- Birthwt$group
 fit <- grpreg(X, y, group, returnX=TRUE)
-residuals(fit)
-residuals(fit, lambda=0.1)
+residuals(fit)[1:5, 1:5]
+head(residuals(fit, lambda=0.1))
 }

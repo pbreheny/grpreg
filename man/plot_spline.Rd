@@ -21,7 +21,7 @@ plot_spline(
 
 \item{variable}{The name of the variable which will be plotted.}
 
-\item{lambda}{Values of the regularization parameter \code{lambda} which will be used for the plot. Each value of lambda will produce a different curve.}
+\item{lambda}{Values of the regularization parameter \code{lambda} which will be used for the plot. If a vector is passed, a curve will be drawn for each value of lambda. If a \code{cv.grpreg} object is passed, the \code{lambda} value minimizing cross-validation error will be used as a default; otherwise, there is no default value.}
 
 \item{which}{Indices of the penalty parameter \code{lambda} which will be used for the plot. If both \code{lambda} and \code{which} are specified, \code{lambda} takes precedence.}
 
@@ -38,7 +38,7 @@ plot_spline(
 \item{...}{Further arguments to be passed to \code{plot()}}
 }
 \description{
-Plots a spline curve for a single variable using a grpreg object for which an additive model was fit.
+Plots a spline curve for a single variable using a \code{grpreg} or \code{cv.grpreg} object for which an additive model was fit.
 }
 \details{
 \code{plot_spline()} takes a model fit using both the \code{\link[=grpreg]{grpreg()}} and \code{\link[=expand_spline]{expand_spline()}} functions and plots a spline curve for a given variable.
@@ -57,4 +57,8 @@ plot_spline(fit, "V02", lambda = 0.03, partial=TRUE, lwd=6, col='yellow',
 op <- par(mfrow=c(3,2), mar=c(4.5, 4.5, 0.25, 0.25))
 for (i in 1:6) plot_spline(fit, sprintf("V\%02d", i), lambda = 0.03, partial=TRUE)
 par(op)
+
+cvfit <- cv.grpreg(X, Data$y)
+plot_spline(cvfit, "V02")
+plot_spline(cvfit, "V02", partial=TRUE)
 }

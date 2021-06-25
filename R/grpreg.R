@@ -118,7 +118,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
                         lambda = lambda,
                         alpha = alpha,
                         loss = loss,
-                        linear.predictor = Eta,
+                        linear.predictors = Eta,
                         n = n,
                         penalty = penalty,
                         df = df,
