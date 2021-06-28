@@ -20,6 +20,20 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   if (nlambda < 2) stop("nlambda must be at least 2", call.=FALSE)
   if (alpha > 1 | alpha <= 0) stop("alpha must be in (0, 1]", call.=FALSE)
 
+  # Check for expandedMatix
+  if(inherits(X, "expandedMatrix")) {
+    expanded <- TRUE
+    group <- X$group
+    knots <- X$knots
+    boundary <- X$boundary
+    degree <- X$degree
+    originalx <- X$originalx
+    type <- X$type
+    X <- X$X
+  } else {
+    expanded <- FALSE
+  }
+  
   # Construct XG, Y
   bilevel <- strtrim(penalty, 2) != "gr"
   Y <- newS(y)
@@ -91,8 +105,15 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
                         fail = Y$fail,
                         linear.predictors = sweep(Eta, 2, colMeans(Eta), '-')),
                    class = c("grpsurv", "grpreg"))
-  if (returnX) {
-    val$XG <- XG
+  if (returnX) val$XG <- XG
+  if (expanded) {
+    val$meta <- list(knots = knots,
+                     boundary = boundary,
+                     degree = degree,
+                     originalx = originalx,
+                     type = type,
+                     X = X)
+    attr(val, "class") <- c("grpsurv", "grpreg", "expanded")
   }
   val
 }

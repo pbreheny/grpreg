@@ -61,7 +61,7 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
     }
   } else {
     if (type=="vars") stop("Predicting type 'vars' not implemented with multivariate outcomes", call.=FALSE)
-    if (type=="groups") return(drop(apply(beta, 3, function(x){which(apply(x!=0, 2, any))})))
+    if (type=="groups") return(drop(apply(beta, 3, function(x) which(apply(x!=0, 2, any)))))
     if (type=="norm") return(drop(apply(beta, 3, function(x) apply(x, 2, function(x){sqrt(sum(x^2))}))))
     if (type=="nvars") {
       return(drop(apply(beta!=0, 3, FUN=sum)))
@@ -90,6 +90,7 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
 }
 coef.grpreg <- function(object, lambda, which=1:length(object$lambda), drop=TRUE, ...) {
   if (!missing(lambda)) {
+    if (any(lambda > max(fit$lambda) | lambda < min(fit$lambda))) stop('lambda must lie within the range of the fitted coefficient path', call.=FALSE)
     ind <- approx(object$lambda, seq(object$lambda), lambda)$y
     l <- floor(ind)
     r <- ceiling(ind)

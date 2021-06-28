@@ -25,7 +25,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   if (alpha > 1 | alpha <= 0) stop("alpha must be in (0, 1]", call.=FALSE)
   
   # Check for expandedMatix
-  if(inherits(X, "expandedMatrix")){
+  if(inherits(X, "expandedMatrix")) {
     expanded <- TRUE
     group <- X$group
     knots <- X$knots
@@ -132,13 +132,12 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   }
   if (returnX) val$XG <- XG
   if (expanded) {
-    val$XG <- XG
     val$meta <- list(knots = knots,
-                 boundary = boundary,
-                 degree = degree,
-                 originalx = originalx,
-                 type = type,
-                 X = X)
+                     boundary = boundary,
+                     degree = degree,
+                     originalx = originalx,
+                     type = type,
+                     X = X)
     attr(val, "class") <- c("grpreg", "expanded")
   }
   val

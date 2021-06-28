@@ -76,6 +76,7 @@ predict.grpsurv <- function(object, X,
     eta <- matrix(0, 1, 1)
     warning('Returning "baseline" prediction; supply X for more interesting prediction')
   } else {
+    if (inherits(object, "expanded")) X <- predict_spline(object, X)
     eta <- X %*% beta
   }
   if (type=='link') return(drop(eta))
