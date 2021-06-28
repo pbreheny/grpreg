@@ -51,7 +51,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   b <- matrix(res[[1]], p, nlambda)
   iter <- res[[2]]
   df <- res[[3]]
-  loss <- -1*res[[4]]
+  loss <- -2*res[[4]]
   Eta <- matrix(res[[5]], n, nlambda)
 
   # Eliminate saturated lambda values, if any
@@ -77,7 +77,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
 
   # Output
   val <- structure(list(beta = beta,
-                        group = group,
+                        group = factor(group),
                         lambda = lambda,
                         penalty = penalty,
                         gamma = gamma,
