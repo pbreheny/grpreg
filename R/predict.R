@@ -90,7 +90,7 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
 }
 coef.grpreg <- function(object, lambda, which=1:length(object$lambda), drop=TRUE, ...) {
   if (!missing(lambda)) {
-    if (any(lambda > max(fit$lambda) | lambda < min(fit$lambda))) stop('lambda must lie within the range of the fitted coefficient path', call.=FALSE)
+    if (any(lambda > max(object$lambda) | lambda < min(object$lambda))) stop('lambda must lie within the range of the fitted coefficient path', call.=FALSE)
     ind <- approx(object$lambda, seq(object$lambda), lambda)$y
     l <- floor(ind)
     r <- ceiling(ind)

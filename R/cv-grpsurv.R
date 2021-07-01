@@ -5,7 +5,7 @@ cv.grpsurv <- function(X, y, group, ..., nfolds=10, seed, fold, se=c('quick', 'b
   fit.args <- list(...)
   fit.args$X <- X
   fit.args$y <- y
-  fit.args$group <- group
+  if (!inherits(X, "expandedMatrix")) fit.args$group <- group
   fit.args$returnX <- TRUE
   fit <- do.call("grpsurv", fit.args)
 

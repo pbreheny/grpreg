@@ -27,10 +27,10 @@
 #' @seealso [plot_spline()] to visualize the resulting nonlinear fits
 #'
 #' @examples
-#' X <- expand_spline(attitude[-1])
-#' fit <- grpreg(X, attitude$rating, penalty="grLasso")
-#' plot(fit)
-#' plot_spline(fit, "complaints", lambda=0.001)
+#' Data <- gen_nonlinear_data(n=1000)
+#' X <- expand_spline(Data$X)
+#' fit <- grpreg(X, Data$y)
+#' plot_spline(fit, "V02", lambda = 0.03)
 
 expand_spline <- function(x, df = 3, degree = 3, type = c("bs", "ns")) {
   type <- match.arg(type)

@@ -66,7 +66,7 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
   #create sequence and basis and calculate y's and residuals
   min <- meta$boundary[[i]][1]
   max <- meta$boundary[[i]][2]
-  newx <- seq(min, max, length.out = 200) 
+  newx <- seq(min, max, length.out = 200)
   if (type == "conditional"){
     xmeans <- matrix(colMeans(meta$originalx), 200, p, byrow = TRUE)
     xmeans[,i] <- newx
@@ -75,7 +75,8 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
       xmeans <- matrix(colMeans(meta$originalx), n, p, byrow = TRUE)
       xmeans[,i] <- meta$originalx[,i]
       const <- predict(fit, xmeans, lambda = max(lambda))
-      betas <- coef.grpreg(fit, lambda = max(lambda))
+      r <- residuals(fit, lambda=max(lambda))
+      if (inherits(fit, 'grpsurv')) r <- r[fit$order]
       parresid <- residuals(fit, lambda=max(lambda)) + const
     }
   } else if (type == "contrast") {
@@ -87,13 +88,16 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
     attr(mat, "class") <- c(meta$type, "basis", "matrix")
     newxbs <- predict(mat, newx)
     betas <- matrix(coef.grpreg(fit, lambda = lambda), ncol = l)
+    if (!inherits(fit, 'grpsurv')) betas <- betas[-1,,drop=FALSE]
     newxmean <- predict(mat, mean(meta$originalx[,i]))
-    y <- newxbs%*%betas[j+1,] - matrix(newxmean%*%betas[j+1,],200,l, byrow = TRUE)
+    y <- newxbs%*%betas[j,] - matrix(newxmean%*%betas[j,],200,l, byrow = TRUE)
     if (partial == TRUE) {
       betas <- coef.grpreg(fit, lambda = max(lambda))
-      r <- residuals(fit, lambda=lambda)
-      offset <- rep(newxmean %*% betas[j+1], length = length(fit$y))
-      parresid <- r + fit$meta$X[,j] %*% betas[j+1] - offset
+      if (!inherits(fit, 'grpsurv')) betas <- betas[-1]
+      r <- residuals(fit, lambda=max(lambda))
+      if (inherits(fit, 'grpsurv')) r <- r[fit$order]
+      offset <- rep(newxmean %*% betas[j], length = fit$n)
+      parresid <- r + fit$meta$X[,j] %*% betas[j] - offset
     }
   } else {
     stop(paste(type, "is not a valid type"), call. = FALSE)

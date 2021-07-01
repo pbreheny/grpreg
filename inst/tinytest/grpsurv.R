@@ -7,10 +7,6 @@ X <- matrix(rnorm(50*6), 50, 6)
 g <- rep(1:3, each=2)
 fit <- grpsurv(X, y, g, lambda.min=0)
 
-# TEMP CODE
-X <- X[order(y[,1]),]
-y <- y[order(y[,1]),]
-
 # $ grpsurv equals MLE when lam=0
 fit.mle <- coxph(y~X)
 expect_equivalent(coef(fit)[,100], coef(fit.mle), tol=0.01)
@@ -33,15 +29,15 @@ expect_equivalent(fit$linear.predictors[, 100], fit.mle$linear.predictors[order(
 fit <- grpsurv(X, y, g, lambda.min=0, penalty="gel", eps=1e-12)
 expect_equivalent(fit$linear.predictors[, 100], fit.mle$linear.predictors[order(y)])
 
-# residuals are correct (slightly different because baseline hazard estimated differently)
+# residuals are correct (slightly different at final observation because baseline hazard estimated differently)
 fit <- grpsurv(X, y, g, lambda.min=0, penalty="grLasso", eps=1e-12)
 r1 <- residuals(fit, lambda=0)
-r2 <- residuals(fit.mle, type='deviance')[order(y)]
+r2 <- residuals(fit.mle, type='deviance')
 plot(r1, r2)
 abline(0,1)
-expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle, type='deviance')[order(y)], tolerance=0.1)
+expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle, type='deviance'), tolerance=0.1)
 fit <- grpsurv(X, y, g, lambda.min=0, penalty="gel", eps=1e-12)
-expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle, type='deviance')[order(y)], tolerance=0.1)
+expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle, type='deviance'), tolerance=0.1)
 
 # predict works for grpsurv
 head(predict(fit, X, 'vars'))
