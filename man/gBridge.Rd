@@ -26,7 +26,7 @@ gamma=0.5, group.multiplier, warn=TRUE)
     penalties in \code{grpreg}, it is not possible to solve for
     \code{lambda.max} directly with group bridge models.  Thus, it must
     be specified by the user.  If it is not specified, \code{gBridge}
-    will attempt a guess at \code{lambda.max}, but this is not
+    will attempt to guess \code{lambda.max}, but this is not
     particularly accurate.}
   \item{alpha}{Tuning parameter for the balance between the group
     penalty and the L2 penalty, as in \code{grpreg}.}
@@ -50,7 +50,7 @@ gamma=0.5, group.multiplier, warn=TRUE)
   differentiable at zero; because of this, a number of changes must be
   made to the algorithm, which is why it has its own function.  Most
   notably, the method is unable to start at \code{lambda.max}; it must
-  start at \code{lambda.max} and proceed in the opposite direction.
+  start at \code{lambda.min} and proceed in the opposite direction.
 
   In other respects, the usage and behavior of the function is similar
   to the rest of the \code{grpreg} package.
@@ -59,10 +59,10 @@ gamma=0.5, group.multiplier, warn=TRUE)
   \code{grpreg}.}
 \references{
   \itemize{
-    \item Huang, J., Ma, S., Xie, H., and Zhang, C. (2009) A group bridge
+    \item Huang J, Ma S, Xie H, and Zhang C. (2009) A group bridge
     approach for variable selection.  \emph{Biometrika}, \strong{96}:
     339-355.
-    \item Breheny, P. and Huang, J. (2009) Penalized methods for
+    \item Breheny P and Huang J. (2009) Penalized methods for
     bi-level variable selection.  \emph{Statistics and its interface},
     \strong{2}: 369-380.
     }}

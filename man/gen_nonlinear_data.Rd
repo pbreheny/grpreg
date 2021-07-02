@@ -2,7 +2,7 @@
 % Please edit documentation in R/gen_nonlinear_data.R
 \name{gen_nonlinear_data}
 \alias{gen_nonlinear_data}
-\title{Generate example data}
+\title{Generate nonlinear example data}
 \usage{
 gen_nonlinear_data(n = 100, p = 16, seed = 1)
 }
@@ -14,7 +14,7 @@ gen_nonlinear_data(n = 100, p = 16, seed = 1)
 \item{seed}{Change to get different random data sets (numeric; default = 1).}
 }
 \description{
-Includes nonlinear functions so that basis expansion models can be tested; intended for use with \code{expand_spline()}.
+Mainly intended to demonstrate the use of basis expansion models for sparse additive modeling; intended for use with \code{\link[=expand_spline]{expand_spline()}}.
 }
 \examples{
 Data <- gen_nonlinear_data()

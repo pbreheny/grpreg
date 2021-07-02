@@ -1,6 +1,6 @@
-#' Generate example data
+#' Generate nonlinear example data
 #' 
-#' Includes nonlinear functions so that basis expansion models can be tested; intended for use with `expand_spline()`.
+#' Mainly intended to demonstrate the use of basis expansion models for sparse additive modeling; intended for use with [expand_spline()].
 #' 
 #' @param n      Sample size (numeric; default = 100).
 #' @param p      Number of features (numeric; default = 16).

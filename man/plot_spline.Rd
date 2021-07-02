@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_spline.R
 \name{plot_spline}
 \alias{plot_spline}
-\title{Plot spline curve}
+\title{Plot spline curve for a fitted additive model}
 \usage{
 plot_spline(
   fit,
@@ -19,23 +19,25 @@ plot_spline(
 \arguments{
 \item{fit}{A \code{grpreg} object. The model must have been fit using a \code{expand_spline} object.}
 
-\item{variable}{The name of the variable which will be plotted.}
+\item{variable}{The name of the variable which will be plotted (character).}
 
-\item{lambda}{Values of the regularization parameter \code{lambda} which will be used for the plot. If a vector is passed, a curve will be drawn for each value of lambda. If a \code{cv.grpreg} object is passed, the \code{lambda} value minimizing cross-validation error will be used as a default; otherwise, there is no default value.}
+\item{lambda}{Values of the regularization parameter \code{lambda} which will be used for the plot. If a vector is passed, a curve will be drawn for each value of lambda (numeric vector; if a \code{cv.grpreg} object is passed, the \code{lambda} value minimizing cross-validation error will be used as a default; otherwise, there is no default value)}
 
-\item{which}{Indices of the penalty parameter \code{lambda} which will be used for the plot. If both \code{lambda} and \code{which} are specified, \code{lambda} takes precedence.}
+\item{which}{Index of penalty parameter \code{lambda} which will be used for the plot. If both \code{lambda} and \code{which} are specified, \code{lambda} takes precedence (integer vector).}
 
-\item{partial}{If \code{TRUE}, a scatter plot of the partial residuals is superimposed on the curve. Default: \code{FALSE}. If multiple lambdas are specified, the largest value is used to calculate the residuals.}
+\item{partial}{If \code{TRUE}, a scatter plot of the partial residuals is superimposed on the curve (logical; default = \code{FALSE}). If multiple lambdas are specified, the largest value is used to calculate the residuals.}
 
-\item{type}{Type of plot to be produced. Default is \code{contrast}.  The following options are supported:
-* If \code{"conditional"} is selected, the plot returned shows the value of the variable on the x-axis and the change in response on the y-axis, holding all other variables constant at their mean value.
-* If \code{"contrast"} is selected, the plot returned shows the effect on the expected value of the response by moving the x variable away from the mean on the x-axis.}
+\item{type}{Type of plot to be produced (default = \code{"contrast"}). The following options are supported:
+\itemize{
+\item If \code{"conditional"}, the plot returned shows the value of the variable on the x-axis and the change in linear predictor on the y-axis, holding all other variables constant at their mean value.
+\item If \code{"contrast"}, the plot returned shows the effect on the linear predictor by moving the x variable away from its mean.
+}}
 
-\item{warnings}{If \code{FALSE}, warnings will be suppressed. Default is \code{TRUE}.}
+\item{warnings}{If \code{FALSE}, warnings will be suppressed (default = \code{TRUE}).}
 
-\item{points.par}{List of parameters (see \code{\link[=par]{par()}} to pass to \code{\link[=points]{points()}} when partial residuals are drawn in the plots.}
+\item{points.par}{List of parameters (see \code{\link[=par]{par()}} to pass to \code{\link[=points]{points()}} when \code{partial=TRUE}.}
 
-\item{...}{Further arguments to be passed to \code{plot()}}
+\item{...}{Further arguments to be passed to \code{plot()}. Note that these arguments also control the appearance of the lines.}
 }
 \description{
 Plots a spline curve for a single variable using a \code{grpreg} or \code{cv.grpreg} object for which an additive model was fit.

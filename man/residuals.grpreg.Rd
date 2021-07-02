@@ -9,11 +9,11 @@
 \arguments{
 \item{object}{Object of class \code{grpreg} or \code{grpsurv}.}
 
-\item{lambda}{Values of the regularization parameter at which residuals are requested. For values of lambda not in the sequence of fitted models, linear interpolation is used.}
+\item{lambda}{Values of the regularization parameter at which residuals are requested (numeric vector). For values of lambda not in the sequence of fitted models, linear interpolation is used.}
 
-\item{which}{Indices of the penalty parameter at which residuals are requested. Default: all indices. If lambda is specified, this will override \code{which}.}
+\item{which}{Index of the penalty parameter at which residuals are requested (default = all indices). If \code{lambda} is specified, this take precedence over \code{which}.}
 
-\item{drop}{By default, if a single value of lambda is supplied, a vector of residuals is returned. Set drop=FALSE if you wish to have the function always return a matrix (see \verb{[drop()]}).}
+\item{drop}{By default, if a single value of lambda is supplied, a vector of residuals is returned (logical; default=\code{TRUE}). Set \code{drop=FALSE} if you wish to have the function always return a matrix (see \code{\link[=drop]{drop()}}).}
 
 \item{...}{Not used.}
 }

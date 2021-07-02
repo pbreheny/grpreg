@@ -1,20 +1,20 @@
-#' Plot spline curve
+#' Plot spline curve for a fitted additive model
 #'
 #' Plots a spline curve for a single variable using a `grpreg` or `cv.grpreg` object for which an additive model was fit.
 #'
 #' `plot_spline()` takes a model fit using both the [grpreg()] and [expand_spline()] functions and plots a spline curve for a given variable.
 #'
-#' @param fit        A `grpreg` object. The model must have been fit using a `expand_spline` object.
-#' @param variable   The name of the variable which will be plotted.
-#' @param lambda     Values of the regularization parameter `lambda` which will be used for the plot. If a vector is passed, a curve will be drawn for each value of lambda. If a `cv.grpreg` object is passed, the `lambda` value minimizing cross-validation error will be used as a default; otherwise, there is no default value.
-#' @param which      Indices of the penalty parameter `lambda` which will be used for the plot. If both `lambda` and `which` are specified, `lambda` takes precedence.
-#' @param partial    If `TRUE`, a scatter plot of the partial residuals is superimposed on the curve. Default: `FALSE`. If multiple lambdas are specified, the largest value is used to calculate the residuals.
-#' @param type       Type of plot to be produced. Default is `contrast`.  The following options are supported:
-#'                     * If `"conditional"` is selected, the plot returned shows the value of the variable on the x-axis and the change in response on the y-axis, holding all other variables constant at their mean value.
-#'                     * If `"contrast"` is selected, the plot returned shows the effect on the expected value of the response by moving the x variable away from the mean on the x-axis. 
-#' @param warnings   If `FALSE`, warnings will be suppressed. Default is `TRUE`.
-#' @param points.par   List of parameters (see [par()] to pass to [points()] when partial residuals are drawn in the plots.
-#' @param ...        Further arguments to be passed to `plot()`
+#' @param fit         A `grpreg` object. The model must have been fit using a `expand_spline` object.
+#' @param variable    The name of the variable which will be plotted (character).
+#' @param lambda      Values of the regularization parameter `lambda` which will be used for the plot. If a vector is passed, a curve will be drawn for each value of lambda (numeric vector; if a `cv.grpreg` object is passed, the `lambda` value minimizing cross-validation error will be used as a default; otherwise, there is no default value)
+#' @param which       Index of penalty parameter `lambda` which will be used for the plot. If both `lambda` and `which` are specified, `lambda` takes precedence (integer vector).
+#' @param partial     If `TRUE`, a scatter plot of the partial residuals is superimposed on the curve (logical; default = `FALSE`). If multiple lambdas are specified, the largest value is used to calculate the residuals.
+#' @param type        Type of plot to be produced (default = `"contrast"`). The following options are supported:
+#'   * If `"conditional"`, the plot returned shows the value of the variable on the x-axis and the change in linear predictor on the y-axis, holding all other variables constant at their mean value.
+#'   * If `"contrast"`, the plot returned shows the effect on the linear predictor by moving the x variable away from its mean.
+#' @param warnings    If `FALSE`, warnings will be suppressed (default = `TRUE`).
+#' @param points.par  List of parameters (see [par()] to pass to [points()] when `partial=TRUE`.
+#' @param ...         Further arguments to be passed to `plot()`. Note that these arguments also control the appearance of the lines.
 #'
 #' @examples
 #' Data <- gen_nonlinear_data(n=1000)
