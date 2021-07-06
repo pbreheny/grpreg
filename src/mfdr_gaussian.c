@@ -14,14 +14,12 @@ SEXP mfdr_gaussian(SEXP fit) {
   // Declarations
   int n = INTEGER(getListElement(fit, "n"))[0];
   int L = ncols(getListElement(fit, "beta"));
-  int ng = size(getListElement(fit, "group.multiplier"));  
-  int *gm = nrows(getListElement(fit, "group.multiplier"));  
-  double *b = REAL(getListElement(fit, "beta"));
+  int ng = length(getListElement(fit, "group.multiplier"));  
+  double *gm = REAL(getListElement(fit, "group.multiplier"));  
   double *lambda = REAL(getListElement(fit, "lambda"));
   double *df = REAL(getListElement(fit, "df"));
   double *RSS = REAL(getListElement(fit, "loss"));
   double alpha = REAL(getListElement(fit, "alpha"))[0];
-  double *m = REAL(getListElement(fit, "penalty.factor"));
   double tauSq;
   SEXP EF;
   PROTECT(EF = allocVector(REALSXP, L));
@@ -29,9 +27,9 @@ SEXP mfdr_gaussian(SEXP fit) {
   
   // Calculation
   for (int l=0; l<L; l++) {
+    tauSq = RSS[l]/(n-df[l]);
     for (int j=1; j < ng; j++) {
-      tauSq = RSS[l]/(n-df[l]);
-      REAL(EF)[l] += pchisq(n*pow(lambda[l]*gm[j],2.0)*alpha*m[j-1]/tauSq, pow(gm[j], 2.0), 0, 0);
+      REAL(EF)[l] += pchisq(n*pow(lambda[l]*gm[j],2.0)*alpha/tauSq, pow(gm[j], 2.0), 0, 0);
     }
   }
   

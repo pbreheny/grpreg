@@ -54,5 +54,5 @@ print.summary.cv.grpreg <- function(x, digits, ...) {
   cat("  Maximum R-squared: ", formatC(max(x$r.squared), digits[3], format="f"), "\n", sep="")
   cat("  Maximum signal-to-noise ratio: ", formatC(max(x$snr), digits[4], format="f"), "\n", sep="")
   if (x$model == "logistic") cat("  Prediction error at lambda.min: ", formatC(x$pe[x$min], digits[5], format="f"), "\n", sep="")
-  if (x$model == "linear") cat("  Scale estimate (sigma) at lambda.min: ", formatC(sqrt(x$cve[x$min]), digits[5], format="f"), "\n", sep="")
+  #if (x$model == "linear") cat("  Scale estimate (sigma) at lambda.min: ", formatC(sqrt(x$cve[x$min]), digits[5], format="f"), "\n", sep="")
 }

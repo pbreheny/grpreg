@@ -14,7 +14,9 @@ extern SEXP lcdfit_cox(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEX
 extern SEXP lcdfit_gaussian(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP maxgrad(SEXP, SEXP, SEXP, SEXP);
 extern SEXP maxprod(SEXP, SEXP, SEXP, SEXP);
+extern SEXP mfdr_gaussian(SEXP);
 extern SEXP standardize(SEXP);
+
 
 static const R_CallMethodDef CallEntries[] = {
   {"gdfit_glm",                (DL_FUNC) &gdfit_glm,                16},
@@ -25,6 +27,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"lcdfit_gaussian",          (DL_FUNC) &lcdfit_gaussian,          16},
   {"maxgrad",                  (DL_FUNC) &maxgrad,                   4},
   {"maxprod",                  (DL_FUNC) &maxprod,                   4},
+  {"mfdr_gaussian",            (DL_FUNC) &mfdr_gaussian,             1},
   {"standardize",              (DL_FUNC) &standardize,               1},
   {NULL, NULL, 0}
 };
