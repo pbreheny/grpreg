@@ -4,7 +4,7 @@ mfdr <- function(fit, X) {
   if (!inherits(fit, 'grpreg')) stop('"fit" must be an grpreg object', call.=FALSE)
   if (!(fit$penalty == "grLasso" | fit$penalty == "grMCP")) stop('"mFDR" is only avaiable for "grLasso" and "grMCP" penalties', call.=FALSE)
   if (inherits(fit, "ncvsurv") || fit$family == "binomial") {
-    if (!("X" %in% names(fit))) {
+    if (!("XG" %in% names(fit))) {
       stop("The argument 'returnX=TRUE' is needed to calculate mFDR for GLM/Cox models", call.=FALSE)
       if (missing(X)) {
         stop("X must be supplied to calculate mFDR for GLM/Cox models", call.=FALSE)
@@ -23,10 +23,11 @@ mfdr <- function(fit, X) {
     #EF <- .Call("mfdr_cox", fit)
   } else {
     if (fit$family == "binomial") {
-       fit$P <- matrix(nrow = fit$n, ncol = length(fit$lambda))
+       fit$P <- matrix(nrow = length(fit$lambda), ncol = fit$n)
        for(i in 1:length(fit$lambda)){
-         fit$P[,i] <- predict(fit, X = X, lambda = fit$lambda[i], type = "response")  
+         fit$P[i,] <- predict(fit, X = X, lambda = fit$lambda[i], type = "response")  
        }
+       fit$XX <- fit$XG$X
       EF <- .Call("mfdr_binomial", fit)
     } else if (fit$family == "gaussian") {
       EF <- .Call("mfdr_gaussian", fit)
