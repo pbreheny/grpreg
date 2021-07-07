@@ -22,7 +22,7 @@ SEXP mfdr_binomial(SEXP fit) {
   double *gm = REAL(getListElement(fit, "group.multiplier"));
   double *lambda = REAL(getListElement(fit, "lambda"));
   double alpha = REAL(getListElement(fit, "alpha"))[0];
-  double *tauSq = Calloc(ng, double);
+  double *tauSq;
   double *w = Calloc(n, double);
   SEXP EF;
   PROTECT(EF = allocVector(REALSXP, L));
@@ -30,17 +30,21 @@ SEXP mfdr_binomial(SEXP fit) {
   
   // Calculation
   for (int l=0; l<L; l++) {
+
+  // Find W for current lam
     for (int i=0; i<n; i++) {
       w[i] = pi[n*l+i]*(1-pi[n*l+i]);
     }
+  
+  // Find TauSq for each grp
     ck = 0;
     for (int j=0; j < ng; j++) {
-      tauSq[j] = 0;
+      tauSq = 0;
       for (int k=0; k < pow(gm[j], 2.0); k++) {
-        tauSq[j] += wsqsum(X, w, n, ck+k)/n;
-        ck++;
+        tauSq += wsqsum(X, w, n, ck+k)/n;
       }
-      REAL(EF)[l] += pchisq(n*pow(lambda[l]*gm[j]*gm[j], 2.0)*alpha/tauSq[j], pow(gm[j], 2.0), 0, 0);
+      REAL(EF)[l] += pchisq(n*pow(lambda[l]*gm[j]*gm[j], 2.0)*alpha/tauSq, pow(gm[j], 2.0), 0, 0);
+      ck++;
     }
   }
   
