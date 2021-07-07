@@ -22,7 +22,7 @@ SEXP mfdr_binomial(SEXP fit) {
   double *gm = REAL(getListElement(fit, "group.multiplier"));
   double *lambda = REAL(getListElement(fit, "lambda"));
   double alpha = REAL(getListElement(fit, "alpha"))[0];
-  double *tauSq;
+  double tauSq;
   double *w = Calloc(n, double);
   SEXP EF;
   PROTECT(EF = allocVector(REALSXP, L));
