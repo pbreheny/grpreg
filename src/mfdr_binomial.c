@@ -16,13 +16,12 @@ SEXP mfdr_binomial(SEXP fit) {
   int n = INTEGER(getListElement(fit, "n"))[0];
   int L = ncols(getListElement(fit, "beta"));
   int ng = length(getListElement(fit, "group.multiplier"));  
-  int ck;
   double *pi = REAL(getListElement(fit, "P")); 
   double *X = REAL(getListElement(fit, "XX"));
   double *gm = REAL(getListElement(fit, "group.multiplier"));
   double *lambda = REAL(getListElement(fit, "lambda"));
   double alpha = REAL(getListElement(fit, "alpha"))[0];
-  double tauSq;
+  double *tauSq = Calloc(ng, double);
   double *w = Calloc(n, double);
   SEXP EF;
   PROTECT(EF = allocVector(REALSXP, L));
@@ -33,18 +32,19 @@ SEXP mfdr_binomial(SEXP fit) {
     for (int i=0; i<n; i++) {
       w[i] = pi[n*l+i]*(1-pi[n*l+i]);
     }
-    ck = 0;
+    int ck=0;
     for (int j=0; j < ng; j++) {
-      tauSq = 0;
+      tauSq[j] = 0;
       for (int k=0; k < pow(gm[j], 2.0); k++) {
-        tauSq += wsqsum(X, w, n, ck+k)/n;
+        tauSq[j] += wsqsum(X, w, n, ck+k)/n;
         ck++;
       }
-      REAL(EF)[l] += pchisq(n*pow(lambda[l]*gm[j]*gm[j], 2.0)*alpha/tauSq, pow(gm[j], 2.0), 0, 0);
+      REAL(EF)[l] += pchisq(n*pow(lambda[l]*gm[j]*gm[j], 2.0)*alpha/tauSq[j], pow(gm[j], 2.0), 0, 0);
     }
   }
   
   // Return
+  Free(tauSq);
   Free(w);
   UNPROTECT(1);
   return(EF);
