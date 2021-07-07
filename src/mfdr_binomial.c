@@ -36,7 +36,7 @@ SEXP mfdr_binomial(SEXP fit) {
       w[i] = pi[n*l+i]*(1-pi[n*l+i]);
     }
   
-  // Find TauSq for each grp
+  // Find EF contrib of each grp
     ck = 0;
     for (int j=0; j < ng; j++) {
       tauSq = 0;
@@ -49,7 +49,6 @@ SEXP mfdr_binomial(SEXP fit) {
   }
   
   // Return
-  Free(tauSq);
   Free(w);
   UNPROTECT(1);
   return(EF);
