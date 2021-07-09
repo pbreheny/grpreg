@@ -26,7 +26,7 @@ gamma=0.5, group.multiplier, warn=TRUE)
     penalties in \code{grpreg}, it is not possible to solve for
     \code{lambda.max} directly with group bridge models.  Thus, it must
     be specified by the user.  If it is not specified, \code{gBridge}
-    will attempt a guess at \code{lambda.max}, but this is not
+    will attempt to guess \code{lambda.max}, but this is not
     particularly accurate.}
   \item{alpha}{Tuning parameter for the balance between the group
     penalty and the L2 penalty, as in \code{grpreg}.}
@@ -50,7 +50,7 @@ gamma=0.5, group.multiplier, warn=TRUE)
   differentiable at zero; because of this, a number of changes must be
   made to the algorithm, which is why it has its own function.  Most
   notably, the method is unable to start at \code{lambda.max}; it must
-  start at \code{lambda.max} and proceed in the opposite direction.
+  start at \code{lambda.min} and proceed in the opposite direction.
 
   In other respects, the usage and behavior of the function is similar
   to the rest of the \code{grpreg} package.
@@ -61,6 +61,7 @@ gamma=0.5, group.multiplier, warn=TRUE)
   \itemize{
     \item Huang J, Ma S, Xie H, and Zhang C. (2009) A group bridge
     approach for variable selection.  \emph{Biometrika}, \strong{96}:
+<<<<<<< HEAD
     339-355. \doi{10.1093/biomet/asp020}
     
     \item Breheny P and Huang J. (2009) Penalized methods for bi-level
@@ -68,6 +69,13 @@ gamma=0.5, group.multiplier, warn=TRUE)
     369-380. \doi{10.4310/sii.2009.v2.n3.a10}
   }
 }
+=======
+    339-355.
+    \item Breheny P and Huang J. (2009) Penalized methods for
+    bi-level variable selection.  \emph{Statistics and its interface},
+    \strong{2}: 369-380.
+    }}
+>>>>>>> additive-models
 \author{Patrick Breheny}
 \seealso{\code{\link{grpreg}}}
 \examples{
@@ -79,11 +87,11 @@ group <- Birthwt$group
 y <- Birthwt$bwt
 fit <- gBridge(X, y, group)
 plot(fit)
-select(fit)
+select(fit)$beta
 
 ## Logistic regression
 y <- Birthwt$low
 fit <- gBridge(X, y, group, family="binomial")
 plot(fit)
-select(fit)
+select(fit)$beta
 }

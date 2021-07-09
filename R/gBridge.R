@@ -1,4 +1,4 @@
-gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poisson"), nlambda=100, lambda,
+gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian", "binomial", "poisson"), nlambda=100, lambda,
                     lambda.min={if (nrow(X) > ncol(X)) .001 else .05}, lambda.max, alpha=1, eps=.001, delta=1e-7,
                     max.iter=10000, gamma=0.5, group.multiplier, warn=TRUE, returnX=FALSE, ...) {
   # Error checking
@@ -30,15 +30,17 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian","binomial","poiss
   if (family=="gaussian") {
     fit <- .Call("lcdfit_gaussian", XG$X, yy, "gBridge", K1, K0, lambda, alpha, eps, delta, gamma, 0, as.integer(max.iter), as.double(XG$m), as.integer(p), as.integer(max(XG$g)), as.integer(TRUE))
     b <- rbind(mean(y), matrix(fit[[1]], nrow=p))
-    iter <- fit[[2]]
-    df <- fit[[3]] + 1 # Intercept
-    loss <- fit[[4]]
+    loss <- fit[[2]]
+    Eta <- matrix(fit[[3]], nrow=n) + mean(y)
+    df <- fit[[4]] + 1 # Intercept
+    iter <- fit[[5]]
   } else {
     fit <- .Call("lcdfit_glm", XG$X, yy, family, "gBridge", K1, K0, lambda, alpha, eps, delta, gamma, 0, as.integer(max.iter), as.double(XG$m), as.integer(p), as.integer(max(XG$g)), as.integer(warn), as.integer(TRUE))
     b <- rbind(fit[[1]], matrix(fit[[2]], nrow=p))
-    iter <- fit[[3]]
-    df <- fit[[4]]
-    loss <- fit[[5]]
+    loss <- fit[[3]]
+    Eta <- matrix(fit[[4]], nrow=n)
+    df <- fit[[5]]
+    iter <- fit[[6]]
   }
 
   # Eliminate saturated lambda values, if any

@@ -4,7 +4,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
   fit.args <- list(...)
   fit.args$X <- X
   fit.args$y <- y
-  fit.args$group <- group
+  if (!inherits(X, "expandedMatrix")) fit.args$group <- group
   fit.args$returnX <- TRUE
   if (gBridge) {
     fit <- do.call("gBridge", fit.args)
@@ -12,7 +12,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
     fit <- do.call("grpreg", fit.args)
   }
 
-  # Get standardized X, y
+  # Get y, standardized X
   XG <- fit$XG
   X <- XG$X
   y <- fit$y

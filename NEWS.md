@@ -1,3 +1,6 @@
+# grpreg 3.4.0 (in development)
+  * Changed: fit$y now returns original y, not centered y
+
 # grpreg 3.3.1 (2021-03-26)
   * Fixed: AUC() now compatible with survival 3.2.10
   * Internal: Fixed memory leak

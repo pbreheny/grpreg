@@ -1,0 +1,77 @@
+---
+title: "Additive models"
+author: "Patrick Breheny"
+---
+  
+```{r setup, include=FALSE}
+library(grpreg)
+knitr::opts_knit$set(aliases=c(h = 'fig.height', w = 'fig.width'))
+knitr::opts_chunk$set(comment="#", collapse=TRUE, cache=FALSE, tidy=FALSE)
+knitr::knit_hooks$set(small.mar = function(before, options, envir) {
+  if (before) par(mar = c(4, 4, .1, .1))
+})
+```
+
+Starting in version 3.4, **grpreg** offers an interface for setting up, fitting, and visualizing additive models. Numeric features are automatically expanded using spline basis functions. The basic idea was first proposed by [Ravikumar et al. (2009)](https://doi.org/10.1111/j.1467-9868.2009.00718.x), who called it SPAM, for sparse additive models. The original proposal involved the group lasso penalty, but any of **grpreg**'s penalty functions can be used instead. The basic usage is illustrated below.
+
+Let's start by generating some nonlinear data:
+
+```{r gen_data}
+Data <- gen_nonlinear_data(n=1000)
+Data$X[1:5, 1:5]
+dim(Data$X)
+```
+
+The matrix `Data$X` contains 16 numeric features, named `V01`, `V02`, and so on. Each of those features can be expanded via the `expand_spline()` function:
+
+```{r expand}
+X <- expand_spline(Data$X)
+X$X[1:5, 1:5]
+dim(X$X)
+head(X$group)
+```
+
+The resulting object is a list that contains the expanded matrix `X$X` and the group assignments `X$group`, along with some metadata needed by internal functions. Note that `X$X` now contains 48 columns -- each of the 16 numeric features (`V01`) has been expanded into a 3-column matrix (`V01_1`, `V01_2`, and `V01_3`). By default, `expand_spline()` uses natural cubic splines with three degrees of freedom, but consult its documentation for additional options.
+
+This expanded matrix can now be passed to `grpreg()`:
+
+```{r fit}
+fit <- grpreg(X, Data$y)
+```
+
+Note that it is not necessary to pass grouping information in this case, as it is contained with the `X` object. At this point, all of the usual tools `coef()`, `predict()`, etc., can be used, as well as `plot.grpreg()`. However, **grpreg** also offers a function, `plot_spline()`, specific to additive models:
+
+```{r plot}
+plot_spline(fit, "V02", lambda = 0.03)
+```
+
+Partial residuals can be included in these plots as well:
+
+```{r plot_partial}
+plot_spline(fit, "V02", lambda = 0.03, partial=TRUE)
+```
+
+By default, these plots are centered such that at the mean of $$x$$ (where $$x$$ denotes the feature being plotted), the $$y$$ value is zero. Alternatively, if `type="conditional"` is specified, `plot_spline()` will construct a plot in which the vertical axis represents model predictions as $$x$$ varies and all other features are fixed at their mean value:
+
+```{r plot_conditional}
+plot_spline(fit, "V02", lambda = 0.03, partial=TRUE, type='conditional')
+```
+
+In comparing these two plots, note that the general contours are the same; the only difference is the value of the vertical axis. Here are the plots for the first 9 coefficients:
+
+```{r plot_all_6}
+op <- par(mfrow=c(3,3), mar=c(4.5, 4.5, 0.25, 0.25))
+for (i in 1:9) plot_spline(fit, sprintf("V%02d", i), lambda = 0.03, partial=TRUE, warn=FALSE)
+par(op)
+```
+
+In the generating model, variables 3 and 4 had a linear relationship with the outcome, variables 1, 2, 5, and 6 had nonlinear relationships, and all other variables were unrelated. The sparse additive model has captured this nicely.
+
+These tools work with cross-validation as one would expect (by default plotting the fit that minimizes cross-validation error):
+
+```{r cvfit}
+cvfit <- cv.grpreg(X, Data$y)
+plot_spline(cvfit, "V02", partial=TRUE)
+```
+
+Finally, these tools work with survival and glm models as well. Here, all plots are returned on the linear predictor scale, and the residuals are deviance residuals.

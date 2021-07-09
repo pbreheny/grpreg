@@ -59,8 +59,8 @@ SEXP gdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0_
   // Pointers
   double *X = REAL(X_);
   double *y = REAL(y_);
-  const char *penalty = CHAR(STRING_ELT(penalty_, 0));
   const char *family = CHAR(STRING_ELT(family_, 0));
+  const char *penalty = CHAR(STRING_ELT(penalty_, 0));
   int *K1 = INTEGER(K1_);
   int K0 = INTEGER(K0_)[0];
   double *lam = REAL(lambda);
@@ -76,20 +76,22 @@ SEXP gdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0_
   int user = INTEGER(user_)[0];
 
   // Outcome
-  SEXP res, beta0, beta, iter, df, Dev;
-  PROTECT(res = allocVector(VECSXP, 5));
+  SEXP res, beta0, beta, Dev, Eta, df, iter;
+  PROTECT(res = allocVector(VECSXP, 6));
   PROTECT(beta0 = allocVector(REALSXP, L));
   for (int i=0; i<L; i++) REAL(beta0)[i] = 0;
+  double *b0 = REAL(beta0);
   PROTECT(beta = allocVector(REALSXP, L*p));
   for (int j=0; j<(L*p); j++) REAL(beta)[j] = 0;
-  PROTECT(iter = allocVector(INTSXP, L));
-  for (int i=0; i<L; i++) INTEGER(iter)[i] = 0;
-  PROTECT(df = allocVector(REALSXP, L));
-  for (int i=0; i<L; i++) REAL(df)[i] = 0;
+  double *b = REAL(beta);
   PROTECT(Dev = allocVector(REALSXP, L));
   for (int i=0; i<L; i++) REAL(Dev)[i] = 0;
-  double *b0 = REAL(beta0);
-  double *b = REAL(beta);
+  PROTECT(Eta = allocVector(REALSXP, L*n));
+  for (int j=0; j<(L*n); j++) REAL(Eta)[j] = 0;
+  PROTECT(df = allocVector(REALSXP, L));
+  for (int i=0; i<L; i++) REAL(df)[i] = 0;
+  PROTECT(iter = allocVector(INTSXP, L));
+  for (int i=0; i<L; i++) INTEGER(iter)[i] = 0;
 
   // Intermediate quantities
   double a0 = 0; // Beta0 from previous iteration
@@ -106,10 +108,10 @@ SEXP gdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0_
   // Initialization
   double ybar = sum(y, n)/n;
   double nullDev = 0;
-  if (strcmp(family, "binomial")==0) {
+  if (strcmp(family, "binomial") == 0) {
     a0 = b0[0] = log(ybar/(1-ybar));
     for (int i=0; i<n; i++) nullDev -= 2*y[i]*log(ybar) + 2*(1-y[i])*log(1-ybar);
-  } else if (strcmp(family, "poisson")==0) {
+  } else if (strcmp(family, "poisson") == 0) {
     a0 = b0[0] = log(ybar);
     for (int i=0;i<n;i++) {
       if (y[i]!=0) nullDev += 2*(y[i]*log(y[i]/ybar) + ybar - y[i]);
@@ -118,7 +120,7 @@ SEXP gdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0_
   }
   for (int i=0; i<n; i++) eta[i] = a0;
 
-  // If lam[0]=lam_max, skip lam[0] -- closed form sol'n available
+  // If lam[0]=lam_max, skip lam[0] -- closed form solution available
   if (user) {
     lstart = 0;
   } else {
@@ -174,7 +176,7 @@ SEXP gdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0_
         }
 
         // Check for saturation
-        if (REAL(Dev)[l]/nullDev < .01) {
+        if (REAL(Dev)[l]/nullDev < 0.01) {
           if (warn) warning("Model saturated; exiting...");
           for (int ll=l; ll<L; ll++) INTEGER(iter)[ll] = NA_INTEGER;
           tot_iter = max_iter;
@@ -231,7 +233,10 @@ SEXP gdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0_
         }
       }
 
-      if (violations==0) break;
+      if (violations==0) {
+        for (int i=0; i<n; i++) REAL(Eta)[n*l+i] = eta[i];
+        break;
+      }
       a0 = b0[l];
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }
@@ -242,9 +247,10 @@ SEXP gdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0_
   Free(eta);
   SET_VECTOR_ELT(res, 0, beta0);
   SET_VECTOR_ELT(res, 1, beta);
-  SET_VECTOR_ELT(res, 2, iter);
-  SET_VECTOR_ELT(res, 3, df);
-  SET_VECTOR_ELT(res, 4, Dev);
-  UNPROTECT(6);
+  SET_VECTOR_ELT(res, 2, Dev);
+  SET_VECTOR_ELT(res, 3, Eta);
+  SET_VECTOR_ELT(res, 4, df);
+  SET_VECTOR_ELT(res, 5, iter);
+  UNPROTECT(7);
   return(res);
 }

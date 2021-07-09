@@ -20,6 +20,20 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   if (nlambda < 2) stop("nlambda must be at least 2", call.=FALSE)
   if (alpha > 1 | alpha <= 0) stop("alpha must be in (0, 1]", call.=FALSE)
 
+  # Check for expandedMatix
+  if(inherits(X, "expandedMatrix")) {
+    expanded <- TRUE
+    group <- X$group
+    knots <- X$knots
+    boundary <- X$boundary
+    degree <- X$degree
+    originalx <- X$originalx
+    type <- X$type
+    X <- X$X
+  } else {
+    expanded <- FALSE
+  }
+  
   # Construct XG, Y
   bilevel <- strtrim(penalty, 2) != "gr"
   Y <- newS(y)
@@ -51,7 +65,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   b <- matrix(res[[1]], p, nlambda)
   iter <- res[[2]]
   df <- res[[3]]
-  loss <- -1*res[[4]]
+  loss <- -2*res[[4]]
   Eta <- matrix(res[[5]], n, nlambda)
 
   # Eliminate saturated lambda values, if any
@@ -61,6 +75,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   lambda <- lambda[ind]
   df <- df[ind]
   loss <- loss[ind]
+  Eta <- Eta[, ind]
   if (iter[1] == max.iter) stop("Algorithm failed to converge for any values of lambda.  This indicates a combination of (a) an ill-conditioned feature matrix X and (b) insufficient penalization.  You must fix one or the other for your model to be identifiable.", call.=FALSE)
   if (warn & any(iter==max.iter)) warning("Algorithm failed to converge for all values of lambda", call.=FALSE)
 
@@ -72,10 +87,11 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
 
   # Names
   dimnames(beta) <- list(XG$names, round(lambda, digits=4))
+  colnames(Eta) <- round(lambda, digits=4)
 
   # Output
   val <- structure(list(beta = beta,
-                        group = group,
+                        group = factor(group),
                         lambda = lambda,
                         penalty = penalty,
                         gamma = gamma,
@@ -87,10 +103,18 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
                         group.multiplier = XG$m,
                         time = Y$time,
                         fail = Y$fail,
-                        W = exp(Eta)),
+                        order = Y$ind,
+                        linear.predictors = sweep(Eta, 2, colMeans(Eta), '-')),
                    class = c("grpsurv", "grpreg"))
-  if (returnX) {
-    val$XG <- XG
+  if (returnX) val$XG <- XG
+  if (expanded) {
+    val$meta <- list(knots = knots,
+                     boundary = boundary,
+                     degree = degree,
+                     originalx = originalx,
+                     type = type,
+                     X = X)
+    attr(val, "class") <- c("grpsurv", "grpreg", "expanded")
   }
   val
 }

@@ -20,7 +20,10 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
   }
   if (d == 2) {
     if (type=="vars") return(drop(apply(beta!=0, 2, FUN=which)))
-    if (type=="groups") return(drop(apply(beta!=0, 2, function(x) unique(object$group[x]))))
+    if (type=="groups") {
+      if (ncol(beta) == 1) return(unique(object$group[beta != 0]))
+      else return(drop(apply(beta!=0, 2, function(x) unique(object$group[x]))))
+    }
     if (type=="nvars") {
       v <- drop(apply(beta!=0, 2, FUN=which))
       if (is.list(v)) {
@@ -41,6 +44,7 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
     }
     if (type=="norm") return(drop(apply(beta, 2, function(x) tapply(x, object$group, function(x){sqrt(sum(x^2))}))))
     if (missing(X) | is.null(X)) stop("Must supply X", call.=FALSE)
+    if (inherits(object, "expanded")) X <- predict_spline(object, X)
     eta <- sweep(X %*% beta, 2, alpha, "+")
     if (object$family=="gaussian" & type=="class") stop("type='class' is not applicable for family='gaussian'", call.=FALSE)
     if (object$family=="gaussian" | type=="link") return(drop(eta))
@@ -57,7 +61,7 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
     }
   } else {
     if (type=="vars") stop("Predicting type 'vars' not implemented with multivariate outcomes", call.=FALSE)
-    if (type=="groups") return(drop(apply(beta, 3, function(x){which(apply(x!=0, 2, any))})))
+    if (type=="groups") return(drop(apply(beta, 3, function(x) which(apply(x!=0, 2, any)))))
     if (type=="norm") return(drop(apply(beta, 3, function(x) apply(x, 2, function(x){sqrt(sum(x^2))}))))
     if (type=="nvars") {
       return(drop(apply(beta!=0, 3, FUN=sum)))
@@ -86,6 +90,7 @@ predict.grpreg <- function(object, X, type=c("link", "response", "class", "coeff
 }
 coef.grpreg <- function(object, lambda, which=1:length(object$lambda), drop=TRUE, ...) {
   if (!missing(lambda)) {
+    if (any(lambda > max(object$lambda) | lambda < min(object$lambda))) stop('lambda must lie within the range of the fitted coefficient path', call.=FALSE)
     ind <- approx(object$lambda, seq(object$lambda), lambda)$y
     l <- floor(ind)
     r <- ceiling(ind)

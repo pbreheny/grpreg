@@ -20,5 +20,5 @@ logLik.grpsurv <- function(object, df.method=c("default","active"), ...) {
   df.method <- match.arg(df.method)
   n <- as.integer(object$n)
   df <- if (df.method=="active") apply(coef(object)!=0, 2, sum) else object$df
-  structure(-1*object$loss, df=df, nobs=n, class='logLik')
+  structure(-object$loss/2, df=df, nobs=n, class='logLik')
 }
