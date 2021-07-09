@@ -4,7 +4,9 @@ Version: 3.3.0.3
 Date: 2020-08-24
 Authors@R: c(
   person("Patrick", "Breheny", role=c("aut","cre"), email="patrick-breheny@uiowa.edu", comment=c(ORCID="0000-0002-0650-1119")),
-  person("Yaohui", "Zeng", role="ctb"))
+  person("Yaohui", "Zeng", role="ctb"),
+  person("Ryan", "Kurth", role="ctb"),
+  )
 Depends: R (>= 3.1.0)
 Imports: Matrix
 Suggests: knitr, rmarkdown, splines, survival, tinytest

@@ -54,25 +54,25 @@ expand_spline <- function(x, df = 3, degree = 3, type = c("ns", "bs")) {
       knots[[i+1]] <- attr(bs, "knots")
     }
   }
-  else if(type == "ns"){
-    for(i in 0:(p-1)){
+  else if (type == "ns") {
+    for (i in 0:(p-1)) {
       ns <- splines::ns(x[,i+1], df = df)
       finalx[,(df*i+1):(df*i+df)] <- ns
       boundary[[i+1]] <- attr(ns, "Boundary.knots")
       knots[[i+1]] <- attr(ns, "knots")
     }
   }
-  else{
+  else {
     stop(paste(type, "is not a valid type"), call. = FALSE)
   }
   
-  if(length(colnames(x)) == p){
+  if (length(colnames(x)) == p) {
     groups <- rep(colnames(x), each = df)
-    colnames(finalx) <- paste0(groups, 1:df)
+    colnames(finalx) <- paste(groups, 1:df, sep='_')
   }
-  else{
+  else {
     groups <- rep(paste0("V", 1:p), each = df)
-    colnames(finalx) <- paste(groups, 1:df, sep = "_")
+    colnames(finalx) <- paste(groups, 1:df, sep="_")
   }
   
   return(structure(list(X = finalx, 
