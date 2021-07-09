@@ -8,7 +8,7 @@
 gBridge(X, y, group=1:ncol(X), family=c("gaussian", "binomial",
 "poisson"), nlambda=100, lambda, lambda.min={if (nrow(X) > ncol(X)) .001
 else .05}, lambda.max, alpha=1, eps=.001, delta=1e-7, max.iter=10000,
-gamma=0.5, group.multiplier, warn=TRUE)
+gamma=0.5, group.multiplier, warn=TRUE, returnX=FALSE, ...)
 }
 \arguments{
   \item{X}{The design matrix, as in \code{grpreg}.}
@@ -43,6 +43,9 @@ gamma=0.5, group.multiplier, warn=TRUE)
     group's penalty is to be multiplied, as in \code{grpreg}.}
   \item{warn}{Should the function give a warning if it fails to
     converge?  As in \code{grpreg}.}
+  \item{returnX}{Return the standardized design matrix (and associated
+    group structure information)?  Default is FALSE.}
+  \item{...}{Not used.}
 }
 \details{
   This method fits the group bridge method of Huang et al. (2009).
@@ -61,7 +64,6 @@ gamma=0.5, group.multiplier, warn=TRUE)
   \itemize{
     \item Huang J, Ma S, Xie H, and Zhang C. (2009) A group bridge
     approach for variable selection.  \emph{Biometrika}, \strong{96}:
-<<<<<<< HEAD
     339-355. \doi{10.1093/biomet/asp020}
     
     \item Breheny P and Huang J. (2009) Penalized methods for bi-level
@@ -69,13 +71,6 @@ gamma=0.5, group.multiplier, warn=TRUE)
     369-380. \doi{10.4310/sii.2009.v2.n3.a10}
   }
 }
-=======
-    339-355.
-    \item Breheny P and Huang J. (2009) Penalized methods for
-    bi-level variable selection.  \emph{Statistics and its interface},
-    \strong{2}: 369-380.
-    }}
->>>>>>> additive-models
 \author{Patrick Breheny}
 \seealso{\code{\link{grpreg}}}
 \examples{

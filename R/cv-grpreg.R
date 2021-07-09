@@ -1,4 +1,4 @@
-cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY=FALSE, trace=FALSE, gBridge=FALSE) {
+cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY=FALSE, trace=FALSE) {
 
   # Complete data fit
   fit.args <- list(...)
@@ -6,7 +6,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
   fit.args$y <- y
   if (!inherits(X, "expandedMatrix")) fit.args$group <- group
   fit.args$returnX <- TRUE
-  if (gBridge) {
+  if ('penalty' %in% names(fit.args) && fit.args$penalty == 'gBridge') {
     fit <- do.call("gBridge", fit.args)
   } else {
     fit <- do.call("grpreg", fit.args)
@@ -58,7 +58,6 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
   cv.args$group <- XG$g
   cv.args$group.multiplier <- XG$m
   cv.args$warn <- FALSE
-  cv.args$gBridge <- gBridge
   for (i in 1:nfolds) {
     if (trace) cat("Starting CV fold #", i, sep="","\n")
     res <- cvf(i, X, y, fold, cv.args)
@@ -90,7 +89,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
 cvf <- function(i, X, y, fold, cv.args) {
   cv.args$X <- X[fold!=i, , drop=FALSE]
   cv.args$y <- y[fold!=i]
-  if (cv.args$gBridge) {
+  if ('penalty' %in% names(cv.args) && cv.args$penalty == 'gBridge') {
     fit.i <- do.call("gBridge", cv.args)
   } else {
     fit.i <- do.call("grpreg", cv.args)
