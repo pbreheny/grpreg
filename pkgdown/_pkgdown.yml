@@ -19,6 +19,8 @@ navbar:
         href: articles/web/models.html
       - text: Penalties
         href: articles/web/penalties.html
+      - text: Additive models
+        href: articles/web/additive-models.html
     - text: Functions
       href: reference/index.html
     - text: News
