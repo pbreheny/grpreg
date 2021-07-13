@@ -24,7 +24,7 @@ residuals.grpreg <- function(object, lambda, which=1:length(object$lambda), drop
   if (inherits(object, 'grpsurv')) {
     for (j in 1:length(object$lambda)) {
       H <- suppressWarnings(predict(object, which=j, type='hazard'))
-      M <- object$fail - H(object$time) * exp(object$linear.predictors)
+      M <- object$fail - H(object$stop_time) * exp(object$linear.predictors)
       R <- sign(M) * sqrt(-2*(M + object$fail*log(object$fail-M)))
       R <- R[match(1:object$n, object$order),]  # Return in original order
     }
