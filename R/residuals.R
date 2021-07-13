@@ -23,9 +23,10 @@ residuals.grpreg <- function(object, lambda, which=1:length(object$lambda), drop
   # Calculate matrix of residuals
   if (inherits(object, 'grpsurv')) {
     for (j in 1:length(object$lambda)) {
-      H <- suppressWarnings(predict(object, which=j, type='hazard'))
-      M <- object$fail - H(object$time) * exp(object$linear.predictors)
+      h <- suppressWarnings(predict(object, which=j, type='hazard')(object$time))
+      M <- object$fail - h * exp(object$linear.predictors)
       R <- sign(M) * sqrt(-2*(M + object$fail*log(object$fail-M)))
+      R[h==0,] <- 0
       R <- R[match(1:object$n, object$order),]  # Return in original order
     }
   } else if (object$family == 'gaussian') {
