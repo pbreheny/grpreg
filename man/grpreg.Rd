@@ -114,10 +114,13 @@ tau = 1/3, group.multiplier, warn=TRUE, returnX = FALSE, ...)
     P(\beta, \lambda),}
   where the loss function L is the deviance (-2 times the log
   likelihood) for the specified outcome distribution
-  (gaussian/binomial/poisson).
-  \href{https://pbreheny.github.io/ncvreg/articles/web/models.html}{See
-    here for more details}.
-
+  (gaussian/binomial/poisson). For more details, refer to the following:
+  \itemize{
+    \item
+    \href{https://pbreheny.github.io/grpreg/articles/web/models.html}{Models and loss functions}
+    \item \href{https://pbreheny.github.io/grpreg/articles/web/penalties.html}{Penalties}
+  }
+  
   For the bi-level selection methods, a locally approximated coordinate
   descent algorithm is employed.  For the group selection methods, group
   descent algorithms are employed.

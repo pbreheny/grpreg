@@ -1,12 +1,15 @@
 setupLambda <- function(X, y, group, family, penalty, alpha, lambda.min, log.lambda, nlambda, group.multiplier) {
-  ## Fit to unpenalized covariates
+  
+  # Fit to unpenalized covariates
   n <- length(y)
   K <- table(group)
   K1 <- if (min(group)==0) cumsum(K) else c(0, cumsum(K))
   storage.mode(K1) <- "integer"
   if (K1[1]!=0) {
     fit <- glm(y~X[, group==0], family=family)
-  } else fit <- glm(y~1, family=family)
+  } else {
+    fit <- glm(y~1, family=family)
+  }
 
   ## Determine lambda.max
   if (family=="gaussian") {

@@ -19,6 +19,7 @@ setupG <- function(group, m, bilevel) {
     if (inherits(TRY, 'try-error') || any(!TRY)) stop('Attempting to set group.multiplier is ambiguous if group is not a factor', call.=FALSE)
     if (length(m) != length(lev)) stop("Length of group.multiplier must equal number of penalized groups", call.=FALSE)
     if (storage.mode(m) != "double") storage.mode(m) <- "double"
+    if (any(m < 0)) stop('group.multiplier cannot be negative', call.=FALSE)
   }
   structure(g, levels=lev, m=m)
 }
