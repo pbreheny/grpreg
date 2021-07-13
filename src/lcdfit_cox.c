@@ -133,7 +133,7 @@ int gLCD_cCheck(double *b, const char *penalty, double *X, double *r, double *et
   return(violations);
 }
 
-SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
+SEXP lcdfit_cox(SEXP X_, SEXP start_, SEXP start_o_, SEXP stop_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
                 SEXP lambda, SEXP alpha_, SEXP eps_, SEXP delta_, SEXP gamma_,
                 SEXP tau_, SEXP max_iter_, SEXP group_multiplier, SEXP dfmax_,
                 SEXP gmax_, SEXP warn_, SEXP user_) {
@@ -146,6 +146,9 @@ SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
 
   // Pointers
   double *X = REAL(X_);
+  double *start_time = REAL(start_);
+  double *start_o = REAL(start_o_);
+  double *stop_time = REAL(stop_);
   double *d = REAL(d_);
   const char *penalty = CHAR(STRING_ELT(penalty_, 0));
   int *K1 = INTEGER(K1_);
@@ -191,7 +194,9 @@ SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
   for (int j=0; j<p; j++) e[j] = 0;
   int lstart, ng, nv, violations;
   double shift, l1, l2, nullDev, u, v, s, xwr, xwx, maxChange;
-
+  double current_sum;
+  int start_idx, stop_idx, ss;
+  
   // Initialization
   rsk[n-1] = 1;
   for (int i=n-2; i>=0; i--) rsk[i] = rsk[i+1] + 1;
@@ -255,6 +260,19 @@ SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
         rsk[n-1] = haz[n-1];
         for (int i=n-2; i>=0; i--) {
           rsk[i] = rsk[i+1] + haz[i];
+        }
+        current_sum = 0;
+        start_idx = n;
+        stop_idx = n;
+        while(start_idx>0 && stop_idx>0){
+          ss = start_o[start_idx];
+          if(start_time[ss] < stop_time[stop_idx]){
+            rsk[stop_idx] = rsk[stop_idx] - current_sum;
+            stop_idx = stop_idx - 1;
+          }else{
+            current_sum = current_sum + haz[ss];
+            start_idx = start_idx - 1;
+          }
         }
         for (int i=0; i<n; i++) {
           REAL(Loss)[l] += d[i]*eta[i] - d[i]*log(rsk[i]);

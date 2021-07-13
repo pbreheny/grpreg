@@ -1,4 +1,4 @@
-setupLambdaCox <- function(X, y, Delta, group, penalty, alpha, lambda.min, nlambda, group.multiplier) {
+setupLambdaCox <- function(X, y, group, penalty, alpha, lambda.min, nlambda, group.multiplier) {
   n <- nrow(X)
   p <- ncol(X)
 
@@ -8,13 +8,26 @@ setupLambdaCox <- function(X, y, Delta, group, penalty, alpha, lambda.min, nlamb
   if (K1[1]!=0) {
     SURV <- get("Surv", asNamespace("survival"))
     COXPH <- get("coxph", asNamespace("survival"))
-    nullFit <- COXPH(SURV(y, Delta) ~ X[, group==0, drop=FALSE])
+    nullFit <- COXPH(SURV(y$start_time, y$stop_time, y$fail) ~ X[, group==0, drop=FALSE])
     eta <- nullFit$linear.predictors
     rsk <- rev(cumsum(rev(exp(eta))))
-    s <- Delta - exp(eta)*cumsum(Delta/rsk)
+    current_sum = 0
+    start_idx = n
+    stop_idx = n
+    start_o = order(y[,1])
+    while(start_idx>0 && stop_idx >0){
+      if(y[start_o[start_idx],1]<y[ind[stop_idx],2]){
+        rsk[stop_idx] = rsk[stop_idx] - current_sum
+        stop_idx = stop_idx - 1
+      }else{
+        current_sum = current_sum + exp(eta[start_o[start_idx]])
+        start_idx = start_idx - 1
+      }
+    }
+    s <- y$fail - exp(eta)*cumsum(y$fail/rsk)
   } else {
     w <- 1/(n-(1:n)+1)
-    s <- Delta - cumsum(Delta*w)
+    s <- y$fail - cumsum(y$fail*w)
   }
 
   ## Determine lambda.max
