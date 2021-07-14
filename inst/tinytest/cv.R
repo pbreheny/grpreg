@@ -1,4 +1,4 @@
-.test = "Cross-validation: gaussian"
+# Gaussian
 n <- 50
 group <- rep(0:4,5:1)
 p <- length(group)
@@ -9,7 +9,7 @@ cvfit <- cv.grpreg(X, y, group, penalty='gel')
 cvfit <- cv.grpreg(X, y, group, penalty='grLasso', fold=1:50)
 cvfit <- cv.grpreg(X, y, group, penalty='gel', fold=1:50)
 
-.test = "Cross-validation: binomial"
+# Binomial
 n <- 50
 group <- rep(0:3,4:1)
 p <- length(group)
@@ -20,7 +20,7 @@ cvfit <- cv.grpreg(X, y, group, family='binomial', penalty='gel')
 cvfit <- cv.grpreg(X, y, group, family='binomial', penalty='grLasso', fold=1:50)
 cvfit <- cv.grpreg(X, y, group, family='binomial', penalty='gel', fold=1:50)
 
-.test = "Cross-validation: poisson"
+# Poisson
 n <- 50
 group <- rep(0:3,4:1)
 p <- length(group)
@@ -31,7 +31,7 @@ cvfit <- cv.grpreg(X, y, group, family='poisson', penalty='gel')
 cvfit <- cv.grpreg(X, y, group, family='poisson', penalty='grLasso', fold=1:50)
 cvfit <- cv.grpreg(X, y, group, family='poisson', penalty='gel', fold=1:50)
 
-.test = "Cross-validation: multitask learning"
+# Multitask learning
 n <- 50
 p <- 10
 m <- 4
@@ -43,7 +43,7 @@ Y <- matrix(rnorm(n*m), ncol=m) > 0
 cvfit <- cv.grpreg(X, Y, family='binomial')
 cvfit <- cv.grpreg(X, Y, family='binomial', nfolds=50)
 
-.test = "Cross-validation: p > n"
+# p > n
 n <- 75
 p <- 200
 X <- matrix(rnorm(n*p), n, p)
@@ -53,3 +53,14 @@ g <- rep(LETTERS[1:20], each=10)
 cvfit <- cv.grpreg(X, y, group=g)
 cvfit <- cv.grpreg(X, y>0, group=g, family='binomial')
 cvfit <- cv.grpreg(X, y, group=g, family='poisson')
+
+# summary
+set.seed(4)
+n <- 75
+p <- 200
+X <- matrix(rnorm(n*p), n, p)
+y <- rpois(n, 1)
+g <- rep(LETTERS[1:20], each=10)
+cvfit <- cv.grpreg(X, y, group=g)
+s <- summary(cvfit)
+expect_equivalent(s$ngroups[1], 0)

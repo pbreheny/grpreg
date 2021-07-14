@@ -88,3 +88,4 @@ grpreg:::loss.grpsurv(y, eta, total=FALSE)
 cvfit <- cv.grpsurv(X, y, g, lambda.min=0)
 plot(cvfit)
 summary(cvfit)
+
