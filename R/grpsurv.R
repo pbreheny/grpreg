@@ -37,7 +37,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   # Construct XG, Y
   bilevel <- strtrim(penalty, 2) != "gr"
   Y <- newS(y)
-  XG <- newXG(X[Y$ind,], group, group.multiplier, 1, bilevel)
+  XG <- newXG(X[Y$ind, , drop=FALSE], group, group.multiplier, 1, bilevel)
   if (nrow(XG$X) != length(Y$fail)) stop("X and y do not have the same number of observations", call.=FALSE)
 
   # Set up lambda

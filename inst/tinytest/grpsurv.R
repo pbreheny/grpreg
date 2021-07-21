@@ -7,6 +7,12 @@ X <- matrix(rnorm(50*6), 50, 6)
 g <- rep(1:3, each=2)
 fit <- grpsurv(X, y, g, lambda.min=0)
 
+# Test that grpsurv works when x has 1 column
+y <- Surv(rexp(50), sample(rep(0:1, c(10,40))))
+X <- matrix(rnorm(50*1), 50, 1)
+g <- 1
+fit <- grpsurv(X, y, g, lambda.min=0)
+
 # $ grpsurv equals MLE when lam=0
 fit.mle <- coxph(y~X)
 expect_equivalent(coef(fit)[,100], coef(fit.mle), tol=0.01)
