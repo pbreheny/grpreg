@@ -1,9 +1,21 @@
 # grpreg 3.4.0 (in development)
+  * New: Suite of tools for additive modeling, most notably expand_spline()
+    and plot_spline() (thank you to Ryan Kurth for her work on this project)
+  * New: grpreg() now returns linear.predictors object
+  * New: grpreg() and grpsurv() now have residuals() methods
+  * New: predict.grpsurv() can now predict cumulative hazard (type="hazard")
+  * New: Can now perform cross-validation with group bridge in cv.grpreg()
   * Changed: fit$y now returns original y, not centered y
+  * Changed: grpsurv() now consistent with grpreg() in terms of returning
+    deviance (2*loss) and groups as factors
+  * Fixed: predict() no longer converts factors to strings if type="groups"
+  * Fixed: grpsurv() works correctly if a single feature is supplied
 
 # grpreg 3.3.1 (2021-03-26)
   * Fixed: AUC() now compatible with survival 3.2.10
+  * Fixed: predict() now works correctly for cv.grpsurv objects
   * Internal: Fixed memory leak
+  * Documentation: Better formatting of references, with DOIs
 
 # grpreg 3.3.0 (2020-06-10)
   * Fixed: sqrt(K) no longer hard-coded into discarding rules (thank you to Dan

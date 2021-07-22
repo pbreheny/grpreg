@@ -180,5 +180,5 @@ plot_spline(fit, 'V06', which=20, partial=TRUE)
 # Cross-validation
 cvfit <- cv.grpsurv(Xn, y)
 expect_silent(plot_spline(cvfit, 'V02'))
-expect_warning(plot_spline(cvfit, 'V02', which=2))
+expect_warning(plot_spline(cvfit, 'V11', which=2))
 plot_spline(cvfit, 'V02', partial=TRUE)
