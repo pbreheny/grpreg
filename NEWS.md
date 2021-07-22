@@ -1,4 +1,4 @@
-# grpreg 3.4.0 (in development)
+# grpreg 3.4.0 (2021-07-22)
   * New: Suite of tools for additive modeling, most notably expand_spline()
     and plot_spline() (thank you to Ryan Kurth for her work on this project)
   * New: grpreg() now returns linear.predictors object
