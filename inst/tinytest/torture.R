@@ -1,3 +1,13 @@
+# Single lambda
+n <- 50
+group <- rep(0:3,4:1)
+p <- length(group)
+X <- matrix(rnorm(n*p),ncol=p)
+y <- rnorm(n)
+b.lm <- coef(lm(y~X))
+b <- coef(fit <- grpreg(X, y, group, penalty="grLasso", lambda=0, eps=1e-10))
+expect_equivalent(b, b.lm, tol=0.0001)
+
 # constant columns
 n <- 50
 group <- rep(0:3,4:1)

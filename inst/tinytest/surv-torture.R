@@ -1,5 +1,15 @@
 suppressPackageStartupMessages(library(survival))
 
+# single lambda
+n <- 50
+group <- rep(0:3,4:1)
+p <- length(group)
+X <- matrix(rnorm(n*p),ncol=p)
+y <- Surv(rexp(n), rep(0:1, c(10, n-10)))
+b.mle <- coef(coxph(y~X))
+b <- coef(fit <- grpsurv(X, y, group, penalty="grLasso", lambda=0, eps=1e-10))
+expect_equivalent(b, b.mle, tol=0.0001)
+
 # constant columns
 n <- 50
 group <- rep(0:3,4:1)
