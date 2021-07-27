@@ -61,6 +61,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   lambda <- lambda[ind]
   df <- df[ind]
   loss <- loss[ind]
+  Eta <- Eta[, ind, drop=FALSE]
   if (iter[1] == max.iter) stop("Algorithm failed to converge for any values of lambda.  This indicates a combination of (a) an ill-conditioned feature matrix X and (b) insufficient penalization.  You must fix one or the other for your model to be identifiable.", call.=FALSE)
   if (warn & any(iter==max.iter)) warning("Algorithm failed to converge for all values of lambda", call.=FALSE)
 
@@ -72,7 +73,8 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
 
   # Names
   dimnames(beta) <- list(XG$names, round(lambda, digits=4))
-
+  colnames(Eta) <- round(lambda, digits=4)
+  
   # Output
   val <- structure(list(beta = beta,
                         group = group,
@@ -87,6 +89,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
                         group.multiplier = XG$m,
                         time = Y$time,
                         fail = Y$fail,
+                        linear.predictors = sweep(Eta, 2, colMeans(Eta), '-')),
                         W = exp(Eta)),
                    class = c("grpsurv", "grpreg"))
   if (returnX) {

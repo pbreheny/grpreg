@@ -7,7 +7,7 @@ mfdr <- function(fit, X) {
     if (!("XG" %in% names(fit))) {
       stop("The argument 'returnX=TRUE' is needed to calculate mFDR for GLM/Cox models", call.=FALSE)
       if (missing(X)) {
-        stop("X must be supplied to calculate mFDR for GLM/Cox models", call.=FALSE)
+        stop("X must be supplied in addition to the model fit in order to calculate mFDR for GLM/Cox models", call.=FALSE)
       }
     }
   }
@@ -15,12 +15,12 @@ mfdr <- function(fit, X) {
   ## Setup
   S0 <- sum(fit$group.multiplier==0)
   S <- predict(fit, type="ngroups") - S0
- 
   
   # Call C functions
   if (inherits(fit, "ncvsurv")) {
-    stop('"mFDR" has not yet been implemented for survival models', call.=FALSE)
-    #EF <- .Call("mfdr_cox", fit)
+    #stop('"mFDR" has not yet been implemented for survival models', call.=FALSE)
+    fit$XX <- fit$XG$X
+    EF <- .Call("mfdr_cox", fit)
   } else {
     if (fit$family == "binomial") {
        fit$P <- matrix(nrow = length(fit$lambda), ncol = fit$n)
