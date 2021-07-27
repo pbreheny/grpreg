@@ -89,7 +89,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
                         group.multiplier = XG$m,
                         time = Y$time,
                         fail = Y$fail,
-                        linear.predictors = sweep(Eta, 2, colMeans(Eta), '-')),
+                        linear.predictors = sweep(Eta, 2, colMeans(Eta), '-'),
                         W = exp(Eta)),
                    class = c("grpsurv", "grpreg"))
   if (returnX) {
