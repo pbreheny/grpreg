@@ -17,7 +17,7 @@ SEXP mfdr_cox (SEXP fit) {
   int L = ncols(getListElement(fit, "beta"));
   int ng = length(getListElement(fit, "group.multiplier"));  
   int ck;
-  double *Eta = REAL(getListElement(fit, "linear.predictor")); 
+  double *Eta = REAL(getListElement(fit, "linear.predictors")); 
   double *d = REAL(getListElement(fit, "fail"));
   double *X = REAL(getListElement(fit, "XX"));
   double *gm = REAL(getListElement(fit, "group.multiplier"));
