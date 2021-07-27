@@ -3,7 +3,7 @@ mfdr <- function(fit, X) {
   # Initial checks
   if (!inherits(fit, 'grpreg')) stop('"fit" must be an grpreg object', call.=FALSE)
   if (!(fit$penalty == "grLasso" | fit$penalty == "grMCP")) stop('"mFDR" is only avaiable for "grLasso" and "grMCP" penalties', call.=FALSE)
-  if (inherits(fit, "ncvsurv") || fit$family == "binomial") {
+  if (inherits(fit, "grpsurv") || fit$family == "binomial") {
     if (!("XG" %in% names(fit))) {
       stop("The argument 'returnX=TRUE' is needed to calculate mFDR for GLM/Cox models", call.=FALSE)
       if (missing(X)) {
@@ -17,7 +17,7 @@ mfdr <- function(fit, X) {
   S <- predict(fit, type="ngroups") - S0
   
   # Call C functions
-  if (inherits(fit, "ncvsurv")) {
+  if (inherits(fit, "grpsurv")) {
     #stop('"mFDR" has not yet been implemented for survival models', call.=FALSE)
     fit$XX <- fit$XG$X
     EF <- .Call("mfdr_cox", fit)
