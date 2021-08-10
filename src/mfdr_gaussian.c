@@ -15,6 +15,7 @@ SEXP mfdr_gaussian(SEXP fit) {
   int n = INTEGER(getListElement(fit, "n"))[0];
   int L = ncols(getListElement(fit, "beta"));
   int ng = length(getListElement(fit, "group.multiplier"));  
+  int *gl = INTEGER(getListElement(fit, "gl"));  
   double *gm = REAL(getListElement(fit, "group.multiplier"));  
   double *lambda = REAL(getListElement(fit, "lambda"));
   double *df = REAL(getListElement(fit, "df"));
@@ -29,7 +30,7 @@ SEXP mfdr_gaussian(SEXP fit) {
   for (int l=0; l<L; l++) {
     tauSq = RSS[l]/(n-df[l]);
     for (int j=1; j < ng; j++) {
-      REAL(EF)[l] += pchisq(n*pow(lambda[l]*gm[j],2.0)*alpha/tauSq, pow(gm[j], 2.0), 0, 0);
+      REAL(EF)[l] += pchisq(n*pow(lambda[l]*gm[j],2.0)*alpha/tauSq, gl[j], 0, 0);
     }
   }
   

@@ -16,6 +16,7 @@ SEXP mfdr_binomial(SEXP fit) {
   int n = INTEGER(getListElement(fit, "n"))[0];
   int L = ncols(getListElement(fit, "beta"));
   int ng = length(getListElement(fit, "group.multiplier"));  
+  int *gl = INTEGER(getListElement(fit, "gl")); 
   int ck;
   double *pi = REAL(getListElement(fit, "P")); 
   double *X = REAL(getListElement(fit, "XX"));
@@ -40,10 +41,10 @@ SEXP mfdr_binomial(SEXP fit) {
     ck = 0;
     for (int j=0; j < ng; j++) {
       tauSq = 0;
-      for (int k=0; k < pow(gm[j], 2.0); k++) {
+      for (int k=0; k < gl[j]; k++) {
         tauSq += wsqsum(X, w, n, ck+k)/n;
       }
-      REAL(EF)[l] += pchisq(n*pow(lambda[l]*gm[j]*gm[j], 2.0)*alpha/tauSq, pow(gm[j], 2.0), 0, 0);
+      REAL(EF)[l] += pchisq(n*pow(lambda[l]*gm[j]*gm[j], 2.0)*alpha/tauSq, gl[j], 0, 0);
       ck++;
     }
   }

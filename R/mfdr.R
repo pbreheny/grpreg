@@ -15,6 +15,7 @@ mfdr <- function(fit, X) {
   ## Setup
   S0 <- sum(fit$group.multiplier==0)
   S <- predict(fit, type="ngroups") - S0
+  fit$gl <- as.vector(table(fit$group))
   
   # Call C functions
   if (inherits(fit, "grpsurv")) {
