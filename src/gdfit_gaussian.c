@@ -395,10 +395,10 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
               gd_gaussian(b, X, r, g, K1, K, n, l, p, penalty, l1, l2, gamma, df, a, &maxChange);
             }
           }
-          
+
           // Check convergence
           for (int j=0; j<p; j++) a[j] = b[l*p+j];
-          if (maxChange < eps*sdy) break;
+          if (maxChange <= eps*sdy) break;
         }
         // Scan for violations in strong set
         violations = check_strong_set(e2, e, xTr, X, r, K1, K, lam[l], n, J, m);

@@ -223,7 +223,7 @@ SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
 
         // Check for convergence      
         for (int j=0; j<p; j++) a[j] = b[l*p+j];
-        if (maxChange < eps*sdy) break;
+        if (maxChange <= eps*sdy) break;
       }
 
       // Scan for violations
