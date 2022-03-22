@@ -8,7 +8,7 @@
 \usage{
 cv.grpreg(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold,
 returnY=FALSE, trace=FALSE)
-cv.grpsurv(X, y, group, ..., nfolds=10, seed, fold, se=c('quick',
+cv.grpsurv(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, se=c('quick',
 'bootstrap'), returnY=FALSE, trace=FALSE)
 }
 \arguments{

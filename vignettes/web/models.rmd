@@ -22,9 +22,9 @@ where the loss function $L(\bb|\X,\y)$ is the deviance ($-2$ times the log-likel
 
 In linear regression, the loss function is simply the squared error loss:
 $$
-L(\bb|\X,\y) = \norm{\y-\X\bb}_2^2;
+L(\bb|\X,\y) = \frac{1}{2} \norm{\y-\X\bb}_2^2;
 $$
-this loss is proportional to the deviance if the outcome $\y$ follows a normal distribution with constant variance and mean given by $\X\bb$.
+the factor of 1/2 is so that this loss is equivalent to deviance if the outcome $\y$ follows a normal distribution with constant variance and mean given by $\X\bb$.
 
 To fit a penalized linear regression model with `grpreg`:
 

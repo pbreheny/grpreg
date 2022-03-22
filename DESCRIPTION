@@ -25,5 +25,5 @@ License: GPL-3
 URL: https://pbreheny.github.io/grpreg/, https://github.com/pbreheny/grpreg
 LazyData: TRUE
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Encoding: UTF-8
