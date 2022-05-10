@@ -39,19 +39,9 @@ jobs:
         with:
           extra-packages: |
             rcmdcheck
-            betareg
-            e1071
-            gamlss
-            gamm4
-            gbm
-            gridExtra
-            lme4
-            locfit
-            mgcv
-            nnet
-            quantreg
-            randomForest
-            rgl
+            glmnet
+            ncvreg
+            survival
 
       - uses: r-lib/actions/check-r-package@v1
         with:
