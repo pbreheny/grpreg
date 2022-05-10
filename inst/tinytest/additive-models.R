@@ -128,7 +128,7 @@ plot_spline(fit, 'V02', which=20, partial=TRUE, type='contrast')
 # Cross-validation
 cvfit <- cv.grpreg(Xn, y, family='binomial')
 expect_silent(plot_spline(cvfit, 'V02'))
-expect_warning(plot_spline(cvfit, 'V02', which=2))
+expect_warning(plot_spline(cvfit, 'V10', which=2))
 plot_spline(cvfit, 'V02', partial=TRUE, type='conditional')
 plot_spline(cvfit, 'V02', partial=TRUE, type='contrast')
 

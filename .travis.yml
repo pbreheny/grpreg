@@ -1,9 +1,0 @@
-language: r
-r_packages:
-  - glmnet
-  - ncvreg
-  - survival
-
-script:
-  - R CMD build .
-  - R CMD check "${PKG_TARBALL}"; CHECK_RET=$?
