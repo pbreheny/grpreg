@@ -5,7 +5,7 @@ output:
   rmarkdown::html_vignette:
     css: vignette.css
 vignette: >
-  %\VignetteIndexEntry{Getting started}
+  %\VignetteIndexEntry{Getting started with grpreg}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

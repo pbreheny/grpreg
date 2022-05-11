@@ -1,7 +1,7 @@
 ^pkgdown$
 ^docs$
 ^index.Rmd$
-^\.travis\.yml$
+^\.github$
 ^\.version\.json$
 ^.*\.Rproj$
 ^\.Rproj\.user$

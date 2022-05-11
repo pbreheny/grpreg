@@ -50,11 +50,22 @@ reference:
   - select
 - title: Plotting and extracting model features
   contents:
+  - logLik.grpreg
   - predict.grpreg
   - predict.grpsurv
   - plot.grpreg
   - plot.grpsurv.func
+  - residuals.grpreg
+- title: Utilities for additive models
+  contents:
+  - expand_spline
+  - gen_nonlinear_data
+  - plot_spline
 - title: Data sets
   contents:
   - Birthwt
   - Lung
+- title: internal
+  contents:
+  - birthwt.grpreg
+  - grpreg-package
