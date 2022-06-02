@@ -4,7 +4,7 @@ AUC.cv.grpsurv <- function(obj, ...) {
     stop("The 'survival' package is needed for AUC() to work. Please install it.", call. = FALSE)
   }  
   if (packageVersion("survival") < "3.2.10") stop("AUC.cv.ncvsurv requires version 3.2.10 of 'survival' package or higher", call.=FALSE)
-  S <- survival::Surv(obj$fit$time, obj$fit$fail)
+  S <- survival::Surv(obj$fit$start_time, obj$fit$stop_time, obj$fit$fail)
   res <- apply(obj$Y, 2, concord, y = S)
   num <- res['concordant',] + 0.5*res['tied.x',] + 0.5*res['tied.y',] + 0.5*res['tied.xy',]
   num/sum(res[,1])

@@ -45,7 +45,7 @@ void gd_cox(double *b, double *x, double *r, double *eta, double v, int g,
   Free(z);
 }
 
-SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_) {
+SEXP gdfit_cox(SEXP X_, SEXP start_, SEXP start_o_, SEXP stop_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_) {
 
   // Lengths/dimensions
   int n = length(d_);
@@ -55,6 +55,9 @@ SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda,
 
   // Pointers
   double *X = REAL(X_);
+  double *start_time = REAL(start_);
+  double *start_o = REAL(start_o_);
+  double *stop_time = REAL(stop_);
   double *d = REAL(d_);
   const char *penalty = CHAR(STRING_ELT(penalty_, 0));
   int *K1 = INTEGER(K1_);
@@ -98,6 +101,8 @@ SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda,
   for (int g=0; g<J; g++) e[g] = 0;
   int lstart, ng, nv, violations;
   double shift, l1, l2, nullDev, v, s, maxChange;
+  double current_sum;
+  int start_idx, stop_idx, ss;
 
   // Initialization
   // If lam[0]=lam_max, skip lam[0] -- closed form sol'n available
@@ -146,6 +151,19 @@ SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda,
         rsk[n-1] = haz[n-1];
         for (int i=n-2; i>=0; i--) {
           rsk[i] = rsk[i+1] + haz[i];
+        }
+        current_sum = 0;
+        start_idx = n;
+        stop_idx = n;
+        while(start_idx>0 && stop_idx>0){
+          ss = start_o[start_idx];
+          if(start_time[ss] < stop_time[stop_idx]){
+            rsk[stop_idx] = rsk[stop_idx] - current_sum;
+            stop_idx = stop_idx - 1;
+          }else{
+            current_sum = current_sum + haz[ss];
+            start_idx = start_idx - 1;
+          }
         }
         for (int i=0; i<n; i++) {
           REAL(Loss)[l] += d[i]*eta[i] - d[i]*log(rsk[i]);

@@ -7,10 +7,10 @@
 
 /* .Call calls */
 extern SEXP gdfit_glm(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP gdfit_cox(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP gdfit_cox(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gdfit_gaussian(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP lcdfit_glm(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP lcdfit_cox(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP lcdfit_cox(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP lcdfit_gaussian(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP maxgrad(SEXP, SEXP, SEXP, SEXP);
 extern SEXP maxprod(SEXP, SEXP, SEXP, SEXP);
@@ -18,10 +18,10 @@ extern SEXP standardize(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
   {"gdfit_glm",                (DL_FUNC) &gdfit_glm,                16},
-  {"gdfit_cox",                (DL_FUNC) &gdfit_cox,                15},
+  {"gdfit_cox",                (DL_FUNC) &gdfit_cox,                18},
   {"gdfit_gaussian",           (DL_FUNC) &gdfit_gaussian,           15},
   {"lcdfit_glm",               (DL_FUNC) &lcdfit_glm,               18},
-  {"lcdfit_cox",               (DL_FUNC) &lcdfit_cox,               17},
+  {"lcdfit_cox",               (DL_FUNC) &lcdfit_cox,               20},
   {"lcdfit_gaussian",          (DL_FUNC) &lcdfit_gaussian,          16},
   {"maxgrad",                  (DL_FUNC) &maxgrad,                   4},
   {"maxprod",                  (DL_FUNC) &maxprod,                   4},

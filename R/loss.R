@@ -22,14 +22,28 @@ loss.grpreg <- function(y, yhat, family) {
   val
 }
 loss.grpsurv <- function(y, eta, total=TRUE) {
-  ind <- order(y[,1])
-  d <- as.integer(y[ind,2])
+  ind <- order(y[,2])
+  d <- as.integer(y[ind,3])
   if (is.matrix(eta)) {
     eta <- eta[ind, , drop=FALSE]
     r <- apply(eta, 2, function(x) rev(cumsum(rev(exp(x)))))
   } else {
     eta <- as.matrix(eta[ind])
     r <- as.matrix(rev(cumsum(rev(exp(eta)))))
+  }
+  n = nrow(y)
+  current_sum = 0
+  start_idx = n
+  stop_idx = n
+  start_o = order(y[,1])
+  while(start_idx>0 && stop_idx >0){
+    if(y[start_o[start_idx],1]<y[ind[stop_idx],2]){
+      r[stop_idx,] = r[stop_idx,] - current_sum
+      stop_idx = stop_idx - 1
+    }else{
+      current_sum = current_sum + exp(eta[start_o[start_idx],])
+      start_idx = start_idx - 1
+    }
   }
   if (total) {
     return(-2*(crossprod(d, eta) - crossprod(d, log(r))))

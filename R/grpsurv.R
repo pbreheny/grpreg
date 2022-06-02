@@ -42,7 +42,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
 
   # Set up lambda
   if (missing(lambda)) {
-    lambda <- setupLambdaCox(XG$X, Y$time, Y$fail, XG$g, penalty, alpha, lambda.min, nlambda, XG$m)
+    lambda <- setupLambdaCox(XG$X, Y, XG$g, penalty, alpha, lambda.min, nlambda, XG$m)
     user.lambda <- FALSE
   } else {
     nlambda <- length(lambda)
@@ -50,16 +50,17 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   }
 
   ## Fit
-  n <- length(Y$time)
+  n <- length(Y$fail)
   p <- ncol(XG$X)
   K <- as.integer(table(XG$g))
   K0 <- as.integer(if (min(XG$g)==0) K[1] else 0)
   K1 <- as.integer(if (min(XG$g)==0) cumsum(K) else c(0, cumsum(K)))
+  start_order = as.numeric(order(Y$start_time))
   if (bilevel) {
-    res <- .Call("lcdfit_cox", XG$X, Y$fail, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter),
+    res <- .Call("lcdfit_cox", XG$X, Y$start_time, start_order, Y$stop_time, Y$fail, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter),
                  XG$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
   } else {
-    res <- .Call("gdfit_cox", XG$X, Y$fail, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter),
+    res <- .Call("gdfit_cox", XG$X, Y$start_time, start_order, Y$stop_time, Y$fail, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter),
                  as.double(gamma), XG$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
   }
   b <- matrix(res[[1]], p, nlambda)
@@ -101,7 +102,8 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
                         df = df,
                         iter = iter,
                         group.multiplier = XG$m,
-                        time = Y$time,
+                        start_time = Y$start_time,
+                        stop_time = Y$stop_time,
                         fail = Y$fail,
                         order = Y$ind,
                         linear.predictors = sweep(Eta, 2, colMeans(Eta), '-')),

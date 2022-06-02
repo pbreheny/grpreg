@@ -11,7 +11,7 @@ cv.grpsurv <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, se=c('
 
   # Get standardized X, y
   X <- fit$XG$X
-  y <- cbind(fit$time, fit$fail)
+  y <- cbind(fit$start_time, fit$stop_time, fit$fail)
   returnX <- list(...)$returnX
   if (is.null(returnX) || !returnX) fit$X <- NULL
 

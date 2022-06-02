@@ -97,7 +97,7 @@ predict.grpsurv <- function(object, X,
     a <- ifelse(object$fail, (1-w/r)^(1/w), 1)
     S0 <- c(1, cumprod(a))
     H0 <- c(0, cumsum(1-a))
-    x <- c(0, object$time)
+    x <- c(0, object$stop_time)
     for (i in 1:nrow(eta)) {
       S <- S0^exp(eta[i,j])
       H <- H0*exp(eta[i,j])
@@ -113,7 +113,7 @@ predict.grpsurv <- function(object, X,
   if (type %in% c('survival', 'hazard')) {
     if (nrow(eta)==1) val <- val[[1]]
     class(val) <- c('grpsurv.func', class(val))
-    attr(val, 'time') <- object$time
+    attr(val, 'time') <- object$stop_time
   } else if (type == 'median') {
     val <- drop(val)
   }

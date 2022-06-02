@@ -23,7 +23,7 @@ residuals.grpreg <- function(object, lambda, which=1:length(object$lambda), drop
   # Calculate matrix of residuals
   if (inherits(object, 'grpsurv')) {
     for (j in 1:length(object$lambda)) {
-      h <- suppressWarnings(predict(object, which=j, type='hazard')(object$time))
+      h <- suppressWarnings(predict(object, which=j, type='hazard')(object$stop_time))
       M <- object$fail - h * exp(object$linear.predictors)
       R <- sign(M) * sqrt(-2*(M + object$fail*log(object$fail-M)))
       R[h==0,] <- 0
