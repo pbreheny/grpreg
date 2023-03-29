@@ -3,7 +3,7 @@
 [![CRAN version](https://img.shields.io/cran/v/grpreg?logo=R)](https://cran.r-project.org/package=grpreg)
 [![downloads](https://cranlogs.r-pkg.org/badges/grpreg)](https://cran.r-project.org/package=grpreg)
 [![R-CMD-check](https://github.com/pbreheny/grpreg/workflows/R-CMD-check/badge.svg)](https://github.com/pbreheny/grpreg/actions)
-[![codecov.io](https://codecov.io/github/pbreheny/grpreg/coverage.svg?branch=master)](https://codecov.io/github/pbreheny/grpreg?branch=master)
+[![codecov.io](https://codecov.io/github/pbreheny/grpreg/coverage.svg?branch=master)](https://app.codecov.io/gh/pbreheny/grpreg)
 <!-- badges: end -->
 
 # [Regularization Paths for Regression Models with Grouped Covariates](https://pbreheny.github.io/grpreg/)
