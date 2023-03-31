@@ -50,7 +50,7 @@ zero, and will hopefully be improved upon in later versions of
 \code{grpreg}.
 }
 \examples{
-
+\dontshow{set.seed(1)}
 # Birthweight data
 data(Birthwt)
 X <- Birthwt$X
@@ -71,8 +71,5 @@ par(mfrow=c(2,2))
 plot(cvfit, type="all")
 }
 \seealso{
-\code{\link{grpreg}}, \code{\link{cv.grpreg}}
-}
-\author{
-Patrick Breheny
+\code{\link[=grpreg]{grpreg()}}, \code{\link[=cv.grpreg]{cv.grpreg()}}
 }

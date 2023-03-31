@@ -73,8 +73,9 @@
 #' @author Patrick Breheny
 #' @seealso \code{\link{grpreg}}, \code{\link{plot.cv.grpreg}},
 #' \code{\link{summary.cv.grpreg}}, \code{\link{predict.cv.grpreg}}
-#' @examples
 #' 
+#' @examples
+#' \dontshow{set.seed(1)}
 #' data(Birthwt)
 #' X <- Birthwt$X
 #' y <- Birthwt$bwt

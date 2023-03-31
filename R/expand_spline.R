@@ -30,6 +30,7 @@
 #' @seealso [plot_spline()] to visualize the resulting nonlinear fits
 #'
 #' @examples
+#' \dontshow{set.seed(1)}
 #' Data <- gen_nonlinear_data(n=1000)
 #' X <- expand_spline(Data$X)
 #' fit <- grpreg(X, Data$y)

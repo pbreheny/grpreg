@@ -101,13 +101,13 @@ group <- Birthwt$group
 
 ## Linear regression
 y <- Birthwt$bwt
-fit <- gBridge(X, y, group)
+fit <- gBridge(X, y, group, lambda.max=0.08)
 plot(fit)
 select(fit)$beta
 
 ## Logistic regression
 y <- Birthwt$low
-fit <- gBridge(X, y, group, family="binomial")
+fit <- gBridge(X, y, group, family="binomial", lambda.max=0.17)
 plot(fit)
 select(fit)$beta
 }

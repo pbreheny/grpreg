@@ -39,6 +39,7 @@ object can be passed to \code{\link[=grpreg]{grpreg()}}.
 This methodology was originally proposed by Ravikumar et al. (2009), who named it SPAM (SParse Additive Modeling).
 }
 \examples{
+\dontshow{set.seed(1)}
 Data <- gen_nonlinear_data(n=1000)
 X <- expand_spline(Data$X)
 fit <- grpreg(X, Data$y)

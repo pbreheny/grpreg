@@ -14,10 +14,10 @@
 #' individual coefficients.
 #' @param \dots Other graphical parameters to \code{plot}, \code{matlines}, or
 #' \code{legend}
-#' @author Patrick Breheny
-#' @seealso \code{grpreg}
-#' @examples
 #' 
+#' @seealso [grpreg()]
+#' 
+#' @examples
 #' # Fit model to birthweight data
 #' data(Birthwt)
 #' X <- Birthwt$X

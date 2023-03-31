@@ -97,6 +97,10 @@ coef(fit, lambda=0.1)
 
 Cross-validation is similar:
 
+```{r seed}
+set.seed(1)
+```
+
 ```{r models-cox-cv, h=3, w=6, out.height=360, out.width=720}
 cvfit <- cv.grpsurv(X, y, group)
 par(mfrow=c(1,2))

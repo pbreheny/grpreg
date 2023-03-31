@@ -25,10 +25,11 @@
 #' the value where cross-validaton error is minimized.
 #' @param col Controls the color of the dots (CV estimates).
 #' @param \dots Other graphical parameters to \code{plot}
-#' @author Patrick Breheny
-#' @seealso \code{\link{grpreg}}, \code{\link{cv.grpreg}}
-#' @examples
 #' 
+#' @seealso [grpreg()], [cv.grpreg()]
+#' 
+#' @examples
+#' \dontshow{set.seed(1)}
 #' # Birthweight data
 #' data(Birthwt)
 #' X <- Birthwt$X

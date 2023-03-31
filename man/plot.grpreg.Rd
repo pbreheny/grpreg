@@ -29,7 +29,6 @@ individual coefficients.}
 Produces a plot of the coefficient paths for a fitted \code{grpreg} object.
 }
 \examples{
-
 # Fit model to birthweight data
 data(Birthwt)
 X <- Birthwt$X
@@ -53,8 +52,5 @@ plot(fit, legend.loc="topleft", lwd=6, alpha=0.5, legend=labs)
 plot(fit, norm=TRUE, legend.loc="topleft", lwd=6, alpha=0.5, legend=labs)
 }
 \seealso{
-\code{grpreg}
-}
-\author{
-Patrick Breheny
+\code{\link[=grpreg]{grpreg()}}
 }
