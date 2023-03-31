@@ -23,14 +23,13 @@ navbar:
         href: articles/web/additive-models.html
     - text: Functions
       href: reference/index.html
-    - text: News
-      href: news/index.html
   right:
     github:
       icon: fa-github fa-lg
       href: https://github.com/pbreheny/grpreg
 
 template:
+  bootstrap: 5
   params:
     bootswatch: cerulean
 
@@ -69,3 +68,19 @@ reference:
   contents:
   - birthwt.grpreg
   - grpreg-package
+
+home:
+  links:
+  - text: News
+    href: news/index.html
+  sidebar:
+    structure: [links, citation, authors, dev]
+
+footer:
+  structure: 
+    left: developed_by
+    right: updated
+  components:
+    updated: Last updated 2023-03-30
+
+

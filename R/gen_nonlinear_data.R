@@ -8,6 +8,7 @@
 #' 
 #' @examples
 #' Data <- gen_nonlinear_data()
+#' @export
 
 gen_nonlinear_data <- function(n=100, p=16, seed=1) {
   if (!(is.numeric(p) && p >= 6)) stop('p must be at least 6', call.=FALSE)

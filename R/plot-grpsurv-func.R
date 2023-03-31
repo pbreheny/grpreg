@@ -1,3 +1,35 @@
+#' Plot survival curve for grpsurv model
+#' 
+#' Plot survival curve for a model that has been fit using \code{grpsurv}
+#' followed by a prediction of the survival function using
+#' \code{predict.grpsurv}
+#' 
+#' 
+#' @param x A \code{'grpsurv.func'} object, which is returned by
+#' \code{predict.grpsurv} if \code{type='survival'} is specified.  See
+#' examples.
+#' @param alpha Controls alpha-blending (i.e., transparency).  Useful if many
+#' overlapping lines are present.
+#' @param \dots Other graphical parameters to pass to \code{plot}
+#' @author Patrick Breheny
+#' @seealso \code{\link{grpsurv}}, \code{\link{predict.grpsurv}}
+#' @examples
+#' 
+#' data(Lung)
+#' X <- Lung$X
+#' y <- Lung$y
+#' group <- Lung$group
+#' fit <- grpsurv(X, y, group)
+#' 
+#' # A single survival curve
+#' S <- predict(fit, X[1,], type='survival', lambda=.05)
+#' plot(S, xlim=c(0,200))
+#' 
+#' # Lots of survival curves
+#' S <- predict(fit, X, type='survival', lambda=.05)
+#' plot(S, xlim=c(0,200), alpha=0.3)
+#' @export
+
 plot.grpsurv.func <- function(x, alpha=1, ...) {
   time <- attr(x, 'time')
   if (length(x) > 1) {

@@ -34,6 +34,7 @@
 #' cvfit <- cv.grpreg(X, Data$y)
 #' plot_spline(cvfit, "V02")
 #' plot_spline(cvfit, "V02", partial=TRUE)
+#' @export plot_spline
 
 plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE, 
                            type = "contrast", warnings = TRUE, points.par = NULL, ...){
