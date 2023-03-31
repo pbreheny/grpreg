@@ -34,6 +34,7 @@
 #' X <- expand_spline(Data$X)
 #' fit <- grpreg(X, Data$y)
 #' plot_spline(fit, "V02", lambda = 0.03)
+#' @export
 
 expand_spline <- function(x, df = 3, degree = 3, type = c("ns", "bs")) {
   type <- match.arg(type)

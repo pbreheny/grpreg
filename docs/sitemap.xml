@@ -31,19 +31,19 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
+    <loc>/reference/AUC.cv.grpsurv.html</loc>
+  </url>
+  <url>
     <loc>/reference/Birthwt.html</loc>
   </url>
   <url>
     <loc>/reference/Lung.html</loc>
   </url>
   <url>
-    <loc>/reference/auc.html</loc>
+    <loc>/reference/birthwt.grpreg.html</loc>
   </url>
   <url>
-    <loc>/reference/birthwt-grpreg.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cv-grpreg.html</loc>
+    <loc>/reference/cv.grpreg.html</loc>
   </url>
   <url>
     <loc>/reference/expand_spline.html</loc>
@@ -67,33 +67,33 @@
     <loc>/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/logLik-grpreg.html</loc>
+    <loc>/reference/logLik.grpreg.html</loc>
   </url>
   <url>
-    <loc>/reference/plot-cv-grpreg.html</loc>
+    <loc>/reference/plot.cv.grpreg.html</loc>
   </url>
   <url>
-    <loc>/reference/plot-grpreg.html</loc>
+    <loc>/reference/plot.grpreg.html</loc>
   </url>
   <url>
-    <loc>/reference/plot-grpsurv-func.html</loc>
+    <loc>/reference/plot.grpsurv.func.html</loc>
   </url>
   <url>
     <loc>/reference/plot_spline.html</loc>
   </url>
   <url>
-    <loc>/reference/predict.grpsurv.html</loc>
+    <loc>/reference/predict.grpreg.html</loc>
   </url>
   <url>
-    <loc>/reference/predict.html</loc>
+    <loc>/reference/predict.grpsurv.html</loc>
   </url>
   <url>
     <loc>/reference/residuals.grpreg.html</loc>
   </url>
   <url>
-    <loc>/reference/select-grpreg.html</loc>
+    <loc>/reference/select.grpreg.html</loc>
   </url>
   <url>
-    <loc>/reference/summary-cv-grpreg.html</loc>
+    <loc>/reference/summary.cv.grpreg.html</loc>
   </url>
 </urlset>

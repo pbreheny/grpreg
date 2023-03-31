@@ -1,3 +1,6 @@
+#' @rdname cv.grpreg
+#' @export
+
 cv.grpsurv <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, se=c('quick', 'bootstrap'), returnY=FALSE, trace=FALSE) {
   se <- match.arg(se)
 

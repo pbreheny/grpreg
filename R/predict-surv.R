@@ -52,6 +52,7 @@
 #' # Nonzero coefficients
 #' predict(fit, type="vars", lambda=c(0.1, 0.01))
 #' predict(fit, type="nvars", lambda=c(0.1, 0.01))
+#' @export
 
 predict.grpsurv <- function(object, X,
                             type=c("link", "response", "survival", "hazard", "median", "norm", 
