@@ -4,13 +4,14 @@
 #' 
 #' @param n      Sample size (numeric; default = 100).
 #' @param p      Number of features (numeric; default = 16).
-#' @param seed   Change to get different random data sets (numeric; default = 1).
+#' @param seed   Set to get different random data sets, passed to [set.seed()]
 #' 
 #' @examples
 #' Data <- gen_nonlinear_data()
 #' @export
 
-gen_nonlinear_data <- function(n=100, p=16, seed=1) {
+gen_nonlinear_data <- function(n=100, p=16, seed) {
+  if (!missing(seed)) set.seed(seed)
   if (!(is.numeric(p) && p >= 6)) stop('p must be at least 6', call.=FALSE)
   X <- matrix(runif(n*p), nrow=n, ncol=p)
   w <- floor(log10(p)) + 1

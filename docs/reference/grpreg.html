@@ -343,7 +343,7 @@ selection. <em>Biometrics</em>, <strong>71</strong>: 731-740. <a href="https://d
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="cv.grpreg.html">cv.grpreg()</a></code>, as well as <code><a href="plot.grpreg.html">plot.grpreg()</a></code> and <code><a href="select.grpreg.html">select.grpreg()</a></code> methods.</p></div>
+    <div class="dont-index"><p><code><a href="cv.grpreg.html">cv.grpreg()</a></code>, as well as <code><a href="plot.grpreg.html">plot.grpreg()</a></code> and <code><a href="select.html">select.grpreg()</a></code> methods.</p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -361,20 +361,20 @@ selection. <em>Biometrics</em>, <strong>71</strong>: 731-740. <a href="https://d
 <span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">Birthwt</span><span class="op">$</span><span class="va">bwt</span></span></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">grpreg</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grLasso"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="grpreg-1.png" alt="" width="480" height="480"></span>
+<span class="r-plt img"><img src="grpreg-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">grpreg</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grMCP"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="grpreg-2.png" alt="" width="480" height="480"></span>
+<span class="r-plt img"><img src="grpreg-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">grpreg</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grSCAD"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="grpreg-3.png" alt="" width="480" height="480"></span>
+<span class="r-plt img"><img src="grpreg-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">grpreg</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"gel"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="grpreg-4.png" alt="" width="480" height="480"></span>
+<span class="r-plt img"><img src="grpreg-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">grpreg</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"cMCP"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="grpreg-5.png" alt="" width="480" height="480"></span>
-<span class="r-in"><span><span class="fu"><a href="select.grpreg.html">select</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"AIC"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="grpreg-5.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="select.html">select</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"AIC"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $beta</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)        age1        age2        age3        lwt1        lwt2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3.03000773  0.00000000  1.14484129  0.57059454  1.30067773  0.00000000 </span>
@@ -409,20 +409,20 @@ selection. <em>Biometrics</em>, <strong>71</strong>: 731-740. <a href="https://d
 <span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">Birthwt</span><span class="op">$</span><span class="va">low</span></span></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">grpreg</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grLasso"</span>, family<span class="op">=</span><span class="st">"binomial"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="grpreg-6.png" alt="" width="480" height="480"></span>
+<span class="r-plt img"><img src="grpreg-6.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">grpreg</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grMCP"</span>, family<span class="op">=</span><span class="st">"binomial"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="grpreg-7.png" alt="" width="480" height="480"></span>
+<span class="r-plt img"><img src="grpreg-7.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">grpreg</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grSCAD"</span>, family<span class="op">=</span><span class="st">"binomial"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="grpreg-8.png" alt="" width="480" height="480"></span>
+<span class="r-plt img"><img src="grpreg-8.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">grpreg</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"gel"</span>, family<span class="op">=</span><span class="st">"binomial"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="grpreg-9.png" alt="" width="480" height="480"></span>
+<span class="r-plt img"><img src="grpreg-9.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">grpreg</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"cMCP"</span>, family<span class="op">=</span><span class="st">"binomial"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="grpreg-10.png" alt="" width="480" height="480"></span>
-<span class="r-in"><span><span class="fu"><a href="select.grpreg.html">select</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"BIC"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="grpreg-10.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="select.html">select</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"BIC"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $beta</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)        age1        age2        age3        lwt1        lwt2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -1.194072    0.000000    0.000000    0.000000   -6.940487    0.000000 </span>
@@ -466,7 +466,7 @@ selection. <em>Biometrics</em>, <strong>71</strong>: 731-740. <a href="https://d
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5  6  7  8  9  10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Levels: 5 6 7 8 9 10</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="grpreg-11.png" alt="" width="480" height="480"></span>
+<span class="r-plt img"><img src="grpreg-11.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -478,7 +478,7 @@ selection. <em>Biometrics</em>, <strong>71</strong>: 731-740. <a href="https://d
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Last updated 2023-03-30</p>
+  <p></p><p>Last updated 2023-03-31</p>
 </div>
 
     </footer></div>

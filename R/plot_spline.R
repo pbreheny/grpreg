@@ -17,6 +17,7 @@
 #' @param ...         Further arguments to be passed to `plot()`. Note that these arguments also control the appearance of the lines.
 #'
 #' @examples
+#' \dontshow{set.seed(1)}
 #' Data <- gen_nonlinear_data(n=1000)
 #' X <- expand_spline(Data$X)
 #' fit <- grpreg(X, Data$y)

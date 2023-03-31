@@ -46,6 +46,7 @@ Plots a spline curve for a single variable using a \code{grpreg} or \code{cv.grp
 \code{plot_spline()} takes a model fit using both the \code{\link[=grpreg]{grpreg()}} and \code{\link[=expand_spline]{expand_spline()}} functions and plots a spline curve for a given variable.
 }
 \examples{
+\dontshow{set.seed(1)}
 Data <- gen_nonlinear_data(n=1000)
 X <- expand_spline(Data$X)
 fit <- grpreg(X, Data$y)

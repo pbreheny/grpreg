@@ -1,3 +1,7 @@
+#' @rdname select
+#' @export
+select <- function(obj,...) UseMethod("select")
+
 #' Select an value of lambda along a grpreg path
 #' 
 #' Selects a point along the regularization path of a fitted grpreg object
@@ -13,7 +17,8 @@
 #' 2*df*(df+1)/(n-df-1)} \deqn{EBIC = BIC + 2 \log{p \choose \nu}}{EBIC = BIC +
 #' 2*log(p choose df)}
 #' 
-#' @aliases select select.grpreg
+#' @rdname select
+#' 
 #' @param obj A fitted grpreg object.
 #' @param criterion The criterion by which to select the regularization
 #' parameter.  One of \code{"AIC"}, \code{"BIC"}, \code{"GCV"}, \code{"AICc"},
@@ -25,16 +30,18 @@
 #' @param smooth Applies a smoother to the information criteria before
 #' selecting the optimal value.
 #' @param \dots For S3 method compatibility.
-#' @return A list containing: \item{lambda}{The selected value of the
-#' regularization parameter, \code{lambda}.} \item{beta}{The vector of
-#' coefficients at the chosen value of \code{lambda}.} \item{df}{The effective
-#' number of model parameters at the chosen value of \code{lambda}.}
-#' \item{IC}{A vector of the calculated model selection criteria for each point
-#' on the regularization path.}
-#' @author Patrick Breheny
-#' @seealso \code{grpreg}
-#' @examples
 #' 
+#' @return A list containing:
+#' \describe{
+#' \item{lambda}{The selected value of the regularization parameter, `lambda`.}
+#' \item{beta}{The vector of coefficients at the chosen value of `lambda`.}
+#' \item{df}{The effective number of model parameters at the chosen value of `lambda`.}
+#' \item{IC}{A vector of the calculated model selection criteria for each point on the regularization path.}
+#' }
+#' 
+#' @seealso [grpreg()]
+#' 
+#' @examples
 #' data(Birthwt)
 #' X <- Birthwt$X
 #' y <- Birthwt$bwt
@@ -91,7 +98,3 @@ select.grpreg <- function(obj, criterion=c("BIC","AIC","GCV","AICc","EBIC"), df.
               IC=IC))
 }
 
-#' @rdname select.grpreg
-#' @export
-
-select <- function(obj,...) UseMethod("select")

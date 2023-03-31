@@ -228,7 +228,7 @@ responses prior to fitting.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Birthwt</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="va">Birthwt</span><span class="op">$</span><span class="va">X</span></span></span>
 <span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">Birthwt</span><span class="op">$</span><span class="va">bwt</span></span></span>
@@ -236,33 +236,33 @@ responses prior to fitting.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">cvfit</span> <span class="op">&lt;-</span> <span class="fu">cv.grpreg</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cvfit</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="cv.grpreg-1.png" alt="" width="480" height="480"></span>
+<span class="r-plt img"><img src="cv.grpreg-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">cvfit</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> grLasso-penalized linear regression with n=189, p=16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> At minimum cross-validation error (lambda=0.0293):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> At minimum cross-validation error (lambda=0.0080):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> -------------------------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Nonzero coefficients: 16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Nonzero groups: 8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Cross-validation error of 0.42</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Maximum R-squared: 0.21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Maximum signal-to-noise ratio: 0.26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Scale estimate (sigma) at lambda.min: 0.647</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Cross-validation error of 0.44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Maximum R-squared: 0.17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Maximum signal-to-noise ratio: 0.20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Scale estimate (sigma) at lambda.min: 0.663</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">cvfit</span><span class="op">)</span> <span class="co">## Beta at minimum CVE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  (Intercept)         age1         age2         age3         lwt1         lwt2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3.036968099  0.119759128  1.011556096  0.610171600  1.188502278 -0.130642141 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3.044490766 -0.011903110  1.429405469  0.830865167  1.721770019 -0.001171222 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lwt3        white        black        smoke         ptl1        ptl2m </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.900248118  0.232356288 -0.092980525 -0.228955320 -0.228389905  0.112793886 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.252330094  0.277824567 -0.138527669 -0.267472875 -0.277700649  0.193007108 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           ht           ui         ftv1         ftv2        ftv3m </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -0.405349938 -0.418773600  0.023016734  0.008722009 -0.029581600 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -0.522415974 -0.463194421  0.073062346  0.022384572 -0.126538346 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">cvfit</span> <span class="op">&lt;-</span> <span class="fu">cv.grpreg</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"gel"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cvfit</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="cv.grpreg-2.png" alt="" width="480" height="480"></span>
+<span class="r-plt img"><img src="cv.grpreg-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">cvfit</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> gel-penalized linear regression with n=189, p=16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> At minimum cross-validation error (lambda=0.0293):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> At minimum cross-validation error (lambda=0.0243):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> -------------------------------------------------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Nonzero coefficients: 13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Nonzero coefficients: 15</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Nonzero groups: 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Cross-validation error of 0.45</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Maximum R-squared: 0.15</span>
@@ -280,7 +280,7 @@ responses prior to fitting.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Last updated 2023-03-30</p>
+  <p></p><p>Last updated 2023-03-31</p>
 </div>
 
     </footer></div>

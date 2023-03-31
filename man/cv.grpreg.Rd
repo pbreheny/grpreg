@@ -115,7 +115,7 @@ mentioned in the details there, it is recommended to standardize the
 responses prior to fitting.
 }
 \examples{
-
+\dontshow{set.seed(1)}
 data(Birthwt)
 X <- Birthwt$X
 y <- Birthwt$bwt

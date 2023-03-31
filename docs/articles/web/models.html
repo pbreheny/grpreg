@@ -81,8 +81,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Models</h1>
-                        <h4 data-toc-skip class="author">Patrick
-Breheny</h4>
+                        <h4 data-toc-skip class="author">Patrick Breheny</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/pbreheny/grpreg/blob/HEAD/vignettes/web/models.rmd" class="external-link"><code>vignettes/web/models.rmd</code></a></small>
@@ -91,26 +90,16 @@ Breheny</h4>
 
     
     
-<p><code>grpreg</code> fits models that fall into the penalized
-likelihood framework. Rather than estimating <span class="math inline">\(\bb\)</span> by maximizing the likelihood, in this
-framework we estimate <span class="math inline">\(\bb\)</span> by
-minimizing the objective function <span class="math display">\[
+<p><code>grpreg</code> fits models that fall into the penalized likelihood framework. Rather than estimating <span class="math inline">\(\bb\)</span> by maximizing the likelihood, in this framework we estimate <span class="math inline">\(\bb\)</span> by minimizing the objective function <span class="math display">\[
 Q(\bb|\X, \y) = \frac{1}{n}L(\bb|\X,\y) + P_\lam(\bb),
-\]</span> where the loss function <span class="math inline">\(L(\bb|\X,\y)\)</span> is the deviance (<span class="math inline">\(-2\)</span> times the log-likelihood), <span class="math inline">\(P_\lam(\bb)\)</span> is the penalty, and <span class="math inline">\(\lam\)</span> is a regularization parameter that
-controls the tradeoff between the two components. This article describes
-the different loss models available in <code>grpreg</code>; see <a href="penalties.html">penalties</a> for more information on the
-different penalties available.</p>
+\]</span> where the loss function <span class="math inline">\(L(\bb|\X,\y)\)</span> is the deviance (<span class="math inline">\(-2\)</span> times the log-likelihood), <span class="math inline">\(P_\lam(\bb)\)</span> is the penalty, and <span class="math inline">\(\lam\)</span> is a regularization parameter that controls the tradeoff between the two components. This article describes the different loss models available in <code>grpreg</code>; see <a href="penalties.html">penalties</a> for more information on the different penalties available.</p>
 <div class="section level2">
 <h2 id="gaussian-linear-regression">Gaussian (linear regression)<a class="anchor" aria-label="anchor" href="#gaussian-linear-regression"></a>
 </h2>
-<p>In linear regression, the loss function is simply the squared error
-loss: <span class="math display">\[
+<p>In linear regression, the loss function is simply the squared error loss: <span class="math display">\[
 L(\bb|\X,\y) = \frac{1}{2} \norm{\y-\X\bb}_2^2;
-\]</span> the factor of 1/2 is so that this loss is equivalent to
-deviance if the outcome <span class="math inline">\(\y\)</span> follows
-a normal distribution with constant variance and mean given by <span class="math inline">\(\X\bb\)</span>.</p>
-<p>To fit a penalized linear regression model with
-<code>grpreg</code>:</p>
+\]</span> the factor of 1/2 is so that this loss is equivalent to deviance if the outcome <span class="math inline">\(\y\)</span> follows a normal distribution with constant variance and mean given by <span class="math inline">\(\X\bb\)</span>.</p>
+<p>To fit a penalized linear regression model with <code>grpreg</code>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -119,14 +108,10 @@ a normal distribution with constant variance and mean given by <span class="math
 </h2>
 <p>In logistic regression, the loss function is: <span class="math display">\[
 L(\bb|\X,\y) = -2\sum_{i:y_i=1}\log\ph_i - 2\sum_{i:y_i=0}\log(1-\ph_i);
-\]</span> this loss is the deviance for a binomial distribution with
-probabilities <span class="math inline">\(P(Y_i=1)=\ph_i\)</span> given
-by: <span class="math display">\[
+\]</span> this loss is the deviance for a binomial distribution with probabilities <span class="math inline">\(P(Y_i=1)=\ph_i\)</span> given by: <span class="math display">\[
 \ph_i = \frac{\exp(\eta_i)}{1+\eta_i},
-\]</span> where <span class="math inline">\(\be = \X\bb\)</span> denotes
-the linear predictors.</p>
-<p>To fit a penalized logistic regression model with
-<code>grpreg</code>:</p>
+\]</span> where <span class="math inline">\(\be = \X\bb\)</span> denotes the linear predictors.</p>
+<p>To fit a penalized logistic regression model with <code>grpreg</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, family<span class="op">=</span><span class="st">'binomial'</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -134,39 +119,21 @@ the linear predictors.</p>
 <h2 id="poisson">Poisson<a class="anchor" aria-label="anchor" href="#poisson"></a>
 </h2>
 <p>In Poisson regression, the loss function is: <span class="math display">\[
-L(\bb|\X,\y) = 2\sum_i \left\{y_i\log y_i - y_i\log \mu_i + mu_i -
-y_i\right\};
-\]</span> note that some of these terms are constant with respect to
-<span class="math inline">\(\mu_i\)</span> and can therefore be ignored
-during optimization. This loss is the deviance for a Poisson
-distribution <span class="math inline">\(Y_i \sim
-\text{Pois}(\mh_i)\)</span> with rate parameter given by: <span class="math display">\[
+L(\bb|\X,\y) = 2\sum_i \left\{y_i\log y_i - y_i\log \mu_i + mu_i - y_i\right\};
+\]</span> note that some of these terms are constant with respect to <span class="math inline">\(\mu_i\)</span> and can therefore be ignored during optimization. This loss is the deviance for a Poisson distribution <span class="math inline">\(Y_i \sim \text{Pois}(\mh_i)\)</span> with rate parameter given by: <span class="math display">\[
 \mh_i = \exp(\eta_i).
 \]</span></p>
-<p>To fit a penalized Poisson regression model with
-<code>grpreg</code>:</p>
+<p>To fit a penalized Poisson regression model with <code>grpreg</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, family<span class="op">=</span><span class="st">'poisson'</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="cox-proportional-hazards">Cox proportional hazards<a class="anchor" aria-label="anchor" href="#cox-proportional-hazards"></a>
 </h2>
-<p>The above models all fall into the category of distributions known as
-exponential families (hence the <code>family</code>) argument.
-<code>grpreg</code> also allows users to fit Cox proportional hazards
-models, although these models fall outside this framework and are
-therefore fit using a different function, <code>grpsurv</code>. In Cox
-regression, the deviance is <span class="math display">\[
-L(\bb|\X,\y) = -2\sum_{j=1}^{m} d_j \eta_j + 2\sum_{j=1}^{m} d_j
-\log\left\{\sum_{i \in R_j} \exp(\eta_i)\right\},
-\]</span> where <span class="math inline">\(t_1 &lt; t_2 &lt; \ldots
-&lt; t_m\)</span> denotes an increasing list of unique failure times
-indexed by <span class="math inline">\(j\)</span> and <span class="math inline">\(R_j\)</span> denotes the set of observations still
-at risk at time <span class="math inline">\(t_j\)</span>, known as the
-risk set.</p>
-<p>The <code>Lung</code> data (see <code><a href="../../reference/Lung.html">?Lung</a></code> for more details)
-provides an example of time-to-event data that can be used with Cox
-regression. Loading this data set into R,</p>
+<p>The above models all fall into the category of distributions known as exponential families (hence the <code>family</code>) argument. <code>grpreg</code> also allows users to fit Cox proportional hazards models, although these models fall outside this framework and are therefore fit using a different function, <code>grpsurv</code>. In Cox regression, the deviance is <span class="math display">\[
+L(\bb|\X,\y) = -2\sum_{j=1}^{m} d_j \eta_j + 2\sum_{j=1}^{m} d_j \log\left\{\sum_{i \in R_j} \exp(\eta_i)\right\},
+\]</span> where <span class="math inline">\(t_1 &lt; t_2 &lt; \ldots &lt; t_m\)</span> denotes an increasing list of unique failure times indexed by <span class="math inline">\(j\)</span> and <span class="math inline">\(R_j\)</span> denotes the set of observations still at risk at time <span class="math inline">\(t_j\)</span>, known as the risk set.</p>
+<p>The <code>Lung</code> data (see <code><a href="../../reference/Lung.html">?Lung</a></code> for more details) provides an example of time-to-event data that can be used with Cox regression. Loading this data set into R,</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Lung</span><span class="op">)</span></span>
 <span><span class="va">X</span> <span class="op">&lt;-</span> <span class="va">Lung</span><span class="op">$</span><span class="va">X</span></span>
@@ -175,8 +142,7 @@ regression. Loading this data set into R,</p>
 <p>To fit a penalized Cox regression model,</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/grpsurv.html">grpsurv</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span><span class="op">)</span></span></code></pre></div>
-<p>As before, you can call <code>plot</code>, <code>coef</code>,
-<code>predict</code>, etc. on <code>fit</code>:</p>
+<p>As before, you can call <code>plot</code>, <code>coef</code>, <code>predict</code>, etc. on <code>fit</code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fit</span>, lambda<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></span>
 <span><span class="co">#        trt     karno1     karno2     karno3  diagtime1  diagtime2       age1 </span></span>
@@ -185,32 +151,29 @@ regression. Loading this data set into R,</p>
 <span><span class="co">#  0.0000000  0.0000000  0.0000000 -0.2613796  0.1320625  0.2666665 -0.1424394</span></span></code></pre></div>
 <p>Cross-validation is similar:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cvfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/cv.grpreg.html">cv.grpsurv</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cvfit</span>, type<span class="op">=</span><span class="st">'cve'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cvfit</span>, type<span class="op">=</span><span class="st">'rsq'</span><span class="op">)</span></span></code></pre></div>
 <p><img src="models_files/figure-html/models-cox-cv-1.png" width="720" height="360"></p>
-<p>In addition to the quantities like coefficients and number of nonzero
-coefficients that <code>predict</code> returns for other types of
-models, <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> for an <code>grpsurv</code> object can
-also estimate the baseline hazard (using the Kalbfleish-Prentice method)
-and therefore, the survival function. A method to plot the resulting
-function is also available:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p>In addition to the quantities like coefficients and number of nonzero coefficients that <code>predict</code> returns for other types of models, <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> for an <code>grpsurv</code> object can also estimate the baseline hazard (using the Kalbfleish-Prentice method) and therefore, the survival function. A method to plot the resulting function is also available:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">X</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>, type<span class="op">=</span><span class="st">'survival'</span>, lambda<span class="op">=</span><span class="fl">0.02</span><span class="op">)</span></span>
 <span><span class="fu">S</span><span class="op">(</span><span class="fl">365</span><span class="op">)</span>   <span class="co"># Estiamted survival at 1 year</span></span>
 <span><span class="co"># [1] 0.09987997</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">S</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">200</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="models_files/figure-html/models-cox-surv-single-1.png" width="480"></p>
+<p><img src="models_files/figure-html/models-cox-surv-single-1.png" width="700"></p>
 <p>When multiple subjects are involved in the prediction:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">X</span>, type<span class="op">=</span><span class="st">'survival'</span>, lambda<span class="op">=</span><span class="fl">0.02</span><span class="op">)</span></span>
 <span><span class="va">S</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">(</span><span class="fl">365</span><span class="op">)</span>  <span class="co"># Estimated survival at 1 year for subject 1</span></span>
 <span><span class="co"># [1] 0.09987997</span></span>
 <span><span class="va">S</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">(</span><span class="fl">365</span><span class="op">)</span>  <span class="co"># Estimated survival at 1 year for subject 2</span></span>
 <span><span class="co"># [1] 0.1428503</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">S</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">200</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="models_files/figure-html/models-cox-surv-multiple-1.png" width="480"></p>
+<p><img src="models_files/figure-html/models-cox-surv-multiple-1.png" width="700"></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
@@ -225,7 +188,7 @@ function is also available:</p>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Last updated 2023-03-30</p>
+<p>Last updated 2023-03-31</p>
 </div>
 
     </footer>

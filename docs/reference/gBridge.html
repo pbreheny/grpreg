@@ -217,29 +217,29 @@ selection. <em>Statistics and its interface</em>, <strong>2</strong>: 369-380.
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Linear regression</span></span></span>
 <span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">Birthwt</span><span class="op">$</span><span class="va">bwt</span></span></span>
-<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">gBridge</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">gBridge</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, lambda.max<span class="op">=</span><span class="fl">0.08</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="gBridge-1.png" alt="" width="480" height="480"></span>
-<span class="r-in"><span><span class="fu"><a href="select.grpreg.html">select</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">$</span><span class="va">beta</span></span></span>
+<span class="r-plt img"><img src="gBridge-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="select.html">select</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">$</span><span class="va">beta</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)        age1        age2        age3        lwt1        lwt2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2.99879014  0.00000000  0.89255360  0.28150939  1.01892522  0.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2.99879853  0.00000000  0.89267968  0.28165358  1.01904200  0.00000000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        lwt3       white       black       smoke        ptl1       ptl2m </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.73433117  0.26506631 -0.04017367 -0.22057110 -0.17179296  0.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.73440772  0.26506953 -0.04018746 -0.22057682 -0.17180959  0.00000000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          ht          ui        ftv1        ftv2       ftv3m </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -0.28667606 -0.38431366  0.00000000  0.00000000  0.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -0.28672009 -0.38432026  0.00000000  0.00000000  0.00000000 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Logistic regression</span></span></span>
 <span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">Birthwt</span><span class="op">$</span><span class="va">low</span></span></span>
-<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">gBridge</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, family<span class="op">=</span><span class="st">"binomial"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">gBridge</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, family<span class="op">=</span><span class="st">"binomial"</span>, lambda.max<span class="op">=</span><span class="fl">0.17</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="gBridge-2.png" alt="" width="480" height="480"></span>
-<span class="r-in"><span><span class="fu"><a href="select.grpreg.html">select</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">$</span><span class="va">beta</span></span></span>
+<span class="r-plt img"><img src="gBridge-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="select.html">select</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">$</span><span class="va">beta</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)        age1        age2        age3        lwt1        lwt2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  -1.0653116   0.0000000   0.0000000   0.0000000  -4.2881399   0.0000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  -1.0672724   0.0000000   0.0000000   0.0000000  -4.3330945   0.0000000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        lwt3       white       black       smoke        ptl1       ptl2m </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  -2.1227947   0.0000000   0.0000000   0.0000000   1.3568294   0.0000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  -2.1541816   0.0000000   0.0000000   0.0000000   1.3601144   0.0000000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          ht          ui        ftv1        ftv2       ftv3m </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   0.8476535   0.0000000   0.0000000   0.0000000   0.0000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   0.8627355   0.0000000   0.0000000   0.0000000   0.0000000 </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -251,7 +251,7 @@ selection. <em>Statistics and its interface</em>, <strong>2</strong>: 369-380.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Last updated 2023-03-30</p>
+  <p></p><p>Last updated 2023-03-31</p>
 </div>
 
     </footer></div>

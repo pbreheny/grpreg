@@ -81,8 +81,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Getting started with grpreg</h1>
-                        <h4 data-toc-skip class="author">Patrick
-Breheny</h4>
+                        <h4 data-toc-skip class="author">Patrick Breheny</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/pbreheny/grpreg/blob/HEAD/vignettes/getting-started.rmd" class="external-link"><code>vignettes/getting-started.rmd</code></a></small>
@@ -91,35 +90,14 @@ Breheny</h4>
 
     
     
-<p><code>grpreg</code> is an R package for fitting the regularization
-path of linear regression, GLM, and Cox regression models with grouped
-penalties. This includes group selection methods such as group lasso,
-group MCP, and group SCAD as well as bi-level selection methods such as
-the group exponential lasso, the composite MCP, and the group bridge.
-Utilities for carrying out cross-validation as well as post-fitting
-visualization, summarization, and prediction are also provided.</p>
-<p>This vignette offers a brief introduction to the basic use of
-<code>grpreg</code>. For more details on the package, visit the
-<code>grpreg</code> website at <a href="https://pbreheny.github.io/grpreg/" class="external-link uri">https://pbreheny.github.io/grpreg/</a>. For more on the
-algorithms used by <code>grpreg</code>, see the original articles:</p>
+<p><code>grpreg</code> is an R package for fitting the regularization path of linear regression, GLM, and Cox regression models with grouped penalties. This includes group selection methods such as group lasso, group MCP, and group SCAD as well as bi-level selection methods such as the group exponential lasso, the composite MCP, and the group bridge. Utilities for carrying out cross-validation as well as post-fitting visualization, summarization, and prediction are also provided.</p>
+<p>This vignette offers a brief introduction to the basic use of <code>grpreg</code>. For more details on the package, visit the <code>grpreg</code> website at <a href="https://pbreheny.github.io/grpreg/" class="external-link uri">https://pbreheny.github.io/grpreg/</a>. For more on the algorithms used by <code>grpreg</code>, see the original articles:</p>
 <ul>
-<li><p><a href="https://myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf" class="external-link">Breheny, P.
-and Huang, J. (2009) Penalized methods for bi-level variable selection.
-<em>Statistics and its interface</em>, <strong>2</strong>:
-369-380.</a></p></li>
-<li><p><a href="https://dx.doi.org/10.1007/s11222-013-9424-2" class="external-link">Breheny,
-P. and Huang, J. (2015) Group descent algorithms for nonconvex penalized
-linear and logistic regression models with grouped predictors.
-<em>Statistics and Computing</em>, <strong>25</strong>:
-173-187.</a></p></li>
+<li><p><a href="https://myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf" class="external-link">Breheny, P. and Huang, J. (2009) Penalized methods for bi-level variable selection. <em>Statistics and its interface</em>, <strong>2</strong>: 369-380.</a></p></li>
+<li><p><a href="https://dx.doi.org/10.1007/s11222-013-9424-2" class="external-link">Breheny, P. and Huang, J. (2015) Group descent algorithms for nonconvex penalized linear and logistic regression models with grouped predictors. <em>Statistics and Computing</em>, <strong>25</strong>: 173-187.</a></p></li>
 </ul>
 <p>For more information on specific penalties, see <a href="https://pbreheny.github.io/grpreg/articles/web/penalties.html" class="external-link uri">https://pbreheny.github.io/grpreg/articles/web/penalties.html</a>.</p>
-<p><code>grpreg</code> comes with a few example data sets; we’ll look at
-<code>Birthwt</code>, which involves identifying risk factors associated
-with low birth weight. The outcome can either be measured continuously
-(<code>bwt</code>, the birth weight in kilograms) or dichotomized
-(<code>low</code>) with respect to the newborn having a low birth weight
-(under 2.5 kg).</p>
+<p><code>grpreg</code> comes with a few example data sets; we’ll look at <code>Birthwt</code>, which involves identifying risk factors associated with low birth weight. The outcome can either be measured continuously (<code>bwt</code>, the birth weight in kilograms) or dichotomized (<code>low</code>) with respect to the newborn having a low birth weight (under 2.5 kg).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Birthwt</span><span class="op">)</span></span>
 <span><span class="va">X</span> <span class="op">&lt;-</span> <span class="va">Birthwt</span><span class="op">$</span><span class="va">X</span></span>
@@ -139,36 +117,21 @@ with low birth weight. The outcome can either be measured continuously
 <span><span class="co"># [4,]     1     0     1    0     0  0  1    0    1     0</span></span>
 <span><span class="co"># [5,]     1     0     1    0     0  0  1    0    0     0</span></span>
 <span><span class="co"># [6,]     0     0     0    0     0  0  0    0    0     0</span></span></code></pre></div>
-<p>The original design matrix consisted of 8 variables, which have been
-expanded here into 16 features. For example, there are multiple
-indicator functions for race (“other” being the reference group) and
-several continuous factors such as age have been expanded using
-polynomial contrasts (splines would give a similar structure). Hence,
-the columns of the design matrix are <em>grouped</em>; this is what
-grpreg is designed for. The grouping information is encoded as
-follows:</p>
+<p>The original design matrix consisted of 8 variables, which have been expanded here into 16 features. For example, there are multiple indicator functions for race (“other” being the reference group) and several continuous factors such as age have been expanded using polynomial contrasts (splines would give a similar structure). Hence, the columns of the design matrix are <em>grouped</em>; this is what grpreg is designed for. The grouping information is encoded as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">group</span> <span class="op">&lt;-</span> <span class="va">Birthwt</span><span class="op">$</span><span class="va">group</span></span>
 <span><span class="va">group</span></span>
 <span><span class="co">#  [1] age   age   age   lwt   lwt   lwt   race  race  smoke ptl   ptl   ht   </span></span>
 <span><span class="co"># [13] ui    ftv   ftv   ftv  </span></span>
 <span><span class="co"># Levels: age lwt race smoke ptl ht ui ftv</span></span></code></pre></div>
-<p>Here, groups are given as a factor; unique integer codes (which are
-essentially unlabeled factors) and character vectors are also allowed
-(character vectors do have some limitations, however, as the order of
-the groups is left unspecified, which can lead to ambiguity if you also
-try to set the <code>group.multiplier</code> option). To fit a group
-lasso model to this data:</p>
+<p>Here, groups are given as a factor; unique integer codes (which are essentially unlabeled factors) and character vectors are also allowed (character vectors do have some limitations, however, as the order of the groups is left unspecified, which can lead to ambiguity if you also try to set the <code>group.multiplier</code> option). To fit a group lasso model to this data:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grLasso"</span><span class="op">)</span></span></code></pre></div>
 <p>We can then plot the coefficient paths with</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
-<p><img src="getting-started_files/figure-html/plot-1.png" width="480"></p>
-<p>Notice that when a group enters the model (e.g., the green group),
-all of its coefficients become nonzero; this is what happens with group
-lasso models. To see what the coefficients are, we could use the
-<code>coef</code> function:</p>
+<p><img src="getting-started_files/figure-html/plot-1.png" width="700"></p>
+<p>Notice that when a group enters the model (e.g., the green group), all of its coefficients become nonzero; this is what happens with group lasso models. To see what the coefficients are, we could use the <code>coef</code> function:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fit</span>, lambda<span class="op">=</span><span class="fl">0.05</span><span class="op">)</span></span>
 <span><span class="co"># (Intercept)        age1        age2        age3        lwt1        lwt2 </span></span>
@@ -177,17 +140,12 @@ lasso models. To see what the coefficients are, we could use the
 <span><span class="co">#  0.58290856  0.18344777 -0.06107624 -0.18778377 -0.17422515  0.05710668 </span></span>
 <span><span class="co">#          ht          ui        ftv1        ftv2       ftv3m </span></span>
 <span><span class="co"># -0.29776948 -0.38050822  0.00000000  0.00000000  0.00000000</span></span></code></pre></div>
-<p>Note that the number of physician’s visits (<code>ftv</code>) is not
-included in the model at <span class="math inline">\(\lambda=0.05\)</span>.</p>
-<p>Typically, one would carry out cross-validation for the purposes of
-carrying out inference on the predictive accuracy of the model at
-various values of <span class="math inline">\(\lambda\)</span>.</p>
+<p>Note that the number of physician’s visits (<code>ftv</code>) is not included in the model at <span class="math inline">\(\lambda=0.05\)</span>.</p>
+<p>Typically, one would carry out cross-validation for the purposes of carrying out inference on the predictive accuracy of the model at various values of <span class="math inline">\(\lambda\)</span>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cvfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cv.grpreg.html">cv.grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grLasso"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cvfit</span><span class="op">)</span></span></code></pre></div>
-<p><img src="getting-started_files/figure-html/cvplot-1.png" width="480">
-The coefficients corresponding to the value of <span class="math inline">\(\lambda\)</span> that minimizes the
-cross-validation error can be obtained via <code>coef</code>:</p>
+<p><img src="getting-started_files/figure-html/cvplot-1.png" width="700"> The coefficients corresponding to the value of <span class="math inline">\(\lambda\)</span> that minimizes the cross-validation error can be obtained via <code>coef</code>:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">cvfit</span><span class="op">)</span></span>
 <span><span class="co"># (Intercept)        age1        age2        age3        lwt1        lwt2 </span></span>
@@ -196,8 +154,7 @@ cross-validation error can be obtained via <code>coef</code>:</p>
 <span><span class="co">#  1.15399868  0.26474685 -0.12475165 -0.25602530 -0.26542118  0.16769927 </span></span>
 <span><span class="co">#          ht          ui        ftv1        ftv2       ftv3m </span></span>
 <span><span class="co"># -0.48892550 -0.44999086  0.06039457  0.01966211 -0.09634012</span></span></code></pre></div>
-<p>Predicted values can be obtained via <code>predict</code>, which has
-a number of options:</p>
+<p>Predicted values can be obtained via <code>predict</code>, which has a number of options:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">cvfit</span>, X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span><span class="op">)</span>                 <span class="co"># Predictions for new observations</span></span>
 <span><span class="co"># [1] 2.547122 3.006659 3.042348 2.564257 2.577717 3.083550</span></span>
@@ -211,11 +168,7 @@ a number of options:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, type<span class="op">=</span><span class="st">"vars"</span>, lambda<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span>     <span class="co"># Identity of nonzero coefficients</span></span>
 <span><span class="co"># white black smoke  ptl1 ptl2m    ht    ui </span></span>
 <span><span class="co">#     7     8     9    10    11    12    13</span></span></code></pre></div>
-<p>Note that the original fit (to the full data set) is returned as
-<code>cvfit$fit</code>; it is not necessary to call both
-<code>grpreg</code> and <code>cv.grpreg</code> to analyze a data set.
-Several other penalties are available, as are methods for logistic
-regression and Cox proportional hazards regression.</p>
+<p>Note that the original fit (to the full data set) is returned as <code>cvfit$fit</code>; it is not necessary to call both <code>grpreg</code> and <code>cv.grpreg</code> to analyze a data set. Several other penalties are available, as are methods for logistic regression and Cox proportional hazards regression.</p>
   </main>
 </div>
 
@@ -228,7 +181,7 @@ regression and Cox proportional hazards regression.</p>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Last updated 2023-03-30</p>
+<p>Last updated 2023-03-31</p>
 </div>
 
     </footer>

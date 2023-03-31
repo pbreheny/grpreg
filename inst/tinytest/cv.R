@@ -1,3 +1,5 @@
+if (interactive()) library(tinytest)
+
 # Gaussian
 n <- 50
 group <- rep(0:4,5:1)
@@ -64,3 +66,8 @@ g <- rep(LETTERS[1:20], each=10)
 cvfit <- cv.grpreg(X, y, group=g)
 s <- summary(cvfit)
 expect_equivalent(s$ngroups[1], 0)
+
+# predict
+expect_equivalent(
+  predict(cvfit, X[1:3,]),
+  predict(cvfit$fit, X[1:3,], lambda=cvfit$lambda.min))
