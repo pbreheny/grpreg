@@ -11,7 +11,11 @@
 #' @export
 
 gen_nonlinear_data <- function(n=100, p=16, seed) {
-  if (!missing(seed)) set.seed(seed)
+  if (!missing(seed)) {
+    original_seed <- .GlobalEnv$.Random.seed
+    on.exit(.GlobalEnv$.Random.seed <- original_seed)
+    set.seed(seed)
+  }
   if (!(is.numeric(p) && p >= 6)) stop('p must be at least 6', call.=FALSE)
   X <- matrix(runif(n*p), nrow=n, ncol=p)
   w <- floor(log10(p)) + 1

@@ -39,12 +39,13 @@
 #' y <- Birthwt$bwt
 #' cvfit <- cv.grpreg(X, y, group)
 #' plot(cvfit)
-#' par(mfrow=c(2,2))
+#' op <- par(mfrow=c(2,2))
 #' plot(cvfit, type="all")
 #' 
 #' ## Logistic regression
 #' y <- Birthwt$low
 #' cvfit <- cv.grpreg(X, y, group, family="binomial")
+#' par(op)
 #' plot(cvfit)
 #' par(mfrow=c(2,2))
 #' plot(cvfit, type="all")

@@ -114,9 +114,12 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
   if (is.null(returnX) || !returnX) fit$XG <- NULL
 
   # Set up folds
-  if (!missing(seed)) set.seed(seed)
-  n <- length(y)
-  
+  if (!missing(seed)) {
+    original_seed <- .GlobalEnv$.Random.seed
+    on.exit(.GlobalEnv$.Random.seed <- original_seed)
+    set.seed(seed)
+  }
+  n <- length(y)  
   if (missing(fold)) {
     if (m > 1) {
       nn <- n/m
