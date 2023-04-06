@@ -93,9 +93,10 @@ plot.cv.grpreg <- function(x, log.l=TRUE, type=c("cve", "rsq", "scale", "snr", "
       U <- rsqu
       ylab <- ~R^2
     } else if(type=="snr") {
-      y <- rsq/(1-rsq)
-      L <- rsql/(1-rsql)
-      U <- rsqu/(1-rsqu)
+      y <- pmin(rsq/(1-rsq), 1e6)
+      L <- pmin(rsql/(1-rsql), 1e6)
+      U <- pmin(rsqu/(1-rsqu), 1e6)
+      if (max(c(y,L,U)) == 1e6) warning('Signal-to-noise ratio is infinite')
       ylab <- "Signal-to-noise ratio"
     }
   } else if (type=="scale") {
