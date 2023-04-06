@@ -1,3 +1,8 @@
+if (interactive()) library(tinytest)
+
+
+# Linear regression -------------------------------------------------------
+
 Data <- gen_nonlinear_data()
 y <- Data$y
 
@@ -83,7 +88,6 @@ plot_spline(cvfit, 'V02', partial=TRUE, type='contrast')
 
 # Logistic regression -----------------------------------------------------
 
-
 Data <- gen_nonlinear_data(n=500)
 y <- Data$y > quantile(Data$y, 0.25)
 
@@ -134,7 +138,6 @@ plot_spline(cvfit, 'V02', partial=TRUE, type='contrast')
 
 
 # Cox regression -----------------------------------------------------
-
 
 Data <- gen_nonlinear_data(n=500)
 y <- cbind(Data$y, rbinom(500, 1, 0.75))

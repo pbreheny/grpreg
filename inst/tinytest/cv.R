@@ -10,6 +10,7 @@ cvfit <- cv.grpreg(X, y, group, penalty='grLasso')
 cvfit <- cv.grpreg(X, y, group, penalty='gel')
 cvfit <- cv.grpreg(X, y, group, penalty='grLasso', fold=1:50)
 cvfit <- cv.grpreg(X, y, group, penalty='gel', fold=1:50)
+plot(cvfit, type='all')
 
 # Binomial
 n <- 50
@@ -21,6 +22,7 @@ cvfit <- cv.grpreg(X, y, group, family='binomial', penalty='grLasso')
 cvfit <- cv.grpreg(X, y, group, family='binomial', penalty='gel')
 cvfit <- cv.grpreg(X, y, group, family='binomial', penalty='grLasso', fold=1:50)
 cvfit <- cv.grpreg(X, y, group, family='binomial', penalty='gel', fold=1:50)
+plot(cvfit, type='all')
 
 # Poisson
 n <- 50
@@ -32,6 +34,7 @@ cvfit <- cv.grpreg(X, y, group, family='poisson', penalty='grLasso')
 cvfit <- cv.grpreg(X, y, group, family='poisson', penalty='gel')
 cvfit <- cv.grpreg(X, y, group, family='poisson', penalty='grLasso', fold=1:50)
 cvfit <- cv.grpreg(X, y, group, family='poisson', penalty='gel', fold=1:50)
+plot(cvfit, type='all')
 
 # Multitask learning
 n <- 50
@@ -44,6 +47,7 @@ cvfit <- cv.grpreg(X, Y, nfolds=50)
 Y <- matrix(rnorm(n*m), ncol=m) > 0
 cvfit <- cv.grpreg(X, Y, family='binomial')
 cvfit <- cv.grpreg(X, Y, family='binomial', nfolds=50)
+plot(cvfit, type='all')
 
 # p > n
 n <- 75
@@ -55,6 +59,7 @@ g <- rep(LETTERS[1:20], each=10)
 cvfit <- cv.grpreg(X, y, group=g)
 cvfit <- cv.grpreg(X, y>0, group=g, family='binomial')
 cvfit <- cv.grpreg(X, y, group=g, family='poisson')
+plot(cvfit, type='all')
 
 # summary
 set.seed(4)

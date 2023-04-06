@@ -20,7 +20,11 @@ cv.grpsurv <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, se=c('
 
   # Set up folds
   n <- nrow(X)
-  if (!missing(seed)) set.seed(seed)
+  if (!missing(seed)) {
+    original_seed <- .GlobalEnv$.Random.seed
+    on.exit(.GlobalEnv$.Random.seed <- original_seed)
+    set.seed(seed)
+  }
   if (missing(fold)) {
     ind1 <- which(fit$fail==1)
     ind0 <- which(fit$fail==0)
