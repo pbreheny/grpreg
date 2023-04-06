@@ -35,6 +35,7 @@ cvfit <- cv.grpreg(X, y, group, family='poisson', penalty='gel')
 cvfit <- cv.grpreg(X, y, group, family='poisson', penalty='grLasso', fold=1:50)
 cvfit <- cv.grpreg(X, y, group, family='poisson', penalty='gel', fold=1:50)
 plot(cvfit, type='all')
+summary(cvfit)
 
 # Multitask learning
 n <- 50
