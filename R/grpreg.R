@@ -46,7 +46,7 @@
 #'   \item [Models and loss functions](https://pbreheny.github.io/grpreg/articles/web/models.html)
 #'   \item [Penalties](https://pbreheny.github.io/grpreg/articles/web/penalties.htmlPenalties)
 #' }
-#' 
+#'   
 #' For the bi-level selection methods, a locally approximated coordinate
 #' descent algorithm is employed.  For the group selection methods, group
 #' descent algorithms are employed.

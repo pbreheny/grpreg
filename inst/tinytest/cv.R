@@ -77,3 +77,16 @@ expect_equivalent(s$ngroups[1], 0)
 expect_equivalent(
   predict(cvfit, X[1:3,]),
   predict(cvfit$fit, X[1:3,], lambda=cvfit$lambda.min))
+
+
+# R squared ---------------------------------------------------------------
+
+# Gaussian
+n <- 5000
+group <- rep(0:4,5:1)
+X <- matrix(rnorm(n*p),ncol=p)
+y <- rnorm(n, mean=X[,6])
+cvfit <- cv.grpreg(X, y, group, penalty='grLasso', lambda.min=0)
+summary(cvfit, lambda=0)$r.squared
+summary(lm(y ~ ., as.data.frame(X)))$r.squared
+

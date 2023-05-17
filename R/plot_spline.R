@@ -38,7 +38,8 @@
 #' @export plot_spline
 
 plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE, 
-                           type = "contrast", warnings = TRUE, points.par = NULL, ...){
+                        type = "contrast", warnings = TRUE, points.par = NULL,
+                        add = FALSE, ...) {
   if (inherits(fit, "cv.grpreg")) {
     if (missing(lambda) & missing(which)) lambda <- fit$lambda.min
     fit <- fit$fit
@@ -134,7 +135,7 @@ plot_spline <- function(fit, variable, lambda, which = NULL, partial = FALSE,
     new.plot.args <- new.args[names(new.args) %in% c(names(par()), names(formals(plot.default)))]
     plot.args[names(new.plot.args)] <- new.plot.args
   }
-  do.call("matplot", plot.args)
+  if (!add) do.call("matplot", plot.args)
   if (partial == TRUE) {
     points.args <- list(x=meta$originalx[,i], y=parresid, pch=19, cex=0.8, col='gray')
     if (length(points.par)) {
