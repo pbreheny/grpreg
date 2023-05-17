@@ -14,6 +14,7 @@
 #'   * If `"contrast"`, the plot returned shows the effect on the linear predictor by moving the x variable away from its mean.
 #' @param warnings    If `FALSE`, warnings will be suppressed (default = `TRUE`).
 #' @param points.par  List of parameters (see [par()] to pass to [points()] when `partial=TRUE`.
+#' @param add         Add spline to existing plot? (default: FALSE)
 #' @param ...         Further arguments to be passed to `plot()`. Note that these arguments also control the appearance of the lines.
 #'
 #' @examples

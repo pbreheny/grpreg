@@ -27,7 +27,7 @@
     
     <a class="navbar-brand me-2" href="../../index.html">grpreg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.4.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.4.0.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -104,10 +104,11 @@ Q(\bb|\X, \y) = L(\bb|\X,\y) + P_\lam(\bb),
 <li>
 <span class="math inline">\(\beta_{jk}\)</span> denotes <span class="math inline">\(k\)</span>th regression coefficient in the <span class="math inline">\(j\)</span>th group</li>
 <li>
-<span class="math inline">\(\norm{\bb_j}\)</span> denotes the Euclidean (<span class="math inline">\(L_2\)</span>) norm of <span class="math inline">\(\bb_j\)</span>
+<span class="math inline">\(\norm{\bb_j}_2\)</span> denotes the Euclidean (<span class="math inline">\(L_2\)</span>) norm of <span class="math inline">\(\bb_j\)</span>: <span class="math inline">\(\norm{x}_2 = \sqrt{x_1^2 + x_2^2 + \ldots}\)</span>
 </li>
 <li>
-<span class="math inline">\(\norm{\bb_j}_1\)</span> denotes the <span class="math inline">\(L_1\)</span> norm of <span class="math inline">\(\beta_j\)</span> (Manhattan distance)</li>
+<span class="math inline">\(\norm{\bb_j}_1\)</span> denotes the <span class="math inline">\(L_1\)</span> norm of <span class="math inline">\(\beta_j\)</span>: <span class="math inline">\(\norm{x}_1 = \abs{x_1} + \abs{x_2} + \ldots\)</span>
+</li>
 </ul>
 <div class="section level2">
 <h2 id="group-selection">Group selection<a class="anchor" aria-label="anchor" href="#group-selection"></a>
@@ -127,18 +128,14 @@ Q(\bb|\X, \y) = L(\bb|\X,\y) + P_\lam(\bb),
 </h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grLasso"</span><span class="op">)</span></span></code></pre></div>
-<p><span class="math display">\[
-P(\beta) = \lam \sum_j \norm{\bb_j}
-\]</span></p>
+<p><span class="math display">\[ P(\beta) = \lam \sum_j \norm{\bb_j}_2 \]</span></p>
 </div>
 <div class="section level3">
 <h3 id="group-mcp">Group MCP<a class="anchor" aria-label="anchor" href="#group-mcp"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grMCP"</span><span class="op">)</span></span></code></pre></div>
-<p><span class="math display">\[
-P(\bb) = \sum_j \textrm{MCP}_{\lam, \gamma}(\norm{\bb_j})
-\]</span></p>
+<p><span class="math display">\[ P(\bb) = \sum_j \textrm{MCP}_{\lam, \gamma}(\norm{\bb_j}_2) \]</span></p>
 <p>where <span class="math inline">\(\textrm{MCP}_{\lam, \gamma}(\cdot)\)</span> denotes the MCP penalty with regularization parameter <span class="math inline">\(\lam\)</span> and tuning parameter <span class="math inline">\(\gamma\)</span>.</p>
 </div>
 <div class="section level3">
@@ -146,9 +143,7 @@ P(\bb) = \sum_j \textrm{MCP}_{\lam, \gamma}(\norm{\bb_j})
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grSCAD"</span><span class="op">)</span></span></code></pre></div>
-<p><span class="math display">\[
-P(\bb) = \sum_j \textrm{SCAD}_{\lam, \gamma}(\norm{\bb_j})
-\]</span></p>
+<p><span class="math display">\[ P(\bb) = \sum_j \textrm{SCAD}_{\lam, \gamma}(\norm{\bb_j}_2) \]</span></p>
 <p>where <span class="math inline">\(\textrm{SCAD}_{\lam, \gamma}(\cdot)\)</span> denotes the SCAD penalty with regularization parameter <span class="math inline">\(\lam\)</span> and tuning parameter <span class="math inline">\(\gamma\)</span>.</p>
 </div>
 </div>
@@ -161,13 +156,9 @@ P(\bb) = \sum_j \textrm{SCAD}_{\lam, \gamma}(\norm{\bb_j})
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"gel"</span><span class="op">)</span></span></code></pre></div>
-<p><span class="math display">\[
-P(\beta) = \sum_j f_{\lam, \tau}(\norm{\bb_j})
-\]</span></p>
+<p><span class="math display">\[ P(\beta) = \sum_j f_{\lam, \tau}(\norm{\bb_j}_1) \]</span></p>
 <p>where <span class="math inline">\(f(\cdot)\)</span> denotes the exponential penalty with regularization parameter <span class="math inline">\(\lam\)</span> and tuning parameter <span class="math inline">\(\tau\)</span>:</p>
-<p><span class="math display">\[
-f_{\lam, \tau}(\theta) = \frac{\lam^2}{\tau}\left\{1-\exp\left(-\frac{\tau\theta}{\lam}\right)\right\}
-\]</span></p>
+<p><span class="math display">\[ f_{\lam, \tau}(\theta) = \frac{\lam^2}{\tau}\left\{1-\exp\left(-\frac{\tau\theta}{\lam}\right)\right\} \]</span></p>
 <p>If you use the GEL penalty, please cite</p>
 <ul>
 <li>Breheny P (2015). The group exponential lasso for bi-level variable selection. <em>Biometrics</em>, <strong>71</strong>: 731-740. [<a href="https://onlinelibrary.wiley.com/doi/10.1111/biom.12300/pdf" class="external-link">pdf</a>].</li>
@@ -178,9 +169,7 @@ f_{\lam, \tau}(\theta) = \frac{\lam^2}{\tau}\left\{1-\exp\left(-\frac{\tau\theta
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"cMCP"</span><span class="op">)</span></span></code></pre></div>
-<p><span class="math display">\[
-P(\bb) = \sum_j \textrm{MCP}_{\lam, \gam_1} \left( \sum_k \textrm{MCP}_{\lam, \gam_2} (\abs{\beta_{jk}}) \right)
-\]</span></p>
+<p><span class="math display">\[ P(\bb) = \sum_j \textrm{MCP}_{\lam, \gam_1} \left( \sum_k \textrm{MCP}_{\lam, \gam_2} (\abs{\beta_{jk}}) \right) \]</span></p>
 <p>where <span class="math inline">\(\textrm{MCP}_{\lam, \gamma}(\cdot)\)</span> denotes the MCP penalty with regularization parameter <span class="math inline">\(\lam\)</span> and tuning parameter <span class="math inline">\(\gamma\)</span>.</p>
 <p>If you use the composite MCP penalty, please cite either of the following papers:</p>
 <ul>
@@ -194,9 +183,7 @@ P(\bb) = \sum_j \textrm{MCP}_{\lam, \gam_1} \left( \sum_k \textrm{MCP}_{\lam, \g
 </h3>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../../reference/gBridge.html">gBridge</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span><span class="op">)</span></span></code></pre></div>
-<p><span class="math display">\[
-P(\bb) = \lambda \sum_j K_j^\gamma \norm{\bb_j}_1^\gamma
-\]</span></p>
+<p><span class="math display">\[ P(\bb) = \lambda \sum_j K_j^\gamma \norm{\bb_j}_1^\gamma \]</span></p>
 <p>where <span class="math inline">\(K_j\)</span> denotes the number of elements in group <span class="math inline">\(j\)</span>.</p>
 <p>Please note that the group bridge penalty uses a very different algorithm from the other penalties. Due to the nature of the penalty, model fitting is slower and less stable for group bridge models. This is, in fact, the main motivation of the GEL penalty of Section~: to offer a more tractable alternative to group bridge that has similar estimation properties but is much better behaved from a numerical optimization perspective.</p>
 <p>If you use the group bridge penalty, please cite either of the following papers:</p>
@@ -211,16 +198,12 @@ P(\bb) = \lambda \sum_j K_j^\gamma \norm{\bb_j}_1^\gamma
 <h2 id="specifying-an-additional-ridge-component">Specifying an additional ridge component<a class="anchor" aria-label="anchor" href="#specifying-an-additional-ridge-component"></a>
 </h2>
 <p>For all of the penalties in the previous section, <code>grpreg</code> allows the specification of an additional ridge (<span class="math inline">\(L_2\)</span>) component to the penalty. This will set <span class="math inline">\(\lam_1 = \alpha\lam\)</span> and <span class="math inline">\(\lam_2=(1-\alpha)\lam\)</span>, with the penalty given by</p>
-<p><span class="math display">\[
-P(\bb) = P_1(\bb|\lam_1) + \frac{\lam_2}{2}\norm{\bb}^2,
-\]</span></p>
+<p><span class="math display">\[ P(\bb) = P_1(\bb|\lam_1) + \frac{\lam_2}{2}\norm{\bb}_2^2, \]</span></p>
 <p>where <span class="math inline">\(P_1\)</span> is any of the penalties from the earlier sections. So, for example</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grLasso"</span>, alpha<span class="op">=</span><span class="fl">0.75</span><span class="op">)</span></span></code></pre></div>
 <p>will fit a model with penalty</p>
-<p><span class="math display">\[
-P(\beta) = 0.75\lam \sum_j \norm{\bb_j} + \frac{0.25\lam}{2}\norm{\bb}^2.
-\]</span></p>
+<p><span class="math display">\[ P(\beta) = 0.75\lam \sum_j \norm{\bb_j}_2 + \frac{0.25\lam}{2}\norm{\bb}_2^2. \]</span></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
@@ -235,7 +218,7 @@ P(\beta) = 0.75\lam \sum_j \norm{\bb_j} + \frac{0.25\lam}{2}\norm{\bb}^2.
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Last updated 2023-03-31</p>
+<p>Last updated 2023-05-17</p>
 </div>
 
     </footer>
