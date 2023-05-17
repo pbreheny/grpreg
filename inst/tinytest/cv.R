@@ -54,11 +54,13 @@ plot(cvfit, type='all')
 n <- 75
 p <- 200
 X <- matrix(rnorm(n*p), n, p)
-mu <- exp(apply(X[,1:10], 1, sum))
+mu <- exp(apply(X[,1:10], 1, sum)*0.5)
 y <- rpois(n, mu)
 g <- rep(LETTERS[1:20], each=10)
 cvfit <- cv.grpreg(X, y, group=g)
+plot(cvfit, type='all')
 cvfit <- cv.grpreg(X, y>0, group=g, family='binomial')
+plot(cvfit, type='all')
 cvfit <- cv.grpreg(X, y, group=g, family='poisson')
 plot(cvfit, type='all')
 
@@ -84,9 +86,9 @@ expect_equivalent(
 # Gaussian
 n <- 5000
 group <- rep(0:4,5:1)
+p <- length(group)
 X <- matrix(rnorm(n*p),ncol=p)
 y <- rnorm(n, mean=X[,6])
 cvfit <- cv.grpreg(X, y, group, penalty='grLasso', lambda.min=0)
 summary(cvfit, lambda=0)$r.squared
 summary(lm(y ~ ., as.data.frame(X)))$r.squared
-

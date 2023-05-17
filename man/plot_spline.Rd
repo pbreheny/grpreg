@@ -13,6 +13,7 @@ plot_spline(
   type = "contrast",
   warnings = TRUE,
   points.par = NULL,
+  add = FALSE,
   ...
 )
 }
@@ -36,6 +37,8 @@ plot_spline(
 \item{warnings}{If \code{FALSE}, warnings will be suppressed (default = \code{TRUE}).}
 
 \item{points.par}{List of parameters (see \code{\link[=par]{par()}} to pass to \code{\link[=points]{points()}} when \code{partial=TRUE}.}
+
+\item{add}{Add spline to existing plot? (default: FALSE)}
 
 \item{...}{Further arguments to be passed to \code{plot()}. Note that these arguments also control the appearance of the lines.}
 }

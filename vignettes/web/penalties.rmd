@@ -25,8 +25,8 @@ The following notation is used throughout (recall that the design matrix $\X$ is
 * $\bb$ denotes the entire vector of regression coefficients
 * $\bb_j$ denotes the vector of regression coefficients corresponding to the $j$th group
 * $\beta_{jk}$ denotes $k$th regression coefficient in the $j$th group
-* $\norm{\bb_j}$ denotes the Euclidean ($L_2$) norm of $\bb_j$
-* $\norm{\bb_j}_1$ denotes the $L_1$ norm of $\beta_j$ (Manhattan distance)
+* $\norm{\bb_j}_2$ denotes the Euclidean ($L_2$) norm of $\bb_j$: $\norm{x}_2 = \sqrt{x_1^2 + x_2^2 + \ldots}$
+* $\norm{\bb_j}_1$ denotes the $L_1$ norm of $\beta_j$: $\norm{x}_1 = \abs{x_1} + \abs{x_2} + \ldots$
 
 ## Group selection
 
@@ -48,9 +48,7 @@ The group lasso was originally proposed in
 grpreg(X, y, group, penalty="grLasso")
 ```
 
-$$
-P(\beta) = \lam \sum_j \norm{\bb_j}
-$$
+$$ P(\beta) = \lam \sum_j \norm{\bb_j}_2 $$
 
 ### Group MCP
 
@@ -58,9 +56,7 @@ $$
 grpreg(X, y, group, penalty="grMCP")
 ```
 
-$$
-P(\bb) = \sum_j \textrm{MCP}_{\lam, \gamma}(\norm{\bb_j})
-$$
+$$ P(\bb) = \sum_j \textrm{MCP}_{\lam, \gamma}(\norm{\bb_j}_2) $$
 
 where $\textrm{MCP}_{\lam, \gamma}(\cdot)$ denotes the MCP penalty with regularization parameter $\lam$ and tuning parameter $\gamma$.
 
@@ -70,9 +66,7 @@ where $\textrm{MCP}_{\lam, \gamma}(\cdot)$ denotes the MCP penalty with regulari
 grpreg(X, y, group, penalty="grSCAD")
 ```
 
-$$
-P(\bb) = \sum_j \textrm{SCAD}_{\lam, \gamma}(\norm{\bb_j})
-$$
+$$ P(\bb) = \sum_j \textrm{SCAD}_{\lam, \gamma}(\norm{\bb_j}_2) $$
 
 where $\textrm{SCAD}_{\lam, \gamma}(\cdot)$ denotes the SCAD penalty with regularization parameter $\lam$ and tuning parameter $\gamma$.
 
@@ -86,15 +80,11 @@ These penalties are sparse at both the group and individual levels.  In some gro
 grpreg(X, y, group, penalty="gel")
 ```
 
-$$
-P(\beta) = \sum_j f_{\lam, \tau}(\norm{\bb_j})
-$$
+$$ P(\beta) = \sum_j f_{\lam, \tau}(\norm{\bb_j}_1) $$
 
 where $f(\cdot)$ denotes the exponential penalty with regularization parameter $\lam$ and tuning parameter $\tau$:
 
-$$
-f_{\lam, \tau}(\theta) = \frac{\lam^2}{\tau}\left\{1-\exp\left(-\frac{\tau\theta}{\lam}\right)\right\}
-$$
+$$ f_{\lam, \tau}(\theta) = \frac{\lam^2}{\tau}\left\{1-\exp\left(-\frac{\tau\theta}{\lam}\right)\right\} $$
 
 If you use the GEL penalty, please cite
 
@@ -106,9 +96,7 @@ If you use the GEL penalty, please cite
 grpreg(X, y, group, penalty="cMCP")
 ```
 
-$$
-P(\bb) = \sum_j \textrm{MCP}_{\lam, \gam_1} \left( \sum_k \textrm{MCP}_{\lam, \gam_2} (\abs{\beta_{jk}}) \right)
-$$
+$$ P(\bb) = \sum_j \textrm{MCP}_{\lam, \gam_1} \left( \sum_k \textrm{MCP}_{\lam, \gam_2} (\abs{\beta_{jk}}) \right) $$
 
 where $\textrm{MCP}_{\lam, \gamma}(\cdot)$ denotes the MCP penalty with regularization parameter $\lam$ and tuning parameter $\gamma$.
 
@@ -125,9 +113,7 @@ Please note that there is some confusion around the name "group MCP".  In the fi
 gBridge(X, y, group)
 ```
 
-$$
-P(\bb) = \lambda \sum_j K_j^\gamma \norm{\bb_j}_1^\gamma
-$$
+$$ P(\bb) = \lambda \sum_j K_j^\gamma \norm{\bb_j}_1^\gamma $$
 
 where $K_j$ denotes the number of elements in group $j$.
 
@@ -144,9 +130,7 @@ The first paper proposed the method; the second paper proposed the algorithm tha
 
 For all of the penalties in the previous section, `grpreg` allows the specification of an additional ridge ($L_2$) component to the penalty.  This will set $\lam_1 = \alpha\lam$ and $\lam_2=(1-\alpha)\lam$, with the penalty given by
 
-$$
-P(\bb) = P_1(\bb|\lam_1) + \frac{\lam_2}{2}\norm{\bb}^2,
-$$
+$$ P(\bb) = P_1(\bb|\lam_1) + \frac{\lam_2}{2}\norm{\bb}_2^2, $$
 
 where $P_1$ is any of the penalties from the earlier sections.  So, for example
 
@@ -156,6 +140,4 @@ grpreg(X, y, group, penalty="grLasso", alpha=0.75)
 
 will fit a model with penalty
 
-$$
-P(\beta) = 0.75\lam \sum_j \norm{\bb_j} + \frac{0.25\lam}{2}\norm{\bb}^2.
-$$
+$$ P(\beta) = 0.75\lam \sum_j \norm{\bb_j}_2 + \frac{0.25\lam}{2}\norm{\bb}_2^2. $$

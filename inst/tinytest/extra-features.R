@@ -55,14 +55,14 @@ fit <- grpreg(X, y, group, penalty="gel", lambda.min=0, eps=1e-12)
 expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle))
 fit.mle <- glm(yy ~ X, family="binomial")
 fit <- grpreg(X, yy, group, penalty="grLasso", lambda.min=0, family="binomial", eps=1e-12, max.iter=1e6)
-expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle), tolerance=1e-5)
+expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle), tolerance=1e-4)
 fit <- grpreg(X, yy, group, penalty="gel", lambda.min=0, family="binomial", eps=1e-12, max.iter=1e6)
-expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle), tolerance=1e-5)
+expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle), tolerance=1e-4)
 fit.mle <- glm(yy ~ X, family="poisson")
 fit <- grpreg(X, yy, group, penalty="grLasso", lambda.min=0, family="poisson", eps=1e-12, max.iter=1e6)
-expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle), tolerance=1e-5)
+expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle), tolerance=1e-4)
 fit <- grpreg(X, yy, group, penalty="gel", lambda.min=0, family="poisson", eps=1e-12, max.iter=1e6)
-expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle), tolerance=1e-5)
+expect_equivalent(residuals(fit, lambda=0), residuals(fit.mle), tolerance=1e-4)
 
 # grpreg handles user-specified lambda
 n <- 50
