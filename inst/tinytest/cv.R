@@ -92,3 +92,16 @@ y <- rnorm(n, mean=X[,6])
 cvfit <- cv.grpreg(X, y, group, penalty='grLasso', lambda.min=0)
 summary(cvfit, lambda=0)$r.squared
 summary(lm(y ~ ., as.data.frame(X)))$r.squared
+
+
+# Return Y ----------------------------------------------------------------
+
+n <- 50
+group <- rep(0:4,5:1)
+p <- length(group)
+X <- matrix(rnorm(n*p),ncol=p)
+y <- rnorm(n)
+cvfit <- cv.grpreg(X, y, group, returnY=TRUE)
+expect_equivalent(
+  cvfit$cve,
+  apply((cvfit$Y - y)^2, 2, mean))

@@ -91,6 +91,7 @@
 #' summary(cvfit)
 #' 
 #' @export cv.grpreg
+
 cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY=FALSE, trace=FALSE) {
 
   # Complete data fit
@@ -108,8 +109,8 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
   # Get y, standardized X
   XG <- fit$XG
   X <- XG$X
-  y <- fit$y
   m <- attr(fit$y, "m")
+  y <- if (fit$family=="gaussian") fit$y - attr(fit$y, "mean") else fit$y
   returnX <- list(...)$returnX
   if (is.null(returnX) || !returnX) fit$XG <- NULL
 
