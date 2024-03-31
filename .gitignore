@@ -1,3 +1,7 @@
 vignettes/*.html
 .Rproj.user
 .Rhistory
+docs
+
+*.o
+*.so
