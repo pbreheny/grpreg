@@ -61,12 +61,12 @@ cv.grpsurv <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, se=c('
 
   # Return
   if (se == "quick") {
-    L <- loss.grpsurv(y, Y, total=FALSE)
+    L <- deviance_grpsurv(y, Y, total=FALSE)
     cve <- apply(L, 2, sum)/sum(fit$fail)
     cvse <- apply(L, 2, sd)*sqrt(nrow(L))/sum(fit$fail)
   } else {
-    cve <- as.double(loss.grpsurv(y, Y))/sum(fit$fail)
-    cvse <- se.grpsurv(y, Y)/sum(fit$fail)
+    cve <- as.double(deviance_grpsurv(y, Y))/sum(fit$fail)
+    cvse <- se_grpsurv(y, Y)/sum(fit$fail)
   }
   min <- which.min(cve)
 
@@ -84,5 +84,5 @@ cvf.surv <- function(i, XX, y, fold, cv.args) {
   nl <- length(fit.i$lambda)
   yhat <- predict(fit.i, X2)
 
-  list(nl=length(fit.i$lambda), yhat=yhat)#, loss=loss)
+  list(nl=length(fit.i$lambda), yhat=yhat)
 }

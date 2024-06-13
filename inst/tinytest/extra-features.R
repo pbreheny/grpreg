@@ -1,3 +1,5 @@
+if (interactive()) library(tinytest)
+
 # logLik is correct
 n <- 50
 group <- rep(0:4,5:1)
@@ -8,29 +10,31 @@ yy <- runif(n) > .5
 fit.mle <- lm(y~X)
 fit <- grpreg(X, y, group, penalty="grLasso", lambda.min=0)
 expect_equivalent(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
-expect_equivalent(apply(grpreg:::loss.grpreg(y, predict(fit, X=X, type='response'), family='gaussian'), 2, sum), fit$loss)
+expect_equivalent(apply(grpreg:::deviance_grpreg(y, predict(fit, X=X, type='response'), family='gaussian'), 2, sum), fit$deviance)
 expect_equivalent(AIC(fit)[100], AIC(fit.mle), tol=.001)
 fit <- grpreg(X, y, group, penalty="gel", lambda.min=0)
 expect_equivalent(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
-expect_equivalent(apply(grpreg:::loss.grpreg(y, predict(fit, X=X, type='response'), family='gaussian'), 2, sum), fit$loss, tol=0.0001)
+expect_equivalent(apply(grpreg:::deviance_grpreg(y, predict(fit, X=X, type='response'), family='gaussian'), 2, sum), fit$deviance, tol=0.0001)
 expect_equivalent(AIC(fit)[100], AIC(fit.mle), tol=.001)
+
+# Binomial
 fit.mle <- glm(yy~X, family="binomial")
 fit <- grpreg(X, yy, group, penalty="grLasso", lambda.min=0, family="binomial")
 expect_equivalent(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
-expect_equivalent(apply(grpreg:::loss.grpreg(yy, predict(fit, X=X, type='response'), family='binomial'), 2, sum), fit$loss, tol=0.0001)
+expect_equivalent(apply(grpreg:::deviance_grpreg(yy, predict(fit, X=X, type='response'), family='binomial'), 2, sum), fit$deviance, tol=0.0001)
 expect_equivalent(AIC(fit)[100], AIC(fit.mle), tol=.001)
 fit <- grpreg(X, yy, group, penalty="gel", lambda.min=0, family="binomial")
 expect_equivalent(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
-expect_equivalent(apply(grpreg:::loss.grpreg(yy, predict(fit, X=X, type='response'), family='binomial'), 2, sum), fit$loss, tol=0.0001)
+expect_equivalent(apply(grpreg:::deviance_grpreg(yy, predict(fit, X=X, type='response'), family='binomial'), 2, sum), fit$deviance, tol=0.0001)
 expect_equivalent(AIC(fit)[100], AIC(fit.mle), tol=.001)
 fit.mle <- glm(yy~X, family="poisson")
 fit <- grpreg(X, yy, group, penalty="grLasso", lambda.min=0, family="poisson")
 expect_equivalent(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
-expect_equivalent(apply(grpreg:::loss.grpreg(yy, predict(fit, X=X, type='response'), family='poisson'), 2, sum), fit$loss, tol=0.0001)
+expect_equivalent(apply(grpreg:::deviance_grpreg(yy, predict(fit, X=X, type='response'), family='poisson'), 2, sum), fit$deviance, tol=0.0001)
 expect_equivalent(AIC(fit)[100], AIC(fit.mle), tol=.001)
 fit <- grpreg(X, yy, group, penalty="gel", lambda.min=0, family="poisson")
 expect_equivalent(logLik(fit)[100], logLik(fit.mle)[1], tol=.001)
-expect_equivalent(apply(grpreg:::loss.grpreg(yy, predict(fit, X=X, type='response'), family='poisson'), 2, sum), fit$loss, tol=0.0001)
+expect_equivalent(apply(grpreg:::deviance_grpreg(yy, predict(fit, X=X, type='response'), family='poisson'), 2, sum), fit$deviance, tol=0.0001)
 expect_equivalent(AIC(fit)[100], AIC(fit.mle), tol=.001)
 
 # linear predictors are correct

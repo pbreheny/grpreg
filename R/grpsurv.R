@@ -10,9 +10,9 @@
 #' defined to be \deqn{Q(\beta|X, y) = \frac{1}{n} L(\beta|X, y) + }{Q(\beta|X,
 #' y) = (1/n)*L(\beta|X, y) + P(\beta, \lambda),}\deqn{
 #' P_\lambda(\beta)}{Q(\beta|X, y) = (1/n)*L(\beta|X, y) + P(\beta, \lambda),}
-#' where the loss function L is the deviance (-2 times the partial
-#' log-likelihood) from the Cox regression mode.
-#' [See here for more details](https://pbreheny.github.io/ncvreg/articles/web/models.html).
+#' where the loss function L is the negative partial log-likelihood (half the
+#' deviance) from the Cox regression model.
+#' [See here for more details](https://pbreheny.github.io/ncvreg/articles/models.html).
 #' 
 #' Presently, ties are not handled by \code{grpsurv} in a particularly
 #' sophisticated manner.  This will be improved upon in a future release of
@@ -70,29 +70,35 @@
 #' saturation?  Default is TRUE.
 #' @param returnX Return the standardized design matrix?  Default is FALSE.
 #' @param ... Not used.
-#' @return An object with S3 class \code{"grpsurv"} containing: \item{beta}{The
-#' fitted matrix of coefficients.  The number of rows is equal to the number of
-#' coefficients, and the number of columns is equal to \code{nlambda}.}
-#' \item{group}{Same as above.} \item{lambda}{The sequence of \code{lambda}
-#' values in the path.} \item{penalty}{Same as above.} \item{gamma}{Same as
-#' above.} \item{alpha}{Same as above.} \item{loss}{The negative partial
-#' log-likelihood of the fitted model at each value of \code{lambda}.}
-#' \item{n}{The number of observations.} \item{df}{A vector of length
-#' \code{nlambda} containing estimates of effective number of model parameters
-#' all the points along the regularization path.  For details on how this is
-#' calculated, see Breheny and Huang (2009).} \item{iter}{A vector of length
-#' \code{nlambda} containing the number of iterations until convergence at each
-#' value of \code{lambda}.} \item{group.multiplier}{A named vector containing
-#' the multiplicative constant applied to each group's penalty.}
+#' 
+#' @returns An object with S3 class `"grpsurv"` containing:
+#' \item{beta}{The fitted matrix of coefficients. The number of rows is equal to
+#' the number of coefficients, and the number of columns is equal to `nlambda`.}
+#' \item{group}{Same as above.}
+#' \item{lambda}{The sequence of `lambda` values in the path.}
+#' \item{penalty}{Same as above.}
+#' \item{gamma}{Same as above.}
+#' \item{alpha}{Same as above.}
+#' \item{deviance}{The deviance of the fitted model at each value of `lambda`.}
+#' \item{n}{The number of observations.}
+#' \item{df}{A vector of length `nlambda` containing estimates of effective
+#' number of model parameters all the points along the regularization path. For
+#' details on how this is calculated, see Breheny and Huang (2009).}
+#' \item{iter}{A vector of length `nlambda` containing the number of iterations
+#' until convergence at each value of `lambda`.}
+#' \item{group.multiplier}{A named vector containing the multiplicative constant
+#' applied to each group's penalty.}
 #' 
 #' For Cox models, the following objects are also returned (and are necessary
-#' to estimate baseline survival conditonal on the estimated regression
-#' coefficients), all of which are ordered by time on study.  I.e., the ith row
-#' of \code{W} does not correspond to the ith row of \code{X}):
+#' to estimate baseline survival conditional on the estimated regression
+#' coefficients), all of which are ordered by time on study (i.e., the ith row
+#' of `W` does not correspond to the ith row of `X`):
 #' 
-#' \item{W}{Matrix of \code{exp(beta)} values for each subject over all
-#' \code{lambda} values.} \item{time}{Times on study.} \item{fail}{Failure
-#' event indicator.}
+#' \item{W}{Matrix of `exp(beta)` values for each subject over all `lambda`
+#' values.}
+#' \item{time}{Times on study.}
+#' \item{fail}{Failure event indicator.}
+#' 
 #' @author Patrick Breheny
 #' 
 #' @seealso [plot.grpreg()], [predict.grpsurv()], [cv.grpsurv()]
@@ -200,7 +206,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
   b <- matrix(res[[1]], p, nlambda)
   iter <- res[[2]]
   df <- res[[3]]
-  loss <- -2*res[[4]]
+  loss <- -res[[4]]
   Eta <- matrix(res[[5]], n, nlambda)
 
   # Eliminate saturated lambda values, if any
@@ -231,7 +237,7 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
                         penalty = penalty,
                         gamma = gamma,
                         alpha = alpha,
-                        loss = loss,
+                        deviance = 2 * loss,
                         n = n,
                         df = df,
                         iter = iter,

@@ -1,7 +1,7 @@
-loss.grpreg <- function(y, yhat, family) {
+deviance_grpreg <- function(y, yhat, family) {
   n <- length(y)
   if (family=="gaussian") {
-    val <- (y-yhat)^2
+    val <- (y - yhat)^2
   } else if (family=="binomial") {
     yhat[yhat < 0.00001] <- 0.00001
     yhat[yhat > 0.99999] <- 0.99999
@@ -21,7 +21,7 @@ loss.grpreg <- function(y, yhat, family) {
   }
   val
 }
-loss.grpsurv <- function(y, eta, total=TRUE) {
+deviance_grpsurv <- function(y, eta, total=TRUE) {
   ind <- order(y[,1])
   d <- as.integer(y[ind,2])
   if (is.matrix(eta)) {

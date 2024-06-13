@@ -87,8 +87,8 @@ fit <- grpsurv(as.data.frame(X), y)
 
 # loss works for grpsurv
 eta <- predict(fit, X, 'link', lambda=0.1)
-grpreg:::loss.grpsurv(y, eta)
-grpreg:::loss.grpsurv(y, eta, total=FALSE)
+grpreg:::deviance_grpsurv(y, eta)
+grpreg:::deviance_grpsurv(y, eta, total=FALSE)
 
 # cross-validation works for grpsurv
 cvfit <- cv.grpsurv(X, y, g, lambda.min=0)

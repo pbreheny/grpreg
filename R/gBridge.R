@@ -151,7 +151,7 @@ gBridge <- function(X, y, group=1:ncol(X), family=c("gaussian", "binomial", "poi
                         group = group,
                         lambda = lambda,
                         alpha = alpha,
-                        loss = loss,
+                        deviance = 2 * loss,
                         n = n,
                         penalty = "gBridge",
                         df = df,

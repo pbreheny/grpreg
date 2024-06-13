@@ -7,11 +7,11 @@ navbar:
     - text: Learn more
       menu:
       - text: Models
-        href: articles/web/models.html
+        href: articles/models.html
       - text: Penalties
-        href: articles/web/penalties.html
+        href: articles/penalties.html
       - text: Additive models
-        href: articles/web/additive-models.html
+        href: articles/additive-models.html
     - text: Functions
       href: reference/index.html
   right:
@@ -21,8 +21,7 @@ navbar:
 
 template:
   bootstrap: 5
-  params:
-    bootswatch: cerulean
+  bootswatch: cerulean
 
 reference:
 - title: Model fitting
@@ -72,6 +71,6 @@ footer:
     left: developed_by
     right: updated
   components:
-    updated: Last updated 2023-05-17
+    updated: Last updated 2024-06-13
 
 

@@ -4,59 +4,61 @@
 #' grouped covariates over a grid of values for the regularization parameter
 #' lambda.
 #' 
-#' The function calls \code{grpreg}/\code{cv.grpsurv} \code{nfolds} times, each
-#' time leaving out 1/\code{nfolds} of the data.  The cross-validation error is
+#' The function calls [grpreg()] or [grpsurv()] `nfolds` times, each
+#' time leaving out 1/`nfolds` of the data.  The cross-validation error is
 #' based on the deviance;
-#' [see here for more details](https://pbreheny.github.io/grpreg/articles/web/models.html).
+#' [see here for more details](https://pbreheny.github.io/grpreg/articles/models.html).
 #' 
 #' For Gaussian and Poisson responses, the folds are chosen according to simple
 #' random sampling.  For binomial responses, the numbers for each outcome class
 #' are balanced across the folds; i.e., the number of outcomes in which
-#' \code{y} is equal to 1 is the same for each fold, or possibly off by 1 if
+#' `y` is equal to 1 is the same for each fold, or possibly off by 1 if
 #' the numbers do not divide evenly.  This approach is used for Cox regression
 #' as well to balance the amount of censoring cross each fold.
 #' 
-#' For Cox models, \code{cv.grpsurv} uses the approach of calculating the full
+#' For Cox models, `cv.grpsurv` uses the approach of calculating the full
 #' Cox partial likelihood using the cross-validated set of linear predictors.
 #' Other approaches to cross-validation for the Cox regression model have been
 #' proposed in the literature; the strengths and weaknesses of the various
 #' methods for penalized regression in the Cox model are the subject of current
 #' research.  A simple approximation to the standard error is provided,
-#' although an option to bootstrap the standard error (\code{se='bootstrap'})
+#' although an option to bootstrap the standard error (`se='bootstrap'`)
 #' is also available.
 #' 
-#' As in \code{grpreg}, seemingly unrelated regressions/multitask learning can
-#' be carried out by setting \code{y} to be a matrix, in which case groups are
-#' set up automatically (see \code{\link{grpreg}} for details), and
-#' cross-validation is carried out with respect to rows of \code{y}.  As
+#' As in [grpreg()], seemingly unrelated regressions/multitask learning can
+#' be carried out by setting `y` to be a matrix, in which case groups are
+#' set up automatically (see [grpreg()] for details), and
+#' cross-validation is carried out with respect to rows of `y`.  As
 #' mentioned in the details there, it is recommended to standardize the
 #' responses prior to fitting.
 #' 
 #' @aliases cv.grpreg cv.grpsurv
-#' @param X The design matrix, as in \code{grpreg}/\code{grpsurv}.
-#' @param y The response vector (or matrix), as in \code{grpreg}\code{grpsurv}.
-#' @param group The grouping vector, as in \code{grpreg}\code{grpsurv}.
-#' @param ... Additional arguments to \code{grpreg}\code{grpsurv}.
+#' 
+#' @param X The design matrix, as in [grpreg()]/[grpsurv()].
+#' @param y The response vector (or matrix), as in [grpreg()]/[grpsurv()].
+#' @param group The grouping vector, as in [grpreg()]/[grpsurv()].
+#' @param ... Additional arguments to [grpreg()]/[grpsurv()].
 #' @param nfolds The number of cross-validation folds.  Default is 10.
 #' @param seed You may set the seed of the random number generator in order to
 #' obtain reproducible results.
 #' @param fold Which fold each observation belongs to.  By default the
 #' observations are randomly assigned.
-#' @param returnY Should \code{cv.grpreg}\code{grpsurv} return the fitted
+#' @param returnY Should cv.grpreg()/cv.grpsurv() return the fitted
 #' values from the cross-validation folds?  Default is FALSE; if TRUE, this
 #' will return a matrix in which the element for row i, column j is the fitted
 #' value for observation i from the fold in which observation i was excluded
-#' from the fit, at the jth value of lambda.  NOTE: For \code{cv.grpsurv}, the
-#' rows of \code{Y} are ordered by time on study, and therefore will not
-#' correspond to the original order of observations pased to \code{cv.grpsurv}.
+#' from the fit, at the jth value of lambda.  NOTE: For `cv.grpsurv()`, the
+#' rows of `Y` are ordered by time on study, and therefore will not
+#' correspond to the original order of observations pased to `cv.grpsurv`.
 #' @param trace If set to TRUE, cv.grpreg will inform the user of its progress
 #' by announcing the beginning of each CV fold.  Default is FALSE.
-#' @param se For \code{cv.grpsurv}, the method by which the cross-valiation
+#' @param se For `cv.grpsurv()`, the method by which the cross-valiation
 #' standard error (CVSE) is calculated.  The 'quick' approach is based on a
 #' rough approximation, but can be calculated more or less instantly.  The
 #' 'bootstrap' approach is more accurate, but requires additional computing
 #' time.
-#' @return An object with S3 class \code{"cv.grpreg"} containing:
+#' 
+#' @returns An object with S3 class \code{"cv.grpreg"} containing:
 #' \item{cve}{The error for each value of \code{lambda}, averaged across the
 #' cross-validation folds.} \item{cvse}{The estimated standard error associated
 #' with each value of for \code{cve}.} \item{lambda}{The sequence of
@@ -67,12 +69,14 @@
 #' observations, not the original observations.} \item{min}{The index of
 #' \code{lambda} corresponding to \code{lambda.min}.} \item{lambda.min}{The
 #' value of \code{lambda} with the minimum cross-validation error.}
-#' \item{null.dev}{The deviance for the intercept-only model.} \item{pe}{If
-#' \code{family="binomial"}, the cross-validation prediction error for each
-#' value of \code{lambda}.}
+#' \item{null.dev}{The deviance for the intercept-only model.}
+#' \item{pe}{If `family="binomial"`, the cross-validation prediction error for
+#' each value of `lambda`.}
+#' 
 #' @author Patrick Breheny
-#' @seealso \code{\link{grpreg}}, \code{\link{plot.cv.grpreg}},
-#' \code{\link{summary.cv.grpreg}}, \code{\link{predict.cv.grpreg}}
+#' 
+#' @seealso [grpreg()], [plot.cv.grpreg()], [summary.cv.grpreg()],
+#' [predict.cv.grpreg()]
 #' 
 #' @examples
 #' \dontshow{set.seed(1)}
@@ -159,7 +163,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
     if (trace) cat("Starting CV fold #", i, sep="","\n")
     res <- cvf(i, X, y, fold, cv.args)
     Y[fold==i, 1:res$nl] <- res$yhat
-    E[fold==i, 1:res$nl] <- res$loss
+    E[fold==i, 1:res$nl] <- res$deviance
     if (fit$family=="binomial") PE[fold==i, 1:res$nl] <- res$pe
   }
 
@@ -173,7 +177,7 @@ cv.grpreg <- function(X, y, group=1:ncol(X), ..., nfolds=10, seed, fold, returnY
   cve <- apply(E, 2, mean)
   cvse <- apply(E, 2, sd) / sqrt(n)
   min <- which.min(cve)
-  null.dev <- calcNullDev(X, y, group=XG$g, family=fit$family)
+  null.dev <- calc_null_dev(X, y, group=XG$g, family=fit$family)
 
   val <- list(cve=cve, cvse=cvse, lambda=lambda, fit=fit, fold=fold, min=min, lambda.min=lambda[min], null.dev=null.dev)
   if (fit$family=="binomial") val$pe <- apply(PE[, ind], 2, mean)
@@ -195,7 +199,7 @@ cvf <- function(i, X, y, fold, cv.args) {
   X2 <- X[fold==i, , drop=FALSE]
   y2 <- y[fold==i]
   yhat <- matrix(predict(fit.i, X2, type="response"), length(y2))
-  loss <- loss.grpreg(y2, yhat, fit.i$family)
+  deviance <- deviance_grpreg(y2, yhat, fit.i$family)
   pe <- if (fit.i$family=="binomial") {(yhat < 0.5) == y2} else NULL
-  list(loss=loss, pe=pe, nl=length(fit.i$lambda), yhat=yhat)
+  list(deviance=deviance, pe=pe, nl=length(fit.i$lambda), yhat=yhat)
 }

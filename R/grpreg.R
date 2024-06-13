@@ -10,13 +10,13 @@
 #' the level of individual covariates (i.e., selecting important groups as well
 #' as important members of those groups).  Group selection selects important
 #' groups, and not members within the group -- i.e., within a group,
-#' coefficients will either all be zero or all nonzero.  The \code{grLasso},
-#' \code{grMCP}, and \code{grSCAD} penalties carry out group selection, while
-#' the \code{gel} and \code{cMCP} penalties carry out bi-level selection.  For
-#' bi-level selection, see also the \code{\link{gBridge}} function.  For
+#' coefficients will either all be zero or all nonzero.  The `grLasso`,
+#' `grMCP`, and `grSCAD` penalties carry out group selection, while
+#' the `gel` and `cMCP` penalties carry out bi-level selection.  For
+#' bi-level selection, see also the [gBridge()] function.  For
 #' historical reasons and backwards compatibility, some of these penalties have
-#' aliases; e.g., \code{gLasso} will do the same thing as \code{grLasso}, but
-#' users are encouraged to use \code{grLasso}.
+#' aliases; e.g., `gLasso` will do the same thing as `grLasso`, but
+#' users are encouraged to use `grLasso`.
 #' 
 #' Please note the distinction between \code{grMCP} and \code{cMCP}.  The
 #' former involves an MCP penalty being applied to an L2-norm of each group.
@@ -39,12 +39,12 @@
 #' \deqn{Q(\beta|X, y) = \frac{1}{n} L(\beta|X, y) + }{Q(\beta|X, y) =
 #' (1/n)*L(\beta|X, y) + P(\beta, \lambda),}\deqn{ P_\lambda(\beta)}{Q(\beta|X,
 #' y) = (1/n)*L(\beta|X, y) + P(\beta, \lambda),} where the loss function L is
-#' the deviance (-2 times the log likelihood) for the specified outcome
+#' the negative log-likelihood (half the deviance) for the specified outcome
 #' distribution (gaussian/binomial/poisson). For more details, refer to the
 #' following:
 #' \itemize{
-#'   \item [Models and loss functions](https://pbreheny.github.io/grpreg/articles/web/models.html)
-#'   \item [Penalties](https://pbreheny.github.io/grpreg/articles/web/penalties.htmlPenalties)
+#'   \item [Models and loss functions](https://pbreheny.github.io/grpreg/articles/models.html)
+#'   \item [Penalties](https://pbreheny.github.io/grpreg/articles/penalties.htmlPenalties)
 #' }
 #'   
 #' For the bi-level selection methods, a locally approximated coordinate
@@ -151,7 +151,8 @@
 #' \item{group}{Same as above.}
 #' \item{lambda}{The sequence of \code{lambda} values in the path.}
 #' \item{alpha}{Same as above.}
-#' \item{loss}{A vector containing either the residual sum of squares (`"gaussian"`) or negative log-likelihood (`"binomial"`) of the fitted model at each value of `lambda`.}
+#' \item{deviance}{A vector containing the deviance of the fitted model at each
+#' value of `lambda`.}
 #' \item{n}{Number of observations.}
 #' \item{penalty}{Same as above.}
 #' \item{df}{A vector of length `nlambda` containing estimates of effective number of model parameters all the points along the regularization path.  For details on how this is calculated, see Breheny and Huang (2009).}
@@ -299,7 +300,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
     if (bilevel) fit <- .Call("lcdfit_gaussian", XG$X, yy, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), XG$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
     else fit <- .Call("gdfit_gaussian", XG$X, yy, penalty, K1, K0, lambda, lam.max, alpha, eps, as.integer(max.iter), gamma, XG$m, as.integer(dfmax), as.integer(gmax), as.integer(user.lambda))
     b <- rbind(mean(y), matrix(fit[[1]], nrow=p))
-    loss <- fit[[2]]
+    dev <- fit[[2]]
     Eta <- matrix(fit[[3]], nrow=n) + mean(y)
     df <- fit[[4]] + 1 # Intercept
     iter <- fit[[5]]
@@ -307,7 +308,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
     if (bilevel) fit <- .Call("lcdfit_glm", XG$X, yy, family, penalty, K1, K0, lambda, alpha, eps, 0, gamma, tau, as.integer(max.iter), XG$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
     else fit <- .Call("gdfit_glm", XG$X, yy, family, penalty, K1, K0, lambda, alpha, eps, as.integer(max.iter), gamma, XG$m, as.integer(dfmax), as.integer(gmax), as.integer(warn), as.integer(user.lambda))
     b <- rbind(fit[[1]], matrix(fit[[2]], nrow=p))
-    loss <- fit[[3]]
+    dev <- fit[[3]]
     Eta <- matrix(fit[[4]], nrow=n)
     df <- fit[[5]]
     iter <- fit[[6]]
@@ -319,7 +320,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
   iter <- iter[ind]
   lambda <- lambda[ind]
   df <- df[ind]
-  loss <- loss[ind]
+  dev <- dev[ind]
   Eta <- Eta[, ind, drop=FALSE]
   if (iter[1] == max.iter) stop("Algorithm failed to converge for any values of lambda.  This indicates a combination of (a) an ill-conditioned feature matrix X and (b) insufficient penalization.  You must fix one or the other for your model to be identifiable.", call.=FALSE)
   if (warn & any(iter==max.iter)) warning("Algorithm failed to converge for all values of lambda", call.=FALSE)
@@ -347,7 +348,7 @@ grpreg <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD"
                         group = factor(group),
                         lambda = lambda,
                         alpha = alpha,
-                        loss = loss,
+                        deviance = dev,
                         linear.predictors = Eta,
                         n = n,
                         penalty = penalty,

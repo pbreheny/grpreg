@@ -16,7 +16,7 @@ knitr::knit_hooks$set(small.mar = function(before, options, envir) {
 $$
 Q(\bb|\X, \y) = \frac{1}{n}L(\bb|\X,\y) + P_\lam(\bb),
 $$
-where the loss function $L(\bb|\X,\y)$ is the deviance ($-2$ times the log-likelihood), $P_\lam(\bb)$ is the penalty, and $\lam$ is a regularization parameter that controls the tradeoff between the two components.  This article describes the different loss models available in `grpreg`; see [penalties](penalties.html) for more information on the different penalties available.
+where the loss function $L(\bb|\X,\y)$ is the negative log-likelihood ($2$ times this quantity is known as the deviance), $P_\lam(\bb)$ is the penalty, and $\lam$ is a regularization parameter that controls the tradeoff between the two components.  This article describes the different loss models available in `grpreg`; see [penalties](penalties.html) for more information on the different penalties available.
 
 # Gaussian (linear regression)
 
@@ -24,7 +24,7 @@ In linear regression, the loss function is simply the squared error loss:
 $$
 L(\bb|\X,\y) = \frac{1}{2} \norm{\y-\X\bb}_2^2;
 $$
-the factor of 1/2 is so that this loss is equivalent to deviance if the outcome $\y$ follows a normal distribution with constant variance and mean given by $\X\bb$.
+this is proportional to the negative log-likelihood for a model where $y$ follows a Gaussian distribution with constant variance and mean equal to $\X\bb$.
 
 To fit a penalized linear regression model with `grpreg`:
 
@@ -36,9 +36,9 @@ fit <- grpreg(X, y, group)
 
 In logistic regression, the loss function is:
 $$
-L(\bb|\X,\y) = -2\sum_{i:y_i=1}\log\ph_i - 2\sum_{i:y_i=0}\log(1-\ph_i);
+L(\bb|\X,\y) = -\sum_{i:y_i=1}\log\ph_i - \sum_{i:y_i=0}\log(1-\ph_i);
 $$
-this loss is the deviance for a binomial distribution with probabilities $P(Y_i=1)=\ph_i$ given by:
+this is the negative log-likelihood for a binomial distribution with probabilities $P(Y_i=1)=\ph_i$ given by:
 $$
 \ph_i = \frac{\exp(\eta_i)}{1+\eta_i},
 $$
@@ -56,7 +56,7 @@ In Poisson regression, the loss function is:
 $$
 L(\bb|\X,\y) = 2\sum_i \left\{y_i\log y_i - y_i\log \mu_i + mu_i - y_i\right\};
 $$
-note that some of these terms are constant with respect to $\mu_i$ and can therefore be ignored during optimization.  This loss is the deviance for a Poisson distribution $Y_i \sim \text{Pois}(\mh_i)$ with rate parameter given by:
+note that some of these terms are constant with respect to $\mu_i$ and can therefore be ignored during optimization.  Twice this loss is the deviance for a Poisson distribution $Y_i \sim \text{Pois}(\mh_i)$ with rate parameter given by:
 $$
 \mh_i = \exp(\eta_i).
 $$
@@ -68,7 +68,7 @@ fit <- grpreg(X, y, group, family='poisson')
 
 # Cox proportional hazards
 
-The above models all fall into the category of distributions known as exponential families (hence the `family`) argument.  `grpreg` also allows users to fit Cox proportional hazards models, although these models fall outside this framework and are therefore fit using a different function, `grpsurv`.  In Cox regression, the deviance is
+The above models all fall into the category of distributions known as exponential families (hence the `family`) argument. `grpreg` also allows users to fit Cox proportional hazards models, although these models fall outside this framework and are therefore fit using a different function, `grpsurv`. In Cox regression, the negative log of the partial likelihood is
 $$
 L(\bb|\X,\y) = -2\sum_{j=1}^{m} d_j \eta_j + 2\sum_{j=1}^{m} d_j \log\left\{\sum_{i \in R_j} \exp(\eta_i)\right\},
 $$
