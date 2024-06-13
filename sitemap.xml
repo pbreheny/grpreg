@@ -4,22 +4,22 @@
     <loc>/404.html</loc>
   </url>
   <url>
+    <loc>/articles/adaptive-rescaling.html</loc>
+  </url>
+  <url>
+    <loc>/articles/additive-models.html</loc>
+  </url>
+  <url>
     <loc>/articles/getting-started.html</loc>
   </url>
   <url>
     <loc>/articles/index.html</loc>
   </url>
   <url>
-    <loc>/articles/web/adaptive-rescaling.html</loc>
+    <loc>/articles/models.html</loc>
   </url>
   <url>
-    <loc>/articles/web/additive-models.html</loc>
-  </url>
-  <url>
-    <loc>/articles/web/models.html</loc>
-  </url>
-  <url>
-    <loc>/articles/web/penalties.html</loc>
+    <loc>/articles/penalties.html</loc>
   </url>
   <url>
     <loc>/authors.html</loc>
