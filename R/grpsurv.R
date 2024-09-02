@@ -12,7 +12,7 @@
 #' P_\lambda(\beta)}{Q(\beta|X, y) = (1/n)*L(\beta|X, y) + P(\beta, \lambda),}
 #' where the loss function L is the negative partial log-likelihood (half the
 #' deviance) from the Cox regression model.
-#' [See here for more details](https://pbreheny.github.io/ncvreg/articles/models.html).
+#' [See here for more details](https://pbreheny.github.io/grpreg/articles/models.html).
 #' 
 #' Presently, ties are not handled by \code{grpsurv} in a particularly
 #' sophisticated manner.  This will be improved upon in a future release of

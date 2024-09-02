@@ -1,3 +1,8 @@
+# grpreg 3.4.1 (2024-09-02)
+  * Fixed: Fixed some broken URLs
+  * Internal: Updated citation format to bibentry()
+  * Internal: Now using R_Calloc for _R_USE_STRICT_R_HEADERS_ compatibility
+
 # grpreg 3.4.0 (2021-07-22)
   * New: Suite of tools for additive modeling, most notably expand_spline()
     and plot_spline() (thank you to Ryan Kurth for her work on this project)

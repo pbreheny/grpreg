@@ -24,7 +24,7 @@ void gd_gaussian(double *b, double *x, double *r, int g, int *K1, int *K,
                  int n, int l, int p, const char *penalty, double lam1, double lam2,
                  double gamma, SEXP df, double *a, double *maxChange) {
   // Calculate z
-  double *z = Calloc(K[g], double);
+  double *z = R_Calloc(K[g], double);
   for (int j=K1[g]; j<K1[g+1]; j++) z[j-K1[g]] = crossprod(x, r, n, j)/n + a[j];
   double z_norm = norm(z, K[g]);
   
@@ -44,7 +44,7 @@ void gd_gaussian(double *b, double *x, double *r, int g, int *K1, int *K,
   }
   // Update df
   if (len > 0) REAL(df)[l] += K[g] * len / z_norm;
-  Free(z);
+  free(z);
 }
 
 // Scan for violations in rest set
@@ -53,7 +53,7 @@ int check_rest_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, 
   double TOLERANCE = 1e-8;
   for (int g = 0; g < J; g++) {
     if (e2[g] == 0) {
-      double *z = Calloc(K[g], double);
+      double *z = R_Calloc(K[g], double);
       for (int j = K1[g]; j < K1[g+1]; j++) {
         z[j-K1[g]] = crossprod(X, r, n, j) / n;
       }
@@ -62,7 +62,7 @@ int check_rest_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1, 
         e[g] = e2[g] = 1;
         violations++;
       }
-      Free(z);
+      free(z);
     }
   }
   return violations;
@@ -73,7 +73,7 @@ int check_strong_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1
   int violations = 0;
   for (int g = 0; g < J; g++) {
     if (e[g] == 0 && e2[g] == 1) {
-      double *z = Calloc(K[g], double);
+      double *z = R_Calloc(K[g], double);
       for (int j = K1[g]; j < K1[g+1]; j++) {
         z[j-K1[g]] = crossprod(X, r, n, j) / n;
       }
@@ -82,7 +82,7 @@ int check_strong_set(int *e2, int *e, double *xTr, double *X, double *r, int *K1
         e[g] = 1;
         violations++;
       }
-      Free(z);
+      free(z);
     }
   }
   return violations;
@@ -114,7 +114,7 @@ void bedpp_init(double *yTxxTv1, double *xTv1_sq, double *xTy_sq, double *xTr,
 
   // compute Xj^T * y
   double tmp = 0;
-  double *XTy = Calloc(K1_len, double);
+  double *XTy = R_Calloc(K1_len, double);
   for (int g=0; g<J; g++) {
     for (int j = K1[g]; j < K1[g+1]; j++) {
       XTy[j-K1[0]] = crossprod(X, y, n, j); // K1 contains consecutive indices of penalized groups
@@ -129,8 +129,8 @@ void bedpp_init(double *yTxxTv1, double *xTv1_sq, double *xTy_sq, double *xTr,
   }
 
   // compute v1_bar at lam_max: = X* X*^T y
-  double *v1_lam_max_tmp = Calloc(*K_star_ptr, double);
-  double *v1_lam_max = Calloc(n, double); // tmp quantity for BEDPP: v1_bar at lam_max: = X_star * X_star^T * y
+  double *v1_lam_max_tmp = R_Calloc(*K_star_ptr, double);
+  double *v1_lam_max = R_Calloc(n, double); // tmp quantity for BEDPP: v1_bar at lam_max: = X_star * X_star^T * y
   for (int j = K1[*g_star_ptr]; j < K1[*g_star_ptr+1]; j++) {
     v1_lam_max_tmp[j-K1[*g_star_ptr]] = crossprod(X, y, n, j);
   }
@@ -149,9 +149,9 @@ void bedpp_init(double *yTxxTv1, double *xTv1_sq, double *xTy_sq, double *xTr,
       yTxxTv1[g] += XTy[j-K1[0]] * xTv1_tmp; 
     }
   }
-  Free(XTy);
-  Free(v1_lam_max_tmp);
-  Free(v1_lam_max);
+  free(XTy);
+  free(v1_lam_max_tmp);
+  free(v1_lam_max);
 }
 
 // basic EDPP screening
@@ -205,12 +205,12 @@ void ssr_bedpp_glasso(int *e2, int *e3, double *xTr, int *K1, int *K, double *la
 void update_xTr(int *e3, int *e3_old, double *xTr, double *X, double *r, int *K1, int *K, int n, int J) {
   for (int g = 0; g < J; g++) {
     if (e3[g] == 1 && e3_old[g] == 0) {
-      double *z = Calloc(K[g], double);
+      double *z = R_Calloc(K[g], double);
       for (int j = K1[g]; j < K1[g+1]; j++) {
         z[j-K1[g]] = crossprod(X, r, n, j) / n;
       }
       xTr[g] = norm(z, K[g]);
-      Free(z);
+      free(z);
     }
   }
 }
@@ -221,7 +221,7 @@ int check_rest_set_ssr_bedpp(int *e2, int *e, int *e3, double *xTr, double *X,
   int violations = 0;
   for (int g = 0; g < J; g++) {
     if (e3[g] == 1 && e2[g] == 0) { // check groups not rejected by BEDPP but by SSR
-      double *z = Calloc(K[g], double);
+      double *z = R_Calloc(K[g], double);
       for (int j = K1[g]; j < K1[g+1]; j++) {
         z[j-K1[g]] = crossprod(X, r, n, j) / n;
       }
@@ -230,7 +230,7 @@ int check_rest_set_ssr_bedpp(int *e2, int *e, int *e3, double *xTr, double *X,
         e[g] = e2[g] = 1;
         violations++;
       }
-      Free(z);
+      free(z);
     }
   }
   return violations;
@@ -286,30 +286,30 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
   for (int i=0; i<L; i++) INTEGER(safe_rejections)[i] = 0;
 
   // Intermediate quantities
-  double *r = Calloc(n, double);
+  double *r = R_Calloc(n, double);
   for (int i=0; i<n; i++) r[i] = y[i];
-  double *a = Calloc(p, double);
+  double *a = R_Calloc(p, double);
   for (int j=0; j<p; j++) a[j] = 0;
-  int *e = Calloc(J, int); // ever-active set
+  int *e = R_Calloc(J, int); // ever-active set
   for (int g=0; g<J; g++) e[g] = 0;
   int lstart = 0, ng, nv, violations;
   double shift, l1, l2, maxChange;
 
   // variables for screening
-  int *e2 = Calloc(J, int); // strong set
-  int *e3 = Calloc(J, int); // BEDPP set
-  int *e3_old = Calloc(J, int); // previous BEDPP set
+  int *e2 = R_Calloc(J, int); // strong set
+  int *e3 = R_Calloc(J, int); // BEDPP set
+  int *e3_old = R_Calloc(J, int); // previous BEDPP set
   for (int g=0; g<J; g++) e3_old[g] = 1; // initialize e3_old = 1, not reject.
-  int *K = Calloc(J, int); // group size
+  int *K = R_Calloc(J, int); // group size
   int K1_len = 0; // # of variables in K1
   for (int g = 0; g < J; g++) {
     K[g] = K1[g+1] - K1[g];
     K1_len += K[g];
   }
-  double *xTr = Calloc(J, double);
-  double *xTy_sq = Calloc(J, double); // tmp quantity for BEDPP: square norm of X^T*y
-  double *yTxxTv1 = Calloc(J, double); // tmp quantity for BEDPP: y^T*X*X^T v1
-  double *xTv1_sq = Calloc(J, double); // tmp quantity for BEDPP: square norm of X^T*v1
+  double *xTr = R_Calloc(J, double);
+  double *xTy_sq = R_Calloc(J, double); // tmp quantity for BEDPP: square norm of X^T*y
+  double *yTxxTv1 = R_Calloc(J, double); // tmp quantity for BEDPP: y^T*X*X^T v1
+  double *xTv1_sq = R_Calloc(J, double); // tmp quantity for BEDPP: square norm of X^T*v1
   int g_star, K_star; // group index and size corresponding to lambda_max
   int *g_star_ptr = &g_star;
   int *K_star_ptr = &K_star;
@@ -418,17 +418,17 @@ SEXP gdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_,
       }
     }
   }
-  Free(a);
-  Free(r);
-  Free(e);
-  Free(e2);
-  Free(e3);
-  Free(e3_old);
-  Free(K);
-  Free(yTxxTv1);
-  Free(xTv1_sq);
-  Free(xTy_sq);
-  Free(xTr);
+  free(a);
+  free(r);
+  free(e);
+  free(e2);
+  free(e3);
+  free(e3_old);
+  free(K);
+  free(yTxxTv1);
+  free(xTv1_sq);
+  free(xTy_sq);
+  free(xTr);
   SET_VECTOR_ELT(res, 0, beta);
   SET_VECTOR_ELT(res, 1, loss);
   SET_VECTOR_ELT(res, 2, Eta);

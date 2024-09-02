@@ -20,7 +20,7 @@ void gd_glm(double *b, double *x, double *r, double v, double *eta, int g, int *
 
   // Calculate z
   int K = K1[g+1] - K1[g];
-  double *z = Calloc(K, double);
+  double *z = R_Calloc(K, double);
   for (int j=K1[g]; j<K1[g+1]; j++) z[j-K1[g]] = crossprod(x, r, n, j)/n + a[j];
   double z_norm = norm(z,K);
 
@@ -45,7 +45,7 @@ void gd_glm(double *b, double *x, double *r, double v, double *eta, int g, int *
 
   // Update df
   if (len > 0) REAL(df)[l] += K * len / z_norm;
-  Free(z);
+  free(z);
 }
 
 SEXP gdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_) {
@@ -95,12 +95,12 @@ SEXP gdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0_
 
   // Intermediate quantities
   double a0 = 0; // Beta0 from previous iteration
-  double *r = Calloc(n, double);
+  double *r = R_Calloc(n, double);
   for (int i=0; i<n; i++) r[i] = y[i];
-  double *eta = Calloc(n, double);
-  double *a = Calloc(p, double);
+  double *eta = R_Calloc(n, double);
+  double *a = R_Calloc(p, double);
   for (int j=0; j<p; j++) a[j] = 0;
-  int *e = Calloc(J, int);
+  int *e = R_Calloc(J, int);
   for (int g=0; g<J; g++) e[g] = 0;
   int lstart, ng, nv, violations;
   double shift, l1, l2, mu, v, maxChange;
@@ -241,10 +241,10 @@ SEXP gdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0_
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }
   }
-  Free(a);
-  Free(r);
-  Free(e);
-  Free(eta);
+  free(a);
+  free(r);
+  free(e);
+  free(eta);
   SET_VECTOR_ELT(res, 0, beta0);
   SET_VECTOR_ELT(res, 1, beta);
   SET_VECTOR_ELT(res, 2, Dev);

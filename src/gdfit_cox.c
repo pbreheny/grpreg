@@ -17,7 +17,7 @@ void gd_cox(double *b, double *x, double *r, double *eta, double v, int g,
 
   // Calculate z
   int K = K1[g+1] - K1[g];
-  double *z = Calloc(K, double);
+  double *z = R_Calloc(K, double);
   for (int j=K1[g]; j<K1[g+1]; j++) z[j-K1[g]] = crossprod(x, r, n, j)/n + a[j];
   double z_norm = norm(z,K);
 
@@ -42,7 +42,7 @@ void gd_cox(double *b, double *x, double *r, double *eta, double v, int g,
 
   // Update df
   if (len > 0) REAL(df)[l] += K * len / z_norm;
-  Free(z);
+  free(z);
 }
 
 SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda, SEXP alpha_, SEXP eps_, SEXP max_iter_, SEXP gamma_, SEXP group_multiplier, SEXP dfmax_, SEXP gmax_, SEXP warn_, SEXP user_) {
@@ -87,14 +87,14 @@ SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda,
   double *ETA = REAL(Eta);
 
   // Intermediate quantities
-  double *a = Calloc(p, double);  // Beta from previous iteration
+  double *a = R_Calloc(p, double);  // Beta from previous iteration
   for (int j=0; j<p; j++) a[j] = 0;
-  double *r = Calloc(n, double);
-  double *h = Calloc(n, double);  
-  double *haz = Calloc(n, double);
-  double *rsk = Calloc(n, double);  
-  double *eta = Calloc(n, double);
-  int *e = Calloc(J, int);
+  double *r = R_Calloc(n, double);
+  double *h = R_Calloc(n, double);  
+  double *haz = R_Calloc(n, double);
+  double *rsk = R_Calloc(n, double);  
+  double *eta = R_Calloc(n, double);
+  int *e = R_Calloc(J, int);
   for (int g=0; g<J; g++) e[g] = 0;
   int lstart, ng, nv, violations;
   double shift, l1, l2, nullDev, v, s, maxChange;
@@ -220,13 +220,13 @@ SEXP gdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP lambda,
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }
   }
-  Free(h);
-  Free(a);
-  Free(r);
-  Free(e);
-  Free(eta);
-  Free(haz);
-  Free(rsk);
+  free(h);
+  free(a);
+  free(r);
+  free(e);
+  free(eta);
+  free(haz);
+  free(rsk);
   SET_VECTOR_ELT(res, 0, beta);
   SET_VECTOR_ELT(res, 1, iter);
   SET_VECTOR_ELT(res, 2, df);

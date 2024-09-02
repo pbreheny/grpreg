@@ -47,13 +47,13 @@ SEXP maxgrad(SEXP X_, SEXP y_, SEXP K_, SEXP m_) {
 
   for (int g=0; g<J; g++) {
     int Kg = K[g+1]-K[g];
-    double *Z = Calloc(Kg, double);
+    double *Z = R_Calloc(Kg, double);
     for (int j=K[g]; j<K[g+1]; j++) {
       Z[j-K[g]] = crossprod(X, y, n, j);
     }
     double z = norm(Z, Kg) / m[g];
     if (z > REAL(zmax)[0]) REAL(zmax)[0] = z;
-    Free(Z);
+    free(Z);
   }
 
   // Return

@@ -31,13 +31,13 @@ cv.grpsurv(
 )
 }
 \arguments{
-\item{X}{The design matrix, as in \code{grpreg}/\code{grpsurv}.}
+\item{X}{The design matrix, as in \code{\link[=grpreg]{grpreg()}}/\code{\link[=grpsurv]{grpsurv()}}.}
 
-\item{y}{The response vector (or matrix), as in \code{grpreg}\code{grpsurv}.}
+\item{y}{The response vector (or matrix), as in \code{\link[=grpreg]{grpreg()}}/\code{\link[=grpsurv]{grpsurv()}}.}
 
-\item{group}{The grouping vector, as in \code{grpreg}\code{grpsurv}.}
+\item{group}{The grouping vector, as in \code{\link[=grpreg]{grpreg()}}/\code{\link[=grpsurv]{grpsurv()}}.}
 
-\item{...}{Additional arguments to \code{grpreg}\code{grpsurv}.}
+\item{...}{Additional arguments to \code{\link[=grpreg]{grpreg()}}/\code{\link[=grpsurv]{grpsurv()}}.}
 
 \item{nfolds}{The number of cross-validation folds.  Default is 10.}
 
@@ -47,18 +47,18 @@ obtain reproducible results.}
 \item{fold}{Which fold each observation belongs to.  By default the
 observations are randomly assigned.}
 
-\item{returnY}{Should \code{cv.grpreg}\code{grpsurv} return the fitted
+\item{returnY}{Should cv.grpreg()/cv.grpsurv() return the fitted
 values from the cross-validation folds?  Default is FALSE; if TRUE, this
 will return a matrix in which the element for row i, column j is the fitted
 value for observation i from the fold in which observation i was excluded
-from the fit, at the jth value of lambda.  NOTE: For \code{cv.grpsurv}, the
+from the fit, at the jth value of lambda.  NOTE: For \code{cv.grpsurv()}, the
 rows of \code{Y} are ordered by time on study, and therefore will not
 correspond to the original order of observations pased to \code{cv.grpsurv}.}
 
 \item{trace}{If set to TRUE, cv.grpreg will inform the user of its progress
 by announcing the beginning of each CV fold.  Default is FALSE.}
 
-\item{se}{For \code{cv.grpsurv}, the method by which the cross-valiation
+\item{se}{For \code{cv.grpsurv()}, the method by which the cross-valiation
 standard error (CVSE) is calculated.  The 'quick' approach is based on a
 rough approximation, but can be calculated more or less instantly.  The
 'bootstrap' approach is more accurate, but requires additional computing
@@ -76,9 +76,9 @@ note that for \code{cv.grpsurv}, these are in terms of the ordered
 observations, not the original observations.} \item{min}{The index of
 \code{lambda} corresponding to \code{lambda.min}.} \item{lambda.min}{The
 value of \code{lambda} with the minimum cross-validation error.}
-\item{null.dev}{The deviance for the intercept-only model.} \item{pe}{If
-\code{family="binomial"}, the cross-validation prediction error for each
-value of \code{lambda}.}
+\item{null.dev}{The deviance for the intercept-only model.}
+\item{pe}{If \code{family="binomial"}, the cross-validation prediction error for
+each value of \code{lambda}.}
 }
 \description{
 Performs k-fold cross validation for penalized regression models with
@@ -86,10 +86,10 @@ grouped covariates over a grid of values for the regularization parameter
 lambda.
 }
 \details{
-The function calls \code{grpreg}/\code{cv.grpsurv} \code{nfolds} times, each
+The function calls \code{\link[=grpreg]{grpreg()}} or \code{\link[=grpsurv]{grpsurv()}} \code{nfolds} times, each
 time leaving out 1/\code{nfolds} of the data.  The cross-validation error is
 based on the deviance;
-\href{https://pbreheny.github.io/grpreg/articles/web/models.html}{see here for more details}.
+\href{https://pbreheny.github.io/grpreg/articles/models.html}{see here for more details}.
 
 For Gaussian and Poisson responses, the folds are chosen according to simple
 random sampling.  For binomial responses, the numbers for each outcome class
@@ -107,9 +107,9 @@ research.  A simple approximation to the standard error is provided,
 although an option to bootstrap the standard error (\code{se='bootstrap'})
 is also available.
 
-As in \code{grpreg}, seemingly unrelated regressions/multitask learning can
+As in \code{\link[=grpreg]{grpreg()}}, seemingly unrelated regressions/multitask learning can
 be carried out by setting \code{y} to be a matrix, in which case groups are
-set up automatically (see \code{\link{grpreg}} for details), and
+set up automatically (see \code{\link[=grpreg]{grpreg()}} for details), and
 cross-validation is carried out with respect to rows of \code{y}.  As
 mentioned in the details there, it is recommended to standardize the
 responses prior to fitting.
@@ -132,8 +132,8 @@ summary(cvfit)
 
 }
 \seealso{
-\code{\link{grpreg}}, \code{\link{plot.cv.grpreg}},
-\code{\link{summary.cv.grpreg}}, \code{\link{predict.cv.grpreg}}
+\code{\link[=grpreg]{grpreg()}}, \code{\link[=plot.cv.grpreg]{plot.cv.grpreg()}}, \code{\link[=summary.cv.grpreg]{summary.cv.grpreg()}},
+\code{\link[=predict.cv.grpreg]{predict.cv.grpreg()}}
 }
 \author{
 Patrick Breheny

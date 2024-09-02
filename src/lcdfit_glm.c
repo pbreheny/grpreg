@@ -164,10 +164,10 @@ SEXP lcdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0
 
   // Intermediate quantities
   double a0;
-  double *a = Calloc(p, double);
-  double *r = Calloc(n, double);
-  int *e = Calloc(p, int);
-  double *eta = Calloc(n, double);
+  double *a = R_Calloc(p, double);
+  double *r = R_Calloc(n, double);
+  int *e = R_Calloc(p, int);
+  double *eta = R_Calloc(n, double);
   int lstart, ng, nv, violations;
   double shift, l1, l2, mu, v, maxChange;
 
@@ -319,10 +319,10 @@ SEXP lcdfit_glm(SEXP X_, SEXP y_, SEXP family_, SEXP penalty_, SEXP K1_, SEXP K0
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }
   }
-  Free(a);
-  Free(r);
-  Free(e);
-  Free(eta);
+  free(a);
+  free(r);
+  free(e);
+  free(eta);
   SET_VECTOR_ELT(res, 0, beta0);
   SET_VECTOR_ELT(res, 1, beta);
   SET_VECTOR_ELT(res, 2, Dev);

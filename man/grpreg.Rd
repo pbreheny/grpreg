@@ -117,7 +117,8 @@ to the number of coefficients, and the number of columns is equal to
 \item{group}{Same as above.}
 \item{lambda}{The sequence of \code{lambda} values in the path.}
 \item{alpha}{Same as above.}
-\item{loss}{A vector containing either the residual sum of squares (\code{"gaussian"}) or negative log-likelihood (\code{"binomial"}) of the fitted model at each value of \code{lambda}.}
+\item{deviance}{A vector containing the deviance of the fitted model at each
+value of \code{lambda}.}
 \item{n}{Number of observations.}
 \item{penalty}{Same as above.}
 \item{df}{A vector of length \code{nlambda} containing estimates of effective number of model parameters all the points along the regularization path.  For details on how this is calculated, see Breheny and Huang (2009).}
@@ -140,7 +141,7 @@ groups, and not members within the group -- i.e., within a group,
 coefficients will either all be zero or all nonzero.  The \code{grLasso},
 \code{grMCP}, and \code{grSCAD} penalties carry out group selection, while
 the \code{gel} and \code{cMCP} penalties carry out bi-level selection.  For
-bi-level selection, see also the \code{\link{gBridge}} function.  For
+bi-level selection, see also the \code{\link[=gBridge]{gBridge()}} function.  For
 historical reasons and backwards compatibility, some of these penalties have
 aliases; e.g., \code{gLasso} will do the same thing as \code{grLasso}, but
 users are encouraged to use \code{grLasso}.
@@ -166,12 +167,12 @@ The objective function for \code{grpreg} optimization is defined to be
 \deqn{Q(\beta|X, y) = \frac{1}{n} L(\beta|X, y) + }{Q(\beta|X, y) =
 (1/n)*L(\beta|X, y) + P(\beta, \lambda),}\deqn{ P_\lambda(\beta)}{Q(\beta|X,
 y) = (1/n)*L(\beta|X, y) + P(\beta, \lambda),} where the loss function L is
-the deviance (-2 times the log likelihood) for the specified outcome
+the negative log-likelihood (half the deviance) for the specified outcome
 distribution (gaussian/binomial/poisson). For more details, refer to the
 following:
 \itemize{
-\item \href{https://pbreheny.github.io/grpreg/articles/web/models.html}{Models and loss functions}
-\item \href{https://pbreheny.github.io/grpreg/articles/web/penalties.htmlPenalties}{Penalties}
+\item \href{https://pbreheny.github.io/grpreg/articles/models.html}{Models and loss functions}
+\item \href{https://pbreheny.github.io/grpreg/articles/penalties.html}{Penalties}
 }
 
 For the bi-level selection methods, a locally approximated coordinate

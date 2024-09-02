@@ -11,17 +11,18 @@
 \method{logLik}{grpsurv}(object, df.method = c("default", "active"), ...)
 }
 \arguments{
-\item{object}{A fitted \code{grpreg} or \code{grpsurv} object, as obtained from \code{grpreg()} or \code{grpsurv()}}
+\item{object}{A fitted \code{grpreg} or \code{grpsurv} object, as obtained from
+\code{\link[=grpreg]{grpreg()}} or \code{\link[=grpsurv]{grpsurv()}}}
 
-\item{df.method}{How should effective model parameters be calculated?  One
+\item{df.method}{How should effective model parameters be calculated? One
 of: \code{"active"}, which counts the number of nonzero coefficients; or
 \code{"default"}, which uses the calculated \code{df} returned by
-\code{grpreg}.  Default is \code{"default"}.}
+\code{grpreg}. Default is \code{"default"}.}
 
 \item{REML}{Use restricted MLE for estimation of the scale parameter in a
 gaussian model?  Default is FALSE.}
 
-\item{\dots}{For S3 method compatibility.}
+\item{...}{For S3 method compatibility.}
 }
 \value{
 Returns an object of class 'logLik', in this case consisting of a
@@ -38,7 +39,7 @@ Calculates the log likelihood and degrees of freedom for a fitted grpreg
 object.
 }
 \details{
-Exists mainly for use with \code{'AIC'} and \code{'BIC'}.
+Exists mainly for use with \code{\link[stats:AIC]{stats::AIC()}} and \code{\link[stats:AIC]{stats::BIC()}}.
 }
 \examples{
 data(Birthwt)
@@ -51,7 +52,7 @@ AIC(fit)
 BIC(fit)
 }
 \seealso{
-\code{grpreg}
+\code{\link[=grpreg]{grpreg()}}
 }
 \author{
 Patrick Breheny

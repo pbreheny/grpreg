@@ -44,7 +44,7 @@
 #' following:
 #' \itemize{
 #'   \item [Models and loss functions](https://pbreheny.github.io/grpreg/articles/models.html)
-#'   \item [Penalties](https://pbreheny.github.io/grpreg/articles/penalties.htmlPenalties)
+#'   \item [Penalties](https://pbreheny.github.io/grpreg/articles/penalties.html)
 #' }
 #'   
 #' For the bi-level selection methods, a locally approximated coordinate

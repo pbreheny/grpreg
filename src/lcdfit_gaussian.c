@@ -148,9 +148,9 @@ SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
   for (int i=0; i<L; i++) INTEGER(iter)[i] = 0;
 
   // Intermediate quantities
-  double *a = Calloc(p, double);
-  double *r = Calloc(n, double);
-  int *e = Calloc(p, int);
+  double *a = R_Calloc(p, double);
+  double *r = R_Calloc(n, double);
+  int *e = R_Calloc(p, int);
   if (strcmp(penalty, "gBridge")==0) {
     for (int i=0; i<n; i++) r[i] = y[i];
     for (int j=0; j<p; j++) {
@@ -242,9 +242,9 @@ SEXP lcdfit_gaussian(SEXP X_, SEXP y_, SEXP penalty_, SEXP K1_, SEXP K0_, SEXP l
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }
   }
-  Free(a);
-  Free(r);
-  Free(e);
+  free(a);
+  free(r);
+  free(e);
   SET_VECTOR_ELT(res, 0, beta);
   SET_VECTOR_ELT(res, 1, loss);
   SET_VECTOR_ELT(res, 2, Eta);

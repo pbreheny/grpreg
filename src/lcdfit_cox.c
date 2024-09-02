@@ -20,7 +20,7 @@ void gLCD_cox(double *b, const char *penalty, double *X, double *r, double *eta,
   // Pre-calculcate v
   int K = K1[g+1] - K1[g];
   double xwr, u;
-  double *v = Calloc(K, double);
+  double *v = R_Calloc(K, double);
   double shift;
   for (int j=K1[g]; j<K1[g+1]; j++) {
     if (e[j]) {
@@ -86,7 +86,7 @@ void gLCD_cox(double *b, const char *penalty, double *X, double *r, double *eta,
       REAL(df)[l] += fabs(b[l*p+j]) / fabs(u);
     }
   }
-  Free(v);
+  free(v);
 }
 
 // KKT check
@@ -96,7 +96,7 @@ int gLCD_cCheck(double *b, const char *penalty, double *X, double *r, double *et
 
   // Make initial local approximation
   int K = K1[g+1] - K1[g];
-  double *v = Calloc(K, double);
+  double *v = R_Calloc(K, double);
   for (int j=K1[g]; j<K1[g+1]; j++) {
     if (e[j]) {
       v[j-K1[g]] = wsqsum(X, h, n, j)/n;
@@ -112,7 +112,7 @@ int gLCD_cCheck(double *b, const char *penalty, double *X, double *r, double *et
     lam1 = sqrt(lam1);
     for (int j=K1[g]; j<K1[g+1]; j++) sG = sG + MCP(a[j]/v[j-K1[g]], lam1, gamma);
   }
-  Free(v);
+  free(v);
 
   // Check
   int violations = 0;
@@ -180,14 +180,14 @@ SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
   double *ETA = REAL(Eta);
 
   // Intermediate quantities
-  double *a = Calloc(p, double);
+  double *a = R_Calloc(p, double);
   for (int j=0; j<p; j++) a[j] = 0;
-  double *r = Calloc(n, double);
-  double *h = Calloc(n, double);
-  double *haz = Calloc(n, double);
-  double *rsk = Calloc(n, double);  
-  double *eta = Calloc(n, double);
-  int *e = Calloc(p, int);
+  double *r = R_Calloc(n, double);
+  double *h = R_Calloc(n, double);
+  double *haz = R_Calloc(n, double);
+  double *rsk = R_Calloc(n, double);  
+  double *eta = R_Calloc(n, double);
+  int *e = R_Calloc(p, int);
   for (int j=0; j<p; j++) e[j] = 0;
   int lstart, ng, nv, violations;
   double shift, l1, l2, nullDev, u, v, s, xwr, xwx, maxChange;
@@ -326,13 +326,13 @@ SEXP lcdfit_cox(SEXP X_, SEXP d_, SEXP penalty_, SEXP K1_, SEXP K0_,
       for (int j=0; j<p; j++) a[j] = b[l*p+j];
     }
   }
-  Free(h);
-  Free(a);
-  Free(r);
-  Free(e);
-  Free(eta);
-  Free(haz);
-  Free(rsk);
+  free(h);
+  free(a);
+  free(r);
+  free(e);
+  free(eta);
+  free(haz);
+  free(rsk);
   SET_VECTOR_ELT(res, 0, beta);
   SET_VECTOR_ELT(res, 1, iter);
   SET_VECTOR_ELT(res, 2, df);
