@@ -1,11 +1,10 @@
 pandoc: 3.1.11
-pkgdown: 2.0.9
+pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
-  adaptive-rescaling: adaptive-rescaling.html
-  additive-models: additive-models.html
+  articles/adaptive-rescaling: adaptive-rescaling.html
+  articles/additive-models: additive-models.html
   getting-started: getting-started.html
-  models: models.html
-  penalties: penalties.html
-last_built: 2024-06-13T21:59Z
-
+  articles/models: models.html
+  articles/penalties: penalties.html
+last_built: 2024-09-02T17:31Z
