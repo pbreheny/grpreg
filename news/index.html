@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">grpreg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,10 +38,21 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="3.4.1" id="grpreg-341-2024-09-02">grpreg 3.4.1 (2024-09-02)<a class="anchor" aria-label="anchor" href="#grpreg-341-2024-09-02"></a></h2>
-<ul><li>Fixed: Fixed some broken URLs</li>
+<h2 class="pkg-version" data-toc-text="3.5.0" id="grpreg-350-2024-09-03">grpreg 3.5.0 (2024-09-03)<a class="anchor" aria-label="anchor" href="#grpreg-350-2024-09-03"></a></h2>
+<ul><li>Changed: grpreg()$loss is no longer returned</li>
+<li>New: plot_spline() now has “add” option so that splines can be added to existing plot</li>
+<li>Fixed: Loss/deviance now used consistently throughout; see <a href="https://github.com/pbreheny/grpreg/issues/52" class="external-link">#52</a></li>
+<li>Fixed: Fixed some broken URLs</li>
+<li>Fixed: Fixed bug in which mean was added twice for cv.grpreg()</li>
+<li>Fixed: Bug in which SNR could be infinite</li>
+<li>Fixed: Passing seed no longer affects global environment</li>
+<li>Fixed: cv.grpsurv() now sets default group if not supplied</li>
+<li>Fixed: No more error if response is constant; see <a href="https://github.com/pbreheny/grpreg/issues/46" class="external-link">#46</a></li>
+<li>Fixed: No more error if single lambda supplied</li>
 <li>Internal: Updated citation format to bibentry()</li>
 <li>Internal: Now using R_Calloc for <em>R_USE_STRICT_R_HEADERS</em> compatibility</li>
+<li>Documentation: Now using roxygen</li>
+<li>Documentation: Updated online documentation on penalties</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.4.0" id="grpreg-340-2021-07-22">grpreg 3.4.0 (2021-07-22)<a class="anchor" aria-label="anchor" href="#grpreg-340-2021-07-22"></a></h2><p class="text-muted">CRAN release: 2021-07-26</p>
