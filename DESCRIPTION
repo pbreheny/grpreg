@@ -1,6 +1,6 @@
 Package: grpreg
 Title: Regularization Paths for Regression Models with Grouped Covariates
-Version: 3.5.0
+Version: 3.5.0.1
 Date: 2024-09-03
 Authors@R: c(
   person("Patrick", "Breheny", role=c("aut","cre"), email="patrick-breheny@uiowa.edu", comment=c(ORCID="0000-0002-0650-1119")),
