@@ -1,7 +1,18 @@
-# grpreg 3.4.1 (2024-09-02)
+# grpreg 3.5.0 (2024-09-03)
+  * Changed: grpreg()$loss is no longer returned
+  * New: plot_spline() now has "add" option so that splines can be added to existing plot
+  * Fixed: Loss/deviance now used consistently throughout; see #52
   * Fixed: Fixed some broken URLs
+  * Fixed: Fixed bug in which mean was added twice for cv.grpreg()
+  * Fixed: Bug in which SNR could be infinite
+  * Fixed: Passing seed no longer affects global environment
+  * Fixed: cv.grpsurv() now sets default group if not supplied
+  * Fixed: No more error if response is constant; see #46
+  * Fixed: No more error if single lambda supplied
   * Internal: Updated citation format to bibentry()
   * Internal: Now using R_Calloc for _R_USE_STRICT_R_HEADERS_ compatibility
+  * Documentation: Now using roxygen
+  * Documentation: Updated online documentation on penalties
 
 # grpreg 3.4.0 (2021-07-22)
   * New: Suite of tools for additive modeling, most notably expand_spline()
