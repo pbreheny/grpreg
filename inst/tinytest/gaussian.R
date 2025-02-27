@@ -58,3 +58,5 @@ grSCAD <- coef(fit <- grpreg(X, y, group, penalty="grSCAD", lambda.min=0, eps=1e
 plot(fit, main=fit$penalty)
 expect_equivalent(grSCAD, reg, tolerance=1e-7)
 expect_equivalent(predict(fit, X)[,100], predict(fit.mle), tolerance=1e-7)
+plot(fit, norm=TRUE, label=TRUE)
+plot(fit, legend.loc='topleft')
