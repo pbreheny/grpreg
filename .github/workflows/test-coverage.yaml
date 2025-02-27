@@ -29,6 +29,7 @@ jobs:
             any::glmnet
             any::ncvreg
             any::survival
+            any::tinytest
             any::xml2
           needs: coverage
 
@@ -51,13 +52,6 @@ jobs:
           plugin: noop
           disable_search: true
           token: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Show testthat output
-        if: always()
-        run: |
-          ## --------------------------------------------------------------------
-          find '${{ runner.temp }}/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
-        shell: bash
 
       - name: Upload test results
         if: failure()
