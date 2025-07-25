@@ -1,27 +1,48 @@
-navbar:
-  left:
-    - icon: fa-home fa-lg
-      href: index.html
-    - text: Getting started
-      href: articles/getting-started.html
-    - text: Learn more
-      menu:
-      - text: Models
-        href: articles/models.html
-      - text: Penalties
-        href: articles/penalties.html
-      - text: Additive models
-        href: articles/additive-models.html
-    - text: Functions
-      href: reference/index.html
-  right:
-    github:
-      icon: fa-github fa-lg
-      href: https://github.com/pbreheny/grpreg
+url: https://pbreheny.github.io/grpreg/
 
 template:
   bootstrap: 5
-  bootswatch: cerulean
+  light-switch: true
+  math-rendering: katex
+  includes:
+    in_header: |
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+      <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+      <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+figures:
+  dev: png
+  dpi: 96
+  fig.ext: png
+  fig.width: 5
+  fig.height: 5
+  fig.retina: 2
+  bg: "#fff"
+
+navbar:
+  structure:
+    left: [intro, articles, reference, news]
+    right: [search, github]
+
+home:
+  sidebar:
+    structure: [links, citation, authors, dev]
+
+footer:
+  structure:
+    left: developed_by
+    right: last_updated
+  components:
+    last_updated: !expr paste("Last updated:", format(Sys.time(), "%B %d, %Y"))
+
+articles:
+  - title: "Learn more"
+    navbar: ~
+    contents:
+      - articles/models
+      - articles/penalties
+      - articles/additive-models
+      - articles/adaptive-rescaling
 
 reference:
 - title: Model fitting
@@ -58,19 +79,3 @@ reference:
   contents:
   - birthwt.grpreg
   - grpreg-package
-
-home:
-  links:
-  - text: News
-    href: news/index.html
-  sidebar:
-    structure: [links, citation, authors, dev]
-
-footer:
-  structure: 
-    left: developed_by
-    right: updated
-  components:
-    updated: Last updated 2024-06-13
-
-

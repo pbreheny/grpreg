@@ -12,18 +12,29 @@
 
 ### Install
 
-* To install the latest release version from CRAN: `install.packages("grpreg")`
-* To install the latest development version from GitHub: `remotes::install_github("pbreheny/grpreg")`
+* To install the latest release version from CRAN:
+
+``` r
+install.packages("grpreg")
+```
+
+* To install the latest development version from GitHub:
+
+``` r
+remotes::install_github("pbreheny/grpreg")
+```
 
 ### Get started
 
-See the ["getting started" vignette](https://pbreheny.github.io/grpreg/articles/getting-started.html)
+See the ["getting started" vignette](https://pbreheny.github.io/grpreg/articles/grpreg.html)
 
 ### Learn more
 
-Follow the links under "Learn more" at the [grpreg website](https://pbreheny.github.io/grpreg/)
+Follow the links under "Articles" at the [grpreg website](https://pbreheny.github.io/grpreg/)
 
-### Details of the algorithms used
+### References
+
+For more on the mathematical foundations and algorithmic details, see:
 
 * [Breheny, P. and Huang, J. (2009) Penalized methods for bi-level variable selection.  *Statistics and its interface*, **2**: 369-380.](https://myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf)
 * [Breheny, P. and Huang, J. (2015) Group descent algorithms for nonconvex penalized linear and logistic regression models with grouped predictors. *Statistics and Computing*, **25**: 173-187.](https://dx.doi.org/10.1007/s11222-013-9424-2)
