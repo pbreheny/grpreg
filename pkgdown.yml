@@ -1,10 +1,13 @@
 pandoc: 3.1.11
-pkgdown: 2.1.1
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   articles/adaptive-rescaling: adaptive-rescaling.html
   articles/additive-models: additive-models.html
-  getting-started: getting-started.html
+  grpreg: grpreg.html
   articles/models: models.html
   articles/penalties: penalties.html
-last_built: 2025-02-27T21:40Z
+last_built: 2025-07-25T14:06Z
+urls:
+  reference: https://pbreheny.github.io/grpreg/reference
+  article: https://pbreheny.github.io/grpreg/articles

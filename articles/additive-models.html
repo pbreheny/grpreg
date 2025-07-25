@@ -6,22 +6,25 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Additive models • grpreg</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<script src="../extra.js"></script><meta property="og:title" content="Additive models">
+<meta property="og:title" content="Additive models">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">grpreg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.5.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.5.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,20 +33,24 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="../index.html"><span class="fa fa-home fa-lg"></span></a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/getting-started.html">Getting started</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/grpreg.html">Get started</a></li>
 <li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-learn-more" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Learn more</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-learn-more">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/models.html">Models</a></li>
     <li><a class="dropdown-item" href="../articles/penalties.html">Penalties</a></li>
     <li><a class="dropdown-item" href="../articles/additive-models.html">Additive models</a></li>
+    <li><a class="dropdown-item" href="../articles/adaptive-rescaling.html">Adaptive rescaling</a></li>
   </ul>
 </li>
-<li class="nav-item"><a class="nav-link" href="../reference/index.html">Functions</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/pbreheny/grpreg"><span class="fa fa-github fa-lg"></span></a></li>
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/pbreheny/grpreg/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -124,25 +131,20 @@ etc., can be used, as well as <code><a href="../reference/plot.grpreg.html">plot
 <code><a href="../reference/plot_spline.html">plot_spline()</a></code>, specific to additive models:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"V02"</span>, lambda <span class="op">=</span> <span class="fl">0.03</span><span class="op">)</span></span></code></pre></div>
-<p><img src="additive-models_files/figure-html/plot-1.png" width="700"></p>
+<p><img src="additive-models_files/figure-html/plot-1.png" width="480"></p>
 <p>Partial residuals can be included in these plots as well:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"V02"</span>, lambda <span class="op">=</span> <span class="fl">0.03</span>, partial<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="additive-models_files/figure-html/plot_partial-1.png" width="700"></p>
-<p>By default, these plots are centered such that at the mean of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
-(where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
-denotes the feature being plotted), the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>
-value is zero. Alternatively, if <code>type="conditional"</code> is
-specified, <code><a href="../reference/plot_spline.html">plot_spline()</a></code> will construct a plot in which the
-vertical axis represents model predictions as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
-varies and all other features are fixed at their mean value:</p>
+<p><img src="additive-models_files/figure-html/plot_partial-1.png" width="480"></p>
+<p>By default, these plots are centered such that at the mean of <span class="math inline">x</span> (where <span class="math inline">x</span>
+denotes the feature being plotted), the <span class="math inline">y</span> value is zero. Alternatively, if
+<code>type="conditional"</code> is specified, <code><a href="../reference/plot_spline.html">plot_spline()</a></code>
+will construct a plot in which the vertical axis represents model
+predictions as <span class="math inline">x</span> varies and all other
+features are fixed at their mean value:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"V02"</span>, lambda <span class="op">=</span> <span class="fl">0.03</span>, partial<span class="op">=</span><span class="cn">TRUE</span>, type<span class="op">=</span><span class="st">'conditional'</span><span class="op">)</span></span></code></pre></div>
-<p><img src="additive-models_files/figure-html/plot_conditional-1.png" width="700"></p>
+<p><img src="additive-models_files/figure-html/plot_conditional-1.png" width="480"></p>
 <p>In comparing these two plots, note that the general contours are the
 same; the only difference is the value of the vertical axis. Here are
 the plots for the first 9 coefficients:</p>
@@ -158,7 +160,7 @@ default plotting the fit that minimizes cross-validation error):</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cvfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cv.grpreg.html">cv.grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">Data</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">cvfit</span>, <span class="st">"V02"</span>, partial<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="additive-models_files/figure-html/cvfit-1.png" width="700"></p>
+<p><img src="additive-models_files/figure-html/cvfit-1.png" width="480"></p>
 <p>Finally, these tools work with survival and glm models as well. Here,
 all plots are returned on the linear predictor scale, and the residuals
 are deviance residuals.</p>
@@ -172,7 +174,7 @@ are deviance residuals.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Last updated 2024-06-13</p>
+  <p>paste(“Last updated:”, format(Sys.time(), “%B %d, %Y”))</p>
 </div>
 
     </footer>

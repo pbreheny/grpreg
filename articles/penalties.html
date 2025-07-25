@@ -6,22 +6,25 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Penalties • grpreg</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<script src="../extra.js"></script><meta property="og:title" content="Penalties">
+<meta property="og:title" content="Penalties">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">grpreg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.5.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.5.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,20 +33,24 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="../index.html"><span class="fa fa-home fa-lg"></span></a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/getting-started.html">Getting started</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/grpreg.html">Get started</a></li>
 <li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-learn-more" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Learn more</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-learn-more">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/models.html">Models</a></li>
     <li><a class="dropdown-item" href="../articles/penalties.html">Penalties</a></li>
     <li><a class="dropdown-item" href="../articles/additive-models.html">Additive models</a></li>
+    <li><a class="dropdown-item" href="../articles/adaptive-rescaling.html">Adaptive rescaling</a></li>
   </ul>
 </li>
-<li class="nav-item"><a class="nav-link" href="../reference/index.html">Functions</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/pbreheny/grpreg"><span class="fa fa-github fa-lg"></span></a></li>
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/pbreheny/grpreg/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -68,50 +75,41 @@ Breheny</h4>
 
     
     
-<p><code>grpreg</code> fits models that fall into the penalized
-likelihood framework, in which we estimate <span class="math inline">$\bb$</span> by minimizing the objective
-function</p>
-<p><span class="math display">$$
-Q(\bb|\X, \y) = L(\bb|\X,\y) + P_\lam(\bb),
-$$</span></p>
-<p>where <span class="math inline">$L(\bb|\X,\y)$</span> is the loss
-(deviance) and <span class="math inline">$P_\lam(\bb)$</span> is the
-penalty. This article describes the different penalties available in
+<p><strong>grpreg</strong> fits models that fall into the penalized
+likelihood framework, in which we estimate <span class="math inline">\boldsymbol{\beta}</span> by minimizing the
+objective function</p>
+<p><span class="math display"> Q(\boldsymbol{\beta}|\mathbf{X},
+\mathbf{y}) = L(\boldsymbol{\beta}|\mathbf{X},\mathbf{y}) +
+P_\lambda(\boldsymbol{\beta}), </span></p>
+<p>where <span class="math inline">L(\boldsymbol{\beta}|\mathbf{X},\mathbf{y})</span>
+is the loss (deviance) and <span class="math inline">P_\lambda(\boldsymbol{\beta})</span> is the penalty.
+This article describes the different penalties available in
 <code>grpreg</code>; see <a href="models.html">models</a> for more
 information on the different loss functions available.</p>
 <p>The following notation is used throughout (recall that the design
-matrix <span class="math inline">$\X$</span> is decomposed into groups
-<span class="math inline">$\X_1, \X_2, \ldots$</span>:</p>
+matrix <span class="math inline">\mathbf{X}</span> is decomposed into
+groups <span class="math inline">\mathbf{X}_1, \mathbf{X}_2,
+\ldots</span>:</p>
 <ul>
 <li>
-<span class="math inline">$\bb$</span> denotes the entire vector of
-regression coefficients</li>
+<span class="math inline">\boldsymbol{\beta}</span> denotes the
+entire vector of regression coefficients</li>
 <li>
-<span class="math inline">$\bb_j$</span> denotes the vector of
-regression coefficients corresponding to the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>th
-group</li>
+<span class="math inline">\boldsymbol{\beta}_j</span> denotes the
+vector of regression coefficients corresponding to the <span class="math inline">j</span>th group</li>
 <li>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mrow><mi>j</mi><mi>k</mi></mrow></msub><annotation encoding="application/x-tex">\beta_{jk}</annotation></semantics></math>
-denotes
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>th
-regression coefficient in the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>th
-group</li>
+<span class="math inline">\beta_{jk}</span> denotes <span class="math inline">k</span>th regression coefficient in the <span class="math inline">j</span>th group</li>
 <li>
-<span class="math inline">$\norm{\bb_j}_2$</span> denotes the
-Euclidean
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>L</mi><mn>2</mn></msub><annotation encoding="application/x-tex">L_2</annotation></semantics></math>)
-norm of <span class="math inline">$\bb_j$</span>: <span class="math inline">$\norm{x}_2 = \sqrt{x_1^2 + x_2^2 +
-\ldots}$</span>
+<span class="math inline">\lVert\boldsymbol{\beta}_j\rVert_2</span>
+denotes the Euclidean (<span class="math inline">L_2</span>) norm of
+<span class="math inline">\boldsymbol{\beta}_j</span>: <span class="math inline">\lVert x\rVert_2 = \sqrt{x_1^2 + x_2^2 +
+\ldots}</span>
 </li>
 <li>
-<span class="math inline">$\norm{\bb_j}_1$</span> denotes the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>L</mi><mn>1</mn></msub><annotation encoding="application/x-tex">L_1</annotation></semantics></math>
-norm of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\beta_j</annotation></semantics></math>:
-<span class="math inline">$\norm{x}_1 = \abs{x_1} + \abs{x_2} +
-\ldots$</span>
+<span class="math inline">\lVert\boldsymbol{\beta}_j\rVert_1</span>
+denotes the <span class="math inline">L_1</span> norm of <span class="math inline">\beta_j</span>: <span class="math inline">\lVert
+x\rVert_1 = \left\lvert x_1\right\rvert + \left\lvert x_2\right\rvert +
+\ldots</span>
 </li>
 </ul>
 <div class="section level2">
@@ -138,32 +136,34 @@ Society Series B</em>, <strong>68</strong>: 49-67.</li>
 </h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grLasso"</span><span class="op">)</span></span></code></pre></div>
-<p><span class="math display">$$ P(\beta) = \lam \sum_j \norm{\bb_j}_2
-$$</span></p>
+<p><span class="math display"> P(\beta) = \lambda\sum_j
+\lVert\boldsymbol{\beta}_j\rVert_2 </span></p>
 </div>
 <div class="section level3">
 <h3 id="group-mcp">Group MCP<a class="anchor" aria-label="anchor" href="#group-mcp"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grMCP"</span><span class="op">)</span></span></code></pre></div>
-<p><span class="math display">$$ P(\bb) = \sum_j \textrm{MCP}_{\lam,
-\gamma}(\norm{\bb_j}_2) $$</span></p>
-<p>where <span class="math inline">$\textrm{MCP}_{\lam,
-\gamma}(\cdot)$</span> denotes the MCP penalty with regularization
-parameter <span class="math inline">$\lam$</span> and tuning parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math>.</p>
+<p><span class="math display"> P(\boldsymbol{\beta}) = \sum_j
+\textrm{MCP}_{\lambda, \gamma}(\lVert\boldsymbol{\beta}_j\rVert_2)
+</span></p>
+<p>where <span class="math inline">\textrm{MCP}_{\lambda,
+\gamma}(\cdot)</span> denotes the MCP penalty with regularization
+parameter <span class="math inline">\lambda</span> and tuning parameter
+<span class="math inline">\gamma</span>.</p>
 </div>
 <div class="section level3">
 <h3 id="group-scad">Group SCAD<a class="anchor" aria-label="anchor" href="#group-scad"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grSCAD"</span><span class="op">)</span></span></code></pre></div>
-<p><span class="math display">$$ P(\bb) = \sum_j \textrm{SCAD}_{\lam,
-\gamma}(\norm{\bb_j}_2) $$</span></p>
-<p>where <span class="math inline">$\textrm{SCAD}_{\lam,
-\gamma}(\cdot)$</span> denotes the SCAD penalty with regularization
-parameter <span class="math inline">$\lam$</span> and tuning parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math>.</p>
+<p><span class="math display"> P(\boldsymbol{\beta}) = \sum_j
+\textrm{SCAD}_{\lambda, \gamma}(\lVert\boldsymbol{\beta}_j\rVert_2)
+</span></p>
+<p>where <span class="math inline">\textrm{SCAD}_{\lambda,
+\gamma}(\cdot)</span> denotes the SCAD penalty with regularization
+parameter <span class="math inline">\lambda</span> and tuning parameter
+<span class="math inline">\gamma</span>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -178,15 +178,13 @@ be zero.</p>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"gel"</span><span class="op">)</span></span></code></pre></div>
-<p><span class="math display">$$ P(\beta) = \sum_j f_{\lam,
-\tau}(\norm{\bb_j}_1) $$</span></p>
-<p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">f(\cdot)</annotation></semantics></math>
-denotes the exponential penalty with regularization parameter <span class="math inline">$\lam$</span> and tuning parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>τ</mi><annotation encoding="application/x-tex">\tau</annotation></semantics></math>:</p>
-<p><span class="math display">$$ f_{\lam, \tau}(\theta) =
-\frac{\lam^2}{\tau}\left\{1-\exp\left(-\frac{\tau\theta}{\lam}\right)\right\}
-$$</span></p>
+<p><span class="math display"> P(\beta) = \sum_j f_{\lambda,
+\tau}(\lVert\boldsymbol{\beta}_j\rVert_1) </span></p>
+<p>where <span class="math inline">f(\cdot)</span> denotes the
+exponential penalty with regularization parameter <span class="math inline">\lambda</span> and tuning parameter <span class="math inline">\tau</span>:</p>
+<p><span class="math display"> f_{\lambda, \tau}(\theta) =
+\frac{\lambda^2}{\tau}\left\{1-\exp\left(-\frac{\tau\theta}{\lambda}\right)\right\}
+</span></p>
 <p>If you use the GEL penalty, please cite</p>
 <ul>
 <li>Breheny P (2015). The group exponential lasso for bi-level variable
@@ -198,13 +196,13 @@ selection. <em>Biometrics</em>, <strong>71</strong>: 731-740. [<a href="https://
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"cMCP"</span><span class="op">)</span></span></code></pre></div>
-<p><span class="math display">$$ P(\bb) = \sum_j \textrm{MCP}_{\lam,
-\gam_1} \left( \sum_k \textrm{MCP}_{\lam, \gam_2} (\abs{\beta_{jk}})
-\right) $$</span></p>
-<p>where <span class="math inline">$\textrm{MCP}_{\lam,
-\gamma}(\cdot)$</span> denotes the MCP penalty with regularization
-parameter <span class="math inline">$\lam$</span> and tuning parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math>.</p>
+<p><span class="math display"> P(\boldsymbol{\beta}) = \sum_j
+\textrm{MCP}_{\lambda, \gamma_1} \left( \sum_k \textrm{MCP}_{\lambda,
+\gamma_2} (\left\lvert\beta_{jk}\right\rvert) \right) </span></p>
+<p>where <span class="math inline">\textrm{MCP}_{\lambda,
+\gamma}(\cdot)</span> denotes the MCP penalty with regularization
+parameter <span class="math inline">\lambda</span> and tuning parameter
+<span class="math inline">\gamma</span>.</p>
 <p>If you use the composite MCP penalty, please cite either of the
 following papers:</p>
 <ul>
@@ -227,12 +225,10 @@ MCP” <a href="#group-mcp">defined above</a>.</p>
 </h3>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/gBridge.html">gBridge</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span><span class="op">)</span></span></code></pre></div>
-<p><span class="math display">$$ P(\bb) = \lambda \sum_j K_j^\gamma
-\norm{\bb_j}_1^\gamma $$</span></p>
-<p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>K</mi><mi>j</mi></msub><annotation encoding="application/x-tex">K_j</annotation></semantics></math>
-denotes the number of elements in group
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>.</p>
+<p><span class="math display"> P(\boldsymbol{\beta}) = \lambda \sum_j
+K_j^\gamma \lVert\boldsymbol{\beta}_j\rVert_1^\gamma </span></p>
+<p>where <span class="math inline">K_j</span> denotes the number of
+elements in group <span class="math inline">j</span>.</p>
 <p>Please note that the group bridge penalty uses a very different
 algorithm from the other penalties. Due to the nature of the penalty,
 model fitting is slower and less stable for group bridge models. This
@@ -258,20 +254,20 @@ algorithm that is used in the <code>grpreg</code> package.</p>
 <h2 id="specifying-an-additional-ridge-component">Specifying an additional ridge component<a class="anchor" aria-label="anchor" href="#specifying-an-additional-ridge-component"></a>
 </h2>
 <p>For all of the penalties in the previous section, <code>grpreg</code>
-allows the specification of an additional ridge
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>L</mi><mn>2</mn></msub><annotation encoding="application/x-tex">L_2</annotation></semantics></math>)
-component to the penalty. This will set <span class="math inline">$\lam_1 = \alpha\lam$</span> and <span class="math inline">$\lam_2=(1-\alpha)\lam$</span>, with the penalty
+allows the specification of an additional ridge (<span class="math inline">L_2</span>) component to the penalty. This will set
+<span class="math inline">\lambda_1 = \alpha\lambda</span> and <span class="math inline">\lambda_2=(1-\alpha)\lambda</span>, with the penalty
 given by</p>
-<p><span class="math display">$$ P(\bb) = P_1(\bb|\lam_1) +
-\frac{\lam_2}{2}\norm{\bb}_2^2, $$</span></p>
-<p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mn>1</mn></msub><annotation encoding="application/x-tex">P_1</annotation></semantics></math>
-is any of the penalties from the earlier sections. So, for example</p>
+<p><span class="math display"> P(\boldsymbol{\beta}) =
+P_1(\boldsymbol{\beta}|\lambda_1) +
+\frac{\lambda_2}{2}\lVert\boldsymbol{\beta}\rVert_2^2, </span></p>
+<p>where <span class="math inline">P_1</span> is any of the penalties
+from the earlier sections. So, for example</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grLasso"</span>, alpha<span class="op">=</span><span class="fl">0.75</span><span class="op">)</span></span></code></pre></div>
 <p>will fit a model with penalty</p>
-<p><span class="math display">$$ P(\beta) = 0.75\lam \sum_j
-\norm{\bb_j}_2 + \frac{0.25\lam}{2}\norm{\bb}_2^2. $$</span></p>
+<p><span class="math display"> P(\beta) = 0.75\lambda\sum_j
+\lVert\boldsymbol{\beta}_j\rVert_2 +
+\frac{0.25\lambda}{2}\lVert\boldsymbol{\beta}\rVert_2^2. </span></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -284,7 +280,7 @@ is any of the penalties from the earlier sections. So, for example</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Last updated 2024-06-13</p>
+  <p>paste(“Last updated:”, format(Sys.time(), “%B %d, %Y”))</p>
 </div>
 
     </footer>
