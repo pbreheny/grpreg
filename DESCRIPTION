@@ -1,15 +1,10 @@
 Package: grpreg
 Title: Regularization Paths for Regression Models with Grouped Covariates
-Version: 3.5.0.2
-Date: 2025-07-25
+Version: 3.5.0.3
 Authors@R: c(
   person("Patrick", "Breheny", role=c("aut","cre"), email="patrick-breheny@uiowa.edu", comment=c(ORCID="0000-0002-0650-1119")),
   person("Yaohui", "Zeng", role="ctb"),
   person("Ryan", "Kurth", role="ctb"))
-Depends: R (>= 3.1.0)
-Imports: Matrix
-Suggests: knitr, rmarkdown, splines, survival, tinytest
-VignetteBuilder: knitr
 Description: Efficient algorithms for fitting the regularization path of linear
   regression, GLM, and Cox regression models with grouped penalties.  This
   includes group selection methods such as group lasso, group MCP, and
@@ -20,10 +15,13 @@ Description: Efficient algorithms for fitting the regularization path of linear
   (2015) <doi:10.1007/s11222-013-9424-2>, and Breheny (2015)
   <doi:10.1111/biom.12300>, or visit the package homepage
   <https://pbreheny.github.io/grpreg/>.
-BugReports: https://github.com/pbreheny/grpreg/issues
 License: GPL-3
 URL: https://pbreheny.github.io/grpreg/, https://github.com/pbreheny/grpreg
-LazyData: TRUE
+BugReports: https://github.com/pbreheny/grpreg/issues
+Depends: R (>= 3.1.0)
+Imports: Matrix
+Suggests: knitr, rmarkdown, splines, survival, tinytest
+VignetteBuilder: knitr
+Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Encoding: UTF-8
