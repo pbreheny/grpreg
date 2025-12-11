@@ -1,0 +1,130 @@
+# [Regularization Paths for Regression Models with Grouped Covariates](https://pbreheny.github.io/grpreg/)
+
+`grpreg` is an R package for fitting the regularization path of linear
+regression, GLM, and Cox regression models with grouped penalties. This
+includes group selection methods such as group lasso, group MCP, and
+group SCAD as well as bi-level selection methods such as the group
+exponential lasso, the composite MCP, and the group bridge. Utilities
+for carrying out cross-validation as well as post-fitting visualization,
+summarization, and prediction are also provided.
+
+### Install
+
+- To install the latest release version from CRAN:
+
+``` r
+install.packages("grpreg")
+```
+
+- To install the latest development version from GitHub:
+
+``` r
+remotes::install_github("pbreheny/grpreg")
+```
+
+### Get started
+
+See the [“getting started”
+vignette](https://pbreheny.github.io/grpreg/articles/grpreg.html)
+
+### Learn more
+
+Follow the links under “Articles” at the [grpreg
+website](https://pbreheny.github.io/grpreg/)
+
+### References
+
+For more on the mathematical foundations and algorithmic details, see:
+
+- [Breheny, P. and Huang, J. (2009) Penalized methods for bi-level
+  variable selection. *Statistics and its interface*, **2**:
+  369-380.](https://myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf)
+- [Breheny, P. and Huang, J. (2015) Group descent algorithms for
+  nonconvex penalized linear and logistic regression models with grouped
+  predictors. *Statistics and Computing*, **25**:
+  173-187.](https://dx.doi.org/10.1007/s11222-013-9424-2)
+
+# Package index
+
+## Model fitting
+
+- [`grpreg()`](https://pbreheny.github.io/grpreg/reference/grpreg.md) :
+  Fit a group penalized regression path
+- [`grpsurv()`](https://pbreheny.github.io/grpreg/reference/grpsurv.md)
+  : Fit an group penalized survival model
+- [`gBridge()`](https://pbreheny.github.io/grpreg/reference/gBridge.md)
+  : Fit a group bridge regression path
+
+## Model selection and cross-validation
+
+- [`cv.grpreg()`](https://pbreheny.github.io/grpreg/reference/cv.grpreg.md)
+  [`cv.grpsurv()`](https://pbreheny.github.io/grpreg/reference/cv.grpreg.md)
+  : Cross-validation for grpreg/grpsurv
+
+- [`plot(`*`<cv.grpreg>`*`)`](https://pbreheny.github.io/grpreg/reference/plot.cv.grpreg.md)
+  :
+
+  Plots the cross-validation curve from a `cv.grpreg` object
+
+- [`summary(`*`<cv.grpreg>`*`)`](https://pbreheny.github.io/grpreg/reference/summary.cv.grpreg.md)
+  [`print(`*`<summary.cv.grpreg>`*`)`](https://pbreheny.github.io/grpreg/reference/summary.cv.grpreg.md)
+  : Summarizing inferences based on cross-validation
+
+- [`AUC()`](https://pbreheny.github.io/grpreg/reference/AUC.cv.grpsurv.md)
+  : Calculates AUC for cv.grpsurv objects
+
+- [`select()`](https://pbreheny.github.io/grpreg/reference/select.md) :
+  Select an value of lambda along a grpreg path
+
+## Plotting and extracting model features
+
+- [`logLik(`*`<grpreg>`*`)`](https://pbreheny.github.io/grpreg/reference/logLik.grpreg.md)
+  [`logLik(`*`<grpsurv>`*`)`](https://pbreheny.github.io/grpreg/reference/logLik.grpreg.md)
+  : logLik method for grpreg
+
+- [`predict(`*`<cv.grpreg>`*`)`](https://pbreheny.github.io/grpreg/reference/predict.grpreg.md)
+  [`coef(`*`<cv.grpreg>`*`)`](https://pbreheny.github.io/grpreg/reference/predict.grpreg.md)
+  [`predict(`*`<grpreg>`*`)`](https://pbreheny.github.io/grpreg/reference/predict.grpreg.md)
+  [`coef(`*`<grpreg>`*`)`](https://pbreheny.github.io/grpreg/reference/predict.grpreg.md)
+  :
+
+  Model predictions based on a fitted `grpreg` object
+
+- [`predict(`*`<grpsurv>`*`)`](https://pbreheny.github.io/grpreg/reference/predict.grpsurv.md)
+  : Model predictions for grpsurv objects
+
+- [`plot(`*`<grpreg>`*`)`](https://pbreheny.github.io/grpreg/reference/plot.grpreg.md)
+  : Plot coefficients from a "grpreg" object
+
+- [`plot(`*`<grpsurv.func>`*`)`](https://pbreheny.github.io/grpreg/reference/plot.grpsurv.func.md)
+  : Plot survival curve for grpsurv model
+
+- [`residuals(`*`<grpreg>`*`)`](https://pbreheny.github.io/grpreg/reference/residuals.grpreg.md)
+  : Extract residuals from a grpreg or grpsurv fit
+
+## Utilities for additive models
+
+- [`expand_spline()`](https://pbreheny.github.io/grpreg/reference/expand_spline.md)
+  : Expand feature matrix using basis splines
+- [`gen_nonlinear_data()`](https://pbreheny.github.io/grpreg/reference/gen_nonlinear_data.md)
+  : Generate nonlinear example data
+- [`plot_spline()`](https://pbreheny.github.io/grpreg/reference/plot_spline.md)
+  : Plot spline curve for a fitted additive model
+
+## Data sets
+
+- [`Birthwt`](https://pbreheny.github.io/grpreg/reference/Birthwt.md) :
+  Risk Factors Associated with Low Infant Birth Weight
+- [`Lung`](https://pbreheny.github.io/grpreg/reference/Lung.md) : VA
+  lung cancer data set
+
+# Articles
+
+### Learn more
+
+- [Models](https://pbreheny.github.io/grpreg/articles/models.md):
+- [Penalties](https://pbreheny.github.io/grpreg/articles/penalties.md):
+- [Additive
+  models](https://pbreheny.github.io/grpreg/articles/additive-models.md):
+- [Adaptive
+  rescaling](https://pbreheny.github.io/grpreg/articles/adaptive-rescaling.md):

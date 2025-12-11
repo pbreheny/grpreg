@@ -69,7 +69,7 @@
 Breheny</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/pbreheny/grpreg/blob/master/vignettes/grpreg.rmd" class="external-link"><code>vignettes/grpreg.rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/pbreheny/grpreg/blob/main/vignettes/grpreg.rmd" class="external-link"><code>vignettes/grpreg.rmd</code></a></small>
       <div class="d-none name"><code>grpreg.rmd</code></div>
     </div>
 
@@ -133,7 +133,7 @@ lasso model to this data:</p>
 <p>We can then plot the coefficient paths with</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
-<p><img src="grpreg_files/figure-html/plot-1.png" width="480"></p>
+<p><img src="grpreg_files/figure-html/plot-1.png" class="r-plt" width="480"></p>
 <p>Notice that when a group enters the model (e.g., the green group),
 all of its coefficients become nonzero; this is what happens with group
 lasso models. To see what the coefficients are, we could use the
@@ -154,7 +154,7 @@ various values of <span class="math inline">\lambda</span>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cvfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cv.grpreg.html">cv.grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grLasso"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cvfit</span><span class="op">)</span></span></code></pre></div>
-<p><img src="grpreg_files/figure-html/cvplot-1.png" width="480">
+<p><img src="grpreg_files/figure-html/cvplot-1.png" class="r-plt" width="480">
 The coefficients corresponding to the value of <span class="math inline">\lambda</span> that minimizes the cross-validation
 error can be obtained via <code>coef</code>:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -195,7 +195,7 @@ regression and Cox proportional hazards regression.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Last updated: August 01, 2025</p>
+  <p>Last updated: December 11, 2025</p>
 </div>
 
     </footer>

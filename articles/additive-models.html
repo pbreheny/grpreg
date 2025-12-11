@@ -69,7 +69,7 @@
 Breheny</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/pbreheny/grpreg/blob/master/vignettes/articles/additive-models.rmd" class="external-link"><code>vignettes/articles/additive-models.rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/pbreheny/grpreg/blob/main/vignettes/articles/additive-models.rmd" class="external-link"><code>vignettes/articles/additive-models.rmd</code></a></small>
       <div class="d-none name"><code>additive-models.rmd</code></div>
     </div>
 
@@ -131,11 +131,11 @@ etc., can be used, as well as <code><a href="../reference/plot.grpreg.html">plot
 <code><a href="../reference/plot_spline.html">plot_spline()</a></code>, specific to additive models:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"V02"</span>, lambda <span class="op">=</span> <span class="fl">0.03</span><span class="op">)</span></span></code></pre></div>
-<p><img src="additive-models_files/figure-html/plot-1.png" width="480"></p>
+<p><img src="additive-models_files/figure-html/plot-1.png" class="r-plt" width="480"></p>
 <p>Partial residuals can be included in these plots as well:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"V02"</span>, lambda <span class="op">=</span> <span class="fl">0.03</span>, partial<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="additive-models_files/figure-html/plot_partial-1.png" width="480"></p>
+<p><img src="additive-models_files/figure-html/plot_partial-1.png" class="r-plt" width="480"></p>
 <p>By default, these plots are centered such that at the mean of <span class="math inline">x</span> (where <span class="math inline">x</span>
 denotes the feature being plotted), the <span class="math inline">y</span> value is zero. Alternatively, if
 <code>type="conditional"</code> is specified, <code><a href="../reference/plot_spline.html">plot_spline()</a></code>
@@ -144,13 +144,13 @@ predictions as <span class="math inline">x</span> varies and all other
 features are fixed at their mean value:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"V02"</span>, lambda <span class="op">=</span> <span class="fl">0.03</span>, partial<span class="op">=</span><span class="cn">TRUE</span>, type<span class="op">=</span><span class="st">'conditional'</span><span class="op">)</span></span></code></pre></div>
-<p><img src="additive-models_files/figure-html/plot_conditional-1.png" width="480"></p>
+<p><img src="additive-models_files/figure-html/plot_conditional-1.png" class="r-plt" width="480"></p>
 <p>In comparing these two plots, note that the general contours are the
 same; the only difference is the value of the vertical axis. Here are
 the plots for the first 9 coefficients:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span> <span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">fit</span>, <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"V%02d"</span>, <span class="va">i</span><span class="op">)</span>, lambda <span class="op">=</span> <span class="fl">0.03</span>, partial<span class="op">=</span><span class="cn">TRUE</span>, warn<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="additive-models_files/figure-html/plot_all_6-1.png" width="90%"></p>
+<p><img src="additive-models_files/figure-html/plot_all_6-1.png" class="r-plt" width="90%"></p>
 <p>In the generating model, variables 3 and 4 had a linear relationship
 with the outcome, variables 1, 2, 5, and 6 had nonlinear relationships,
 and all other variables were unrelated. The sparse additive model has
@@ -160,7 +160,7 @@ default plotting the fit that minimizes cross-validation error):</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cvfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cv.grpreg.html">cv.grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">Data</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">cvfit</span>, <span class="st">"V02"</span>, partial<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="additive-models_files/figure-html/cvfit-1.png" width="480"></p>
+<p><img src="additive-models_files/figure-html/cvfit-1.png" class="r-plt" width="480"></p>
 <p>Finally, these tools work with survival and glm models as well. Here,
 all plots are returned on the linear predictor scale, and the residuals
 are deviance residuals.</p>
@@ -174,7 +174,7 @@ are deviance residuals.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Last updated: August 01, 2025</p>
+  <p>Last updated: December 11, 2025</p>
 </div>
 
     </footer>
