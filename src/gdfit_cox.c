@@ -3,7 +3,9 @@
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 #include <R.h>
+#include <R_ext/Memory.h>
 #include <R_ext/Applic.h>
+
 double crossprod(double *x, double *y, int n, int j);
 double norm(double *x, int p);
 double S(double z, double l);
