@@ -14,6 +14,9 @@ extern SEXP lcdfit_cox(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEX
 extern SEXP lcdfit_gaussian(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP maxgrad(SEXP, SEXP, SEXP, SEXP);
 extern SEXP maxprod(SEXP, SEXP, SEXP, SEXP);
+extern SEXP mfdr_gaussian(SEXP);
+extern SEXP mfdr_binomial(SEXP);
+extern SEXP mfdr_cox(SEXP);
 extern SEXP standardize(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
@@ -26,12 +29,26 @@ static const R_CallMethodDef CallEntries[] = {
   {"maxgrad",                  (DL_FUNC) &maxgrad,                   4},
   {"maxprod",                  (DL_FUNC) &maxprod,                   4},
   {"standardize",              (DL_FUNC) &standardize,               1},
+  {"mfdr_gaussian",            (DL_FUNC) &mfdr_gaussian,             1},
+  {"mfdr_binomial",            (DL_FUNC) &mfdr_binomial,             1},
+  {"mfdr_cox",                 (DL_FUNC) &mfdr_cox,                  1},
   {NULL, NULL, 0}
 };
 
 void R_init_grpreg(DllInfo *dll) {
   R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
+}
+
+// List accessor function
+SEXP getListElement(SEXP list, const char *str) {
+  SEXP elmt = R_NilValue, names = getAttrib(list, R_NamesSymbol);
+  for (int i = 0; i < length(list); i++)
+    if(strcmp(CHAR(STRING_ELT(names, i)), str) == 0) {
+      elmt = VECTOR_ELT(list, i);
+      break;
+    }
+  return elmt;
 }
 
 // Cross product of the jth column of x with y

@@ -245,7 +245,8 @@ grpsurv <- function(X, y, group=1:ncol(X), penalty=c("grLasso", "grMCP", "grSCAD
                         time = Y$time,
                         fail = Y$fail,
                         order = Y$ind,
-                        linear.predictors = sweep(Eta, 2, colMeans(Eta), '-')),
+                        linear.predictors = sweep(Eta, 2, colMeans(Eta), '-'),
+                        W = exp(Eta)),
                    class = c("grpsurv", "grpreg"))
   if (returnX) val$XG <- XG
   if (expanded) {
