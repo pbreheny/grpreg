@@ -114,23 +114,23 @@ summary(cvfit)
 #>   Nonzero coefficients: 16
 #>   Nonzero groups: 8
 #>   Cross-validation error of 0.43
-#>   Maximum R-squared: 0.19
-#>   Maximum signal-to-noise ratio: 0.23
-#>   Scale estimate (sigma) at lambda.min: 0.654
+#>   Maximum R-squared: 0.18
+#>   Maximum signal-to-noise ratio: 0.22
+#>   Scale estimate (sigma) at lambda.min: 0.659
 
 # Logistic regression
 y <- Birthwt$low
 cvfit <- cv.grpreg(X, y, group, family="binomial")
 summary(cvfit)
 #> grLasso-penalized logistic regression with n=189, p=16
-#> At minimum cross-validation error (lambda=0.0180):
+#> At minimum cross-validation error (lambda=0.0136):
 #> -------------------------------------------------
 #>   Nonzero coefficients: 16
 #>   Nonzero groups: 8
-#>   Cross-validation error of 1.17
-#>   Maximum R-squared: 0.07
-#>   Maximum signal-to-noise ratio: 0.06
-#>   Prediction error at lambda.min: 0.312
+#>   Cross-validation error of 1.12
+#>   Maximum R-squared: 0.11
+#>   Maximum signal-to-noise ratio: 0.10
+#>   Prediction error at lambda.min: 0.291
 
 # Cox regression
 data(Lung)
