@@ -59,7 +59,7 @@ data(Lung)
 x_lung <- Lung$X
 y_lung <- Lung$y
 g_lung <- Lung$group
-fit <- grpsurv(x_lung, y_lung, g_lung)
+fit <- grpsurv(x_lung, y_lung, g_lung, penalty = "grSCAD")
 obj <- mfdr(fit, x_lung)
 head(obj)
 }

@@ -1,0 +1,19 @@
+name: Check LTO via R-hub container
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  lto:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/r-hub/containers/lto:latest
+      
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        R -q -e 'pak::pkg_install(c("deps::.", "any::rcmdcheck"), dependencies = TRUE)'
+        
+    - uses: r-lib/actions/check-r-package@v2

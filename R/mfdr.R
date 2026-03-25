@@ -50,7 +50,7 @@
 #' x_lung <- Lung$X
 #' y_lung <- Lung$y
 #' g_lung <- Lung$group
-#' fit <- grpsurv(x_lung, y_lung, g_lung)
+#' fit <- grpsurv(x_lung, y_lung, g_lung, penalty = "grSCAD")
 #' obj <- mfdr(fit, x_lung)
 #' head(obj)
 #' @export mfdr
@@ -58,8 +58,8 @@
 mfdr <- function(fit, X) {
   # Initial checks
   if (!inherits(fit, "grpreg")) stop('"fit" must be an grpreg object', call. = FALSE)
-  if (!(fit$penalty == "grLasso" || fit$penalty == "grMCP"))
-    stop('"mFDR" is only avaiable for "grLasso" and "grMCP" penalties', call. = FALSE)
+  if (!(fit$penalty %in% c("grLasso", "grMCP", "grSCAD")))
+    stop('mfdr() is only avaiable for "grLasso", "grMCP", and "grSCAD" penalties', call. = FALSE)
   if (!missing(X)) {
     if (inherits(fit, "grpsurv")) {
       m <- 1
