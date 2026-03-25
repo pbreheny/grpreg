@@ -24,7 +24,7 @@ category.
 }
 }
 \usage{
-birthwt.grpreg
+data(birthwt.grpreg)
 }
 \description{
 This version of the data set has been deprecated and will not be supported

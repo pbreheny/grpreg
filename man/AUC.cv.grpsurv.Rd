@@ -42,5 +42,5 @@ plot(ll, AUC(cvfit), xlim=rev(range(ll)), lwd=3, type='l',
 van Houwelingen H, Putter H (2011). \emph{Dynamic Prediction in Clinical Survival Analysis}. CRC Press.
 }
 \seealso{
-\code{\link[=cv.grpsurv]{cv.grpsurv()}}, \code{\link[survival:survival-deprecated]{survival::survConcordance()}}
+\code{\link[=cv.grpsurv]{cv.grpsurv()}}, \code{\link[survival:survConcordance]{survival::survConcordance()}}
 }

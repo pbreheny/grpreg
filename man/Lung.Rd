@@ -31,7 +31,7 @@ cancer (0=no, 1=yes)}
 \url{https://cran.r-project.org/package=survival}
 }
 \usage{
-Lung
+data(Lung)
 }
 \description{
 Data from a randomised trial of two treatment regimens for lung cancer. This

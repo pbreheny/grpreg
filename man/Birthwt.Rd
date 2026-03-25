@@ -28,7 +28,7 @@ The matrix \code{X} contains the following columns:
 \url{https://cran.r-project.org/package=MASS}
 }
 \usage{
-Birthwt
+data(Birthwt)
 }
 \description{
 The \code{Birthwt} data contains 189 observations, 16 predictors, and an

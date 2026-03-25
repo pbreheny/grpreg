@@ -39,7 +39,7 @@ Calculates the log likelihood and degrees of freedom for a fitted grpreg
 object.
 }
 \details{
-Exists mainly for use with \code{\link[stats:AIC]{stats::AIC()}} and \code{\link[stats:AIC]{stats::BIC()}}.
+Exists mainly for use with \code{\link[stats:AIC]{stats::AIC()}} and \code{\link[stats:BIC]{stats::BIC()}}.
 }
 \examples{
 data(Birthwt)
