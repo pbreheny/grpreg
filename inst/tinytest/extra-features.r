@@ -211,16 +211,6 @@ plot(
 )
 cvfit <- cv.grpreg(X, y, group, penalty = "grLasso", group.multiplier = gm)
 
-# group.multiplier works to assign unpenalized groups
-## n <- 50
-## p <- 11
-## X <- matrix(rnorm(n*p),ncol=p)
-## y <- rnorm(n)
-## group <- rep(0:3, c(1, 2, 3, 5))
-## gm <- 0:2
-## plot(fit <- grpreg(X, y, group, penalty="cMCP", lambda.min=0, group.multiplier=gm), main=fit$penalty)
-## fit <- grpreg(X, y, group, penalty="cMCP", lambda.min=0, group.multiplier=gm)
-
 # dfmax works
 n <- 100
 group <- rep(1:10, rep(3, 10))
