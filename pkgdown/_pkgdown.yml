@@ -66,6 +66,9 @@ reference:
   - plot.grpreg
   - plot.grpsurv.func
   - residuals.grpreg
+- title: Inference
+  contents:
+  - mfdr
 - title: Utilities for additive models
   contents:
   - expand_spline
