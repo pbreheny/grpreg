@@ -56,6 +56,11 @@
 - [`residuals(`*`<grpreg>`*`)`](https://pbreheny.github.io/grpreg/reference/residuals.grpreg.md)
   : Extract residuals from a grpreg or grpsurv fit
 
+## Inference
+
+- [`mfdr()`](https://pbreheny.github.io/grpreg/reference/mfdr.md) :
+  Marginal false discovery rates
+
 ## Utilities for additive models
 
 - [`expand_spline()`](https://pbreheny.github.io/grpreg/reference/expand_spline.md)

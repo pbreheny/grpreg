@@ -7,6 +7,8 @@
 
 - **Yaohui Zeng**. Contributor.
 
+- **Ryan Miller**. Author. [](https://orcid.org/0000-0003-0446-9992)
+
 - **Ryan Kurth**. Contributor.
 
 ## Citation
