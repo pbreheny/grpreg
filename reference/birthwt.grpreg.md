@@ -8,7 +8,7 @@ instead.
 ## Usage
 
 ``` r
-birthwt.grpreg
+data(birthwt.grpreg)
 ```
 
 ## Format

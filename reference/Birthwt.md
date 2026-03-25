@@ -10,7 +10,7 @@ package.
 ## Usage
 
 ``` r
-Birthwt
+data(Birthwt)
 ```
 
 ## Format

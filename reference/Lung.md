@@ -7,7 +7,7 @@ by Kalbfleisch and Prentice.
 ## Usage
 
 ``` r
-Lung
+data(Lung)
 ```
 
 ## Format
