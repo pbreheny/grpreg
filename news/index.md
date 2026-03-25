@@ -1,6 +1,11 @@
 # Changelog
 
-## grpreg 3.5.0 (2024-09-03)
+## grpreg 3.6.0
+
+- New: Can now calculate marginal FDR for group lasso/SCAD/MCP with
+  mfdr()
+
+## grpreg 3.5.0
 
 CRAN release: 2024-09-03
 
@@ -23,7 +28,7 @@ CRAN release: 2024-09-03
 - Documentation: Now using roxygen
 - Documentation: Updated online documentation on penalties
 
-## grpreg 3.4.0 (2021-07-22)
+## grpreg 3.4.0
 
 CRAN release: 2021-07-26
 
@@ -42,7 +47,7 @@ CRAN release: 2021-07-26
   type=“groups”
 - Fixed: grpsurv() works correctly if a single feature is supplied
 
-## grpreg 3.3.1 (2021-03-26)
+## grpreg 3.3.1
 
 CRAN release: 2021-03-30
 
@@ -51,7 +56,7 @@ CRAN release: 2021-03-30
 - Internal: Fixed memory leak
 - Documentation: Better formatting of references, with DOIs
 
-## grpreg 3.3.0 (2020-06-10)
+## grpreg 3.3.0
 
 CRAN release: 2020-06-10
 
@@ -60,7 +65,7 @@ CRAN release: 2020-06-10
 - Testing: Now uses the tinytest package
 - Documentation: Removing references to grpregOverlap (hope to merge)
 
-## grpreg 3.2.2 (2020-02-14)
+## grpreg 3.2.2
 
 CRAN release: 2020-02-19
 
@@ -70,7 +75,7 @@ CRAN release: 2020-02-19
 - Internal: Lots of internal changes for cleaner, more reliable code
 - New version numbering system
 
-## grpreg 3.2-1 (2019-02-26)
+## grpreg 3.2-1
 
 CRAN release: 2019-02-26
 
@@ -79,7 +84,7 @@ CRAN release: 2019-02-26
 - Fixed: Leave-one-out cross-validation now works correctly for logistic
   regression
 
-## grpreg 3.2-0 (2018-09-27)
+## grpreg 3.2-0
 
 CRAN release: 2018-09-27
 
@@ -99,7 +104,7 @@ CRAN release: 2018-09-27
 - Documentation: vignette now html (used to be pdf)
 - Documentation: pkgdown website
 
-## grpreg 3.1-4 (2018-06-15)
+## grpreg 3.1-4
 
 CRAN release: 2018-06-15
 
@@ -108,13 +113,13 @@ CRAN release: 2018-06-15
   standardization/ orthogonalization
 - Internal: SSR-BEDPP rule turned off due to bug
 
-## grpreg 3.1-3 (2018-04-07)
+## grpreg 3.1-3
 
 CRAN release: 2018-04-08
 
 - Internal: C code now uses \|\| instead of \|
 
-## grpreg 3.1-2 (2017-07-05)
+## grpreg 3.1-2
 
 CRAN release: 2017-07-06
 
@@ -122,7 +127,7 @@ CRAN release: 2017-07-06
   regression with user-specified lambda sequence (thank you very much to
   Natasha Sahr for pointing this out)
 
-## grpreg 3.1-1 (2017-06-07)
+## grpreg 3.1-1
 
 CRAN release: 2017-06-08
 
@@ -131,7 +136,7 @@ CRAN release: 2017-06-08
 - Fixed: Cross-validation no longer fails when group.multiplier is
   specified
 
-## grpreg 3.1-0 (2017-05-18)
+## grpreg 3.1-0
 
 CRAN release: 2017-05-18
 
@@ -159,7 +164,7 @@ CRAN release: 2016-07-11
 - Fixed bug involving mismatch between group.multiplier and group if
   group is given out of order.
 
-## grpreg 3.0-1 (2016-06-06)
+## grpreg 3.0-1
 
 CRAN release: 2016-06-06
 
@@ -167,7 +172,7 @@ CRAN release: 2016-06-06
 - Deprecation: Re-introduced ‘birthwt.grpreg’ for backwards
   compatibility, but this is deprecated
 
-## grpreg 3.0-0 (2016-06-02)
+## grpreg 3.0-0
 
 CRAN release: 2016-06-02
 
@@ -183,7 +188,7 @@ CRAN release: 2016-06-02
 - Documentation: Added vignettes (a quick-start guide and a detailed
   description of available penalties)
 
-## grpreg 2.8-1 (2015-05-30)
+## grpreg 2.8-1
 
 CRAN release: 2015-05-30
 
@@ -193,7 +198,7 @@ CRAN release: 2015-05-30
   when scalar lambda value is passed
 - Documentation: Updated citations
 
-## grpreg 2.8-0 (2014-11-15)
+## grpreg 2.8-0
 
 CRAN release: 2014-11-15
 
@@ -214,7 +219,7 @@ CRAN release: 2014-11-15
 - Fixed: bug in cv.grpreg when attempting to use leave-one-out
   cross-validation
 
-## grpreg 2.7-1 (2014-08-13)
+## grpreg 2.7-1
 
 CRAN release: 2014-08-13
 
@@ -226,7 +231,7 @@ CRAN release: 2014-08-13
   multivariate outcomes (thank you to Cajo ter Braak for pointing out
   that this was broken)
 
-## grpreg 2.7-0 (2014-08-13)
+## grpreg 2.7-0
 
 CRAN release: 2014-08-13
 
@@ -235,14 +240,14 @@ CRAN release: 2014-08-13
 - Fixed: bug in cv.grpreg when attempting to use leave-one-out
   cross-validation (thank you to Cajo ter Braak for pointing this out)
 
-## grpreg 2.6-0 (2014-03-21)
+## grpreg 2.6-0
 
 CRAN release: 2014-03-21
 
 - Internal: Various internal changes to make the package more efficient
   for large data sets
 
-## grpreg 2.5-0 (2013-12-24)
+## grpreg 2.5-0
 
 CRAN release: 2013-12-24
 
@@ -251,7 +256,7 @@ CRAN release: 2013-12-24
 - New: ‘nvars’ and ‘ngroups’ options for predict
 - Change: appearance of summary.cv.grpreg display
 
-## grpreg 2.4-0 (2013-06-07)
+## grpreg 2.4-0
 
 CRAN release: 2013-06-07
 
@@ -270,14 +275,14 @@ CRAN release: 2013-06-07
   specified
 - Fixed: bug in cv.grpreg with user-defined lambda values
 
-## grpreg 2.3-0 (2013-02-10)
+## grpreg 2.3-0
 
 CRAN release: 2013-02-10
 
 - Internal: Switched to SVD-based orthogonalization to allow for linear
   dependency within groups
 
-## grpreg 2.2-1 (2012-11-16)
+## grpreg 2.2-1
 
 CRAN release: 2012-11-15
 
@@ -285,7 +290,7 @@ CRAN release: 2012-11-15
 - Fixed: bug in calculation of binomial deviance when fitted
   probabilities are close to 0 or 1
 
-## grpreg 2.2-0 (2012-10-09)
+## grpreg 2.2-0
 
 CRAN release: 2012-10-09
 
@@ -300,7 +305,7 @@ CRAN release: 2012-10-09
 - Fixed: bug for returning group when some groups were eliminated due to
   constant columns
 
-## grpreg 2.1-0 (2012-07-28)
+## grpreg 2.1-0
 
 CRAN release: 2012-07-28
 
@@ -308,7 +313,7 @@ CRAN release: 2012-07-28
 - Fixed: Bug involving orthogonalization with unpenalized groups
 - Internal: restructuring of C code
 
-## grpreg 2.0-0 (2012-07-21)
+## grpreg 2.0-0
 
 CRAN release: 2012-07-21
 
@@ -323,7 +328,7 @@ CRAN release: 2012-07-21
 - Internal: standardize and orthogonalize functions added
 - Internal: Much more extensive and reproducible code testing
 
-## grpreg 1.2-0 (2011-06-22)
+## grpreg 1.2-0
 
 CRAN release: 2011-06-22
 
@@ -338,4 +343,4 @@ CRAN release: 2011-06-22
 - Removed: ‘monitor’ no longer an option in grpreg
 - Removed: ‘criteria’ option for select
 - Fixed: Bug in calculation of df for gLasso (grpreg.c)
-- Documendation: Updated citation and contact information
+- Documentation: Updated citation and contact information
