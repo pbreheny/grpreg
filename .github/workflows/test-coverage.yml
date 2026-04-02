@@ -4,6 +4,10 @@ on:
   pull_request:
     branches: [main, master]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 name: test-coverage
 
 permissions: read-all
@@ -36,11 +40,11 @@ jobs:
       - name: Test coverage
         run: |
           cov <- covr::package_coverage(
+            type  = "all",
             quiet = FALSE,
             clean = FALSE,
             install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
           )
-          print(cov)
           covr::to_cobertura(cov)
         shell: Rscript {0}
 
