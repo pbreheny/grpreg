@@ -51,8 +51,8 @@ jobs:
       - uses: codecov/codecov-action@v6
         with:
           fail_ci_if_error: ${{ github.event_name != 'pull_request' || secrets.CODECOV_TOKEN }}
-          file: ./cobertura.xml
-          plugin: noop
+          files: ./cobertura.xml
+          plugins: noop
           slug: pbreheny/grpreg
           disable_search: true
           token: ${{ secrets.CODECOV_TOKEN }}
