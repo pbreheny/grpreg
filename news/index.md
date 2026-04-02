@@ -2,6 +2,8 @@
 
 ## grpreg 3.6.0
 
+CRAN release: 2026-03-26
+
 - New: Can now calculate marginal FDR for group lasso/SCAD/MCP with
   mfdr()
 
