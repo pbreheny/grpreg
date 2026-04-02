@@ -46,16 +46,9 @@ jobs:
 
       - uses: codecov/codecov-action@v6
         with:
-          # Fail if error if not on PR, or if on PR and token is given
           fail_ci_if_error: ${{ github.event_name != 'pull_request' || secrets.CODECOV_TOKEN }}
           file: ./cobertura.xml
           plugin: noop
+          slug: pbreheny/grpreg
           disable_search: true
           token: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Upload test results
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: coverage-test-failures
-          path: ${{ runner.temp }}/package
