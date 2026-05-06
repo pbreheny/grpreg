@@ -99,6 +99,7 @@ Patrick Breheny
 ## Examples
 
 ``` r
+
 # Birthweight data
 data(Birthwt)
 X <- Birthwt$X

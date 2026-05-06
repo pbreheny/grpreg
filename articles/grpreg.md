@@ -16,6 +16,7 @@ birth weight in kilograms) or dichotomized (`low`) with respect to the
 newborn having a low birth weight (under 2.5 kg).
 
 ``` r
+
 data(Birthwt)
 X <- Birthwt$X
 y <- Birthwt$bwt
@@ -45,6 +46,7 @@ the columns of the design matrix are *grouped*; this is what grpreg is
 designed for. The grouping information is encoded as follows:
 
 ``` r
+
 group <- Birthwt$group
 group
 #  [1] age   age   age   lwt   lwt   lwt   race  race  smoke ptl   ptl   ht   
@@ -60,12 +62,14 @@ try to set the `group.multiplier` option). To fit a group lasso model to
 this data:
 
 ``` r
+
 fit <- grpreg(X, y, group, penalty="grLasso")
 ```
 
 We can then plot the coefficient paths with
 
 ``` r
+
 plot(fit)
 ```
 
@@ -77,6 +81,7 @@ lasso models. To see what the coefficients are, we could use the `coef`
 function:
 
 ``` r
+
 coef(fit, lambda=0.05)
 # (Intercept)        age1        age2        age3        lwt1        lwt2 
 #  3.02892181  0.14045229  0.62608119  0.37683684  0.74715315 -0.15825582 
@@ -94,6 +99,7 @@ carrying out inference on the predictive accuracy of the model at
 various values of \lambda.
 
 ``` r
+
 cvfit <- cv.grpreg(X, y, group, penalty="grLasso")
 plot(cvfit)
 ```
@@ -103,6 +109,7 @@ corresponding to the value of \lambda that minimizes the
 cross-validation error can be obtained via `coef`:
 
 ``` r
+
 coef(cvfit)
 # (Intercept)        age1        age2        age3        lwt1        lwt2 
 #  3.04158282  0.03585964  1.31006421  0.77036812  1.56663368 -0.04705625 
@@ -116,6 +123,7 @@ Predicted values can be obtained via `predict`, which has a number of
 options:
 
 ``` r
+
 predict(cvfit, X=head(X))                 # Predictions for new observations
 # [1] 2.547122 3.006659 3.042348 2.564257 2.577717 3.083550
 predict(fit, type="ngroups", lambda=0.1)  # Number of nonzero groups

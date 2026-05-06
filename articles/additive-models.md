@@ -12,6 +12,7 @@ functions can be used instead. The basic usage is illustrated below.
 Let’s start by generating some nonlinear data:
 
 ``` r
+
 Data <- gen_nonlinear_data(n=1000)
 Data$X[1:5, 1:5]
 #            V01       V02       V03       V04        V05
@@ -30,6 +31,7 @@ and so on. Each of those features can be expanded via the
 function:
 
 ``` r
+
 X <- expand_spline(Data$X)
 X$X[1:5, 1:5]
 #            V01_1     V01_2      V01_3         V02_1     V02_2
@@ -57,6 +59,7 @@ This expanded matrix can now be passed to
 [`grpreg()`](https://pbreheny.github.io/grpreg/reference/grpreg.md):
 
 ``` r
+
 fit <- grpreg(X, Data$y)
 ```
 
@@ -71,6 +74,7 @@ However, **grpreg** also offers a function,
 specific to additive models:
 
 ``` r
+
 plot_spline(fit, "V02", lambda = 0.03)
 ```
 
@@ -79,6 +83,7 @@ plot_spline(fit, "V02", lambda = 0.03)
 Partial residuals can be included in these plots as well:
 
 ``` r
+
 plot_spline(fit, "V02", lambda = 0.03, partial=TRUE)
 ```
 
@@ -93,6 +98,7 @@ predictions as x varies and all other features are fixed at their mean
 value:
 
 ``` r
+
 plot_spline(fit, "V02", lambda = 0.03, partial=TRUE, type='conditional')
 ```
 
@@ -103,6 +109,7 @@ same; the only difference is the value of the vertical axis. Here are
 the plots for the first 9 coefficients:
 
 ``` r
+
 for (i in 1:9) plot_spline(fit, sprintf("V%02d", i), lambda = 0.03, partial=TRUE, warn=FALSE)
 ```
 
@@ -117,6 +124,7 @@ These tools work with cross-validation as one would expect (by default
 plotting the fit that minimizes cross-validation error):
 
 ``` r
+
 cvfit <- cv.grpreg(X, Data$y)
 plot_spline(cvfit, "V02", partial=TRUE)
 ```

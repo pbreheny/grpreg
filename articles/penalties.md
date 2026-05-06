@@ -54,6 +54,7 @@ The group lasso was originally proposed in
 ### Group lasso
 
 ``` r
+
 grpreg(X, y, group, penalty="grLasso")
 ```
 
@@ -62,6 +63,7 @@ P(\beta) = \lambda\sum_j \lVert\boldsymbol{\beta}\_j\rVert_2
 ### Group MCP
 
 ``` r
+
 grpreg(X, y, group, penalty="grMCP")
 ```
 
@@ -74,6 +76,7 @@ with regularization parameter \lambda and tuning parameter \gamma.
 ### Group SCAD
 
 ``` r
+
 grpreg(X, y, group, penalty="grSCAD")
 ```
 
@@ -93,6 +96,7 @@ zero.
 ### Group exponential lasso (GEL)
 
 ``` r
+
 grpreg(X, y, group, penalty="gel")
 ```
 
@@ -114,6 +118,7 @@ If you use the GEL penalty, please cite
 ### Composite MCP
 
 ``` r
+
 grpreg(X, y, group, penalty="cMCP")
 ```
 
@@ -144,6 +149,7 @@ MCP” [defined above](#group-mcp).
 ### Group bridge
 
 ``` r
+
 gBridge(X, y, group)
 ```
 
@@ -186,6 +192,7 @@ where P_1 is any of the penalties from the earlier sections. So, for
 example
 
 ``` r
+
 grpreg(X, y, group, penalty="grLasso", alpha=0.75)
 ```
 

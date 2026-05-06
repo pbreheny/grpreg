@@ -27,6 +27,7 @@ a Gaussian distribution with constant variance and mean equal to
 To fit a penalized linear regression model with `grpreg`:
 
 ``` r
+
 fit <- grpreg(X, y, group)
 ```
 
@@ -43,6 +44,7 @@ probabilities P(Y_i=1)=\hat{\pi}\_i given by: \hat{\pi}\_i =
 To fit a penalized logistic regression model with `grpreg`:
 
 ``` r
+
 fit <- grpreg(X, y, group, family='binomial')
 ```
 
@@ -59,6 +61,7 @@ Y_i \sim \text{Pois}(\hat{\mu}\_i) with rate parameter given by:
 To fit a penalized Poisson regression model with `grpreg`:
 
 ``` r
+
 fit <- grpreg(X, y, group, family='poisson')
 ```
 
@@ -81,6 +84,7 @@ details) provides an example of time-to-event data that can be used with
 Cox regression. Loading this data set into R,
 
 ``` r
+
 data(Lung)
 X <- Lung$X
 y <- Lung$y
@@ -90,12 +94,14 @@ group <- Lung$group
 To fit a penalized Cox regression model,
 
 ``` r
+
 fit <- grpsurv(X, y, group)
 ```
 
 As before, you can call `plot`, `coef`, `predict`, etc. on `fit`:
 
 ``` r
+
 coef(fit, lambda=0.1)
 #        trt     karno1     karno2     karno3  diagtime1  diagtime2       age1 
 #  0.0000000 -4.6535992  0.4641241 -0.3283532  0.0000000  0.0000000  0.0000000 
@@ -106,10 +112,12 @@ coef(fit, lambda=0.1)
 Cross-validation is similar:
 
 ``` r
+
 set.seed(1)
 ```
 
 ``` r
+
 cvfit <- cv.grpsurv(X, y, group)
 par(mfrow=c(1,2))
 plot(cvfit, type='cve')
@@ -126,6 +134,7 @@ Kalbfleish-Prentice method) and therefore, the survival function. A
 method to plot the resulting function is also available:
 
 ``` r
+
 S <- predict(fit, X[1,], type='survival', lambda=0.02)
 S(365)   # Estiamted survival at 1 year
 # [1] 0.09995821
@@ -137,6 +146,7 @@ plot(S, xlim=c(0,200))
 When multiple subjects are involved in the prediction:
 
 ``` r
+
 S <- predict(fit, X, type='survival', lambda=0.02)
 S[[1]](365)  # Estimated survival at 1 year for subject 1
 # [1] 0.09995821

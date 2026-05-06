@@ -19,7 +19,7 @@ Source:
 Breheny P, Huang J (2015). “Group descent algorithms for nonconvex
 penalized linear and logistic regression models with grouped
 predictors.” *Statistics and Computing*, **25**(2), 173–187.
-[doi:10.1007/s11222-013-9424-2](https://doi.org/10.1007/s11222-013-9424-2),
+[doi:10.1007/s11222-013-9424-2](https://doi.org/10.1007/s11222-013-9424-2).
 <https://dx.doi.org/10.1007/s11222-013-9424-2>.
 
     @Article{,
@@ -36,7 +36,7 @@ predictors.” *Statistics and Computing*, **25**(2), 173–187.
 
 Breheny P (2015). “The group exponential lasso for bi-level variable
 selection.” *Biometrics*, **71**(3), 731–740.
-[doi:10.1111/biom.12300](https://doi.org/10.1111/biom.12300),
+[doi:10.1111/biom.12300](https://doi.org/10.1111/biom.12300).
 <https://dx.doi.org/10.1111/biom.12300>.
 
     @Article{,

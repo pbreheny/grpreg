@@ -39,6 +39,7 @@ Patrick Breheny
 ## Examples
 
 ``` r
+
 data(Lung)
 X <- Lung$X
 y <- Lung$y
