@@ -1,4 +1,4 @@
-name: Check --as-cran
+name: Check as CRAN
 
 on:
   workflow_dispatch: {}
