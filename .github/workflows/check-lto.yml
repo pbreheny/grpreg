@@ -10,7 +10,7 @@ jobs:
       image: ghcr.io/r-hub/containers/lto:latest
       
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Install dependencies
       run: |
