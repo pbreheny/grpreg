@@ -1,4 +1,6 @@
-if (interactive()) library(tinytest)
+if (interactive()) {
+  library(tinytest)
+}
 
 # logLik is correct
 n <- 50

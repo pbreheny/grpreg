@@ -1,37 +1,36 @@
 #' Plot survival curve for grpsurv model
-#' 
-#' Plot survival curve for a model that has been fit using \code{grpsurv}
-#' followed by a prediction of the survival function using
-#' \code{predict.grpsurv}
-#' 
-#' 
-#' @param x A \code{'grpsurv.func'} object, which is returned by
-#' \code{predict.grpsurv} if \code{type='survival'} is specified.  See
-#' examples.
-#' @param alpha Controls alpha-blending (i.e., transparency).  Useful if many
-#' overlapping lines are present.
-#' @param \dots Other graphical parameters to pass to \code{plot}
-#' @author Patrick Breheny
-#' @seealso \code{\link{grpsurv}}, \code{\link{predict.grpsurv}}
+#'
+#' Plot survival curve for a model that has been fit using `grpsurv` followed by a prediction of the
+#' survival function using `predict.grpsurv`
+#'
+#' @param x A `grpsurv.func` object, which is returned by `predict.grpsurv` if `type="survival"` is
+#'   specified. See examples.
+#' @param alpha Controls alpha-blending (i.e., transparency). Useful if many overlapping lines are
+#'   present.
+#' @param ... Other graphical parameters to pass to `plot`
+#'
+#' @returns Invisibly returns `NULL`. Called for its side effect of producing a plot.
+#'
+#' @seealso [grpsurv()], [predict.grpsurv()]
+#'
 #' @examples
-#' 
 #' data(Lung)
 #' X <- Lung$X
 #' y <- Lung$y
 #' group <- Lung$group
 #' fit <- grpsurv(X, y, group)
-#' 
+#'
 #' # A single survival curve
-#' S <- predict(fit, X[1,], type='survival', lambda=.05)
-#' plot(S, xlim=c(0,200))
-#' 
+#' S <- predict(fit, X[1, ], type = "survival", lambda = .05)
+#' plot(S, xlim = c(0, 200))
+#'
 #' # Lots of survival curves
-#' S <- predict(fit, X, type='survival', lambda=.05)
-#' plot(S, xlim=c(0,200), alpha=0.3)
+#' S <- predict(fit, X, type = "survival", lambda = .05)
+#' plot(S, xlim = c(0, 200), alpha = 0.3)
+#'
 #' @export
-
-plot.grpsurv.func <- function(x, alpha=1, ...) {
-  time <- attr(x, 'time')
+plot.grpsurv.func <- function(x, alpha = 1, ...) {
+  time <- attr(x, "time")
   if (length(x) > 1) {
     Y <- sapply(x, function(f) f(time))
     n <- ncol(Y)
@@ -40,16 +39,31 @@ plot.grpsurv.func <- function(x, alpha=1, ...) {
     n <- 1
   }
 
-  plot.args <- list(x=1, y=1, xlim=range(time), ylim=range(Y), xlab='Time', ylab='Pr(Survival)', type="n", las=1, bty="n")
+  plot.args <- list(
+    x = 1,
+    y = 1,
+    xlim = range(time),
+    ylim = range(Y),
+    xlab = "Time",
+    ylab = "Pr(Survival)",
+    type = "n",
+    las = 1,
+    bty = "n"
+  )
   new.args <- list(...)
-  if (length(new.args)) plot.args[names(new.args)] <- new.args
+  if (length(new.args)) {
+    plot.args[names(new.args)] <- new.args
+  }
   do.call("plot", plot.args)
 
-  cols <- hcl(h=seq(15, 375, len=max(4, n+1)), l=60, c=150, alpha=alpha)
-  cols <- if (n==2) cols[c(1,3)] else cols[1:n]
-  line.args <- list(col=cols, lwd=1+2*exp(-n/20), lty=1, type='s')
-  if (length(new.args)) line.args[names(new.args)] <- new.args
+  cols <- hcl(h = seq(15, 375, len = max(4, n + 1)), l = 60, c = 150, alpha = alpha)
+  cols <- if (n == 2) cols[c(1, 3)] else cols[1:n]
+  line.args <- list(col = cols, lwd = 1 + 2 * exp(-n / 20), lty = 1, type = "s")
+  if (length(new.args)) {
+    line.args[names(new.args)] <- new.args
+  }
   line.args$x <- time
   line.args$y <- Y
   do.call("matlines", line.args)
+  invisible(NULL)
 }

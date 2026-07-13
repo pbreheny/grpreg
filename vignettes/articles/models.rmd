@@ -5,8 +5,8 @@ author: "Patrick Breheny"
 
 ```{r setup, include=FALSE}
 library(grpreg)
-knitr::opts_knit$set(aliases=c(h = 'fig.height', w = 'fig.width'))
-knitr::opts_chunk$set(comment="#", collapse=TRUE, cache=FALSE, tidy=FALSE)
+knitr::opts_knit$set(aliases = c(h = "fig.height", w = "fig.width"))
+knitr::opts_chunk$set(comment = "#", collapse = TRUE, cache = FALSE, tidy = FALSE)
 knitr::knit_hooks$set(small.mar = function(before, options, envir) {
   if (before) par(mar = c(4, 4, .1, .1))
 })
@@ -50,7 +50,7 @@ where $\be = \X\bb$ denotes the linear predictors.
 To fit a penalized logistic regression model with `grpreg`:
 
 ```{r, eval=FALSE}
-fit <- grpreg(X, y, group, family='binomial')
+fit <- grpreg(X, y, group, family = "binomial")
 ```
 
 # Poisson
@@ -66,7 +66,7 @@ $$
 
 To fit a penalized Poisson regression model with `grpreg`:
 ```{r, eval=FALSE}
-fit <- grpreg(X, y, group, family='poisson')
+fit <- grpreg(X, y, group, family = "poisson")
 ```
 
 # Cox proportional hazards
@@ -95,7 +95,7 @@ fit <- grpsurv(X, y, group)
 As before, you can call `plot`, `coef`, `predict`, etc. on `fit`:
 
 ```{r}
-coef(fit, lambda=0.1)
+coef(fit, lambda = 0.1)
 ```
 
 Cross-validation is similar:
@@ -106,24 +106,24 @@ set.seed(1)
 
 ```{r models-cox-cv, h=3, w=6, out.height=360, out.width=720}
 cvfit <- cv.grpsurv(X, y, group)
-par(mfrow=c(1,2))
-plot(cvfit, type='cve')
-plot(cvfit, type='rsq')
+par(mfrow = c(1, 2))
+plot(cvfit, type = "cve")
+plot(cvfit, type = "rsq")
 ```
 
 In addition to the quantities like coefficients and number of nonzero coefficients that `predict` returns for other types of models, `predict()` for an `grpsurv` object can also estimate the baseline hazard (using the Kalbfleish-Prentice method) and therefore, the survival function.  A method to plot the resulting function is also available:
 
 ```{r models-cox-surv-single, h=4, w=4}
-S <- predict(fit, X[1,], type='survival', lambda=0.02)
-S(365)   # Estiamted survival at 1 year
-plot(S, xlim=c(0,200))
+S <- predict(fit, X[1, ], type = "survival", lambda = 0.02)
+S(365) # Estiamted survival at 1 year
+plot(S, xlim = c(0, 200))
 ```
 
 When multiple subjects are involved in the prediction:
 
 ```{r models-cox-surv-multiple, h=4, w=4}
-S <- predict(fit, X, type='survival', lambda=0.02)
-S[[1]](365)  # Estimated survival at 1 year for subject 1
-S[[2]](365)  # Estimated survival at 1 year for subject 2
-plot(S, xlim=c(0,200))
+S <- predict(fit, X, type = "survival", lambda = 0.02)
+S[[1]](365) # Estimated survival at 1 year for subject 1
+S[[2]](365) # Estimated survival at 1 year for subject 2
+plot(S, xlim = c(0, 200))
 ```

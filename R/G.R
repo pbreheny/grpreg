@@ -1,8 +1,8 @@
 setupG <- function(group, m, bilevel) {
   gf <- factor(group)
-  if (any(levels(gf)=='0')) {
+  if (any(levels(gf) == "0")) {
     g <- as.integer(gf) - 1
-    lev <- levels(gf)[levels(gf)!='0']
+    lev <- levels(gf)[levels(gf) != "0"]
   } else {
     g <- as.integer(gf)
     lev <- levels(gf)
@@ -14,39 +14,48 @@ setupG <- function(group, m, bilevel) {
     m <- rep(NA, length(lev))
     names(m) <- lev
   } else {
-    #if (all.equal(sort(names(m)), sort(group)))
-    TRY <- try(as.integer(group)==g)
-    if (inherits(TRY, 'try-error') || any(!TRY)) stop('Attempting to set group.multiplier is ambiguous if group is not a factor', call.=FALSE)
-    if (length(m) != length(lev)) stop("Length of group.multiplier must equal number of penalized groups", call.=FALSE)
-    if (storage.mode(m) != "double") storage.mode(m) <- "double"
-    if (any(m < 0)) stop('group.multiplier cannot be negative', call.=FALSE)
+    # if (all.equal(sort(names(m)), sort(group)))
+    TRY <- try(as.integer(group) == g)
+    if (inherits(TRY, "try-error") || any(!TRY)) {
+      stop(
+        "Attempting to set group.multiplier is ambiguous if group is not a factor",
+        call. = FALSE
+      )
+    }
+    if (length(m) != length(lev)) {
+      stop("Length of group.multiplier must equal number of penalized groups", call. = FALSE)
+    }
+    if (storage.mode(m) != "double") {
+      storage.mode(m) <- "double"
+    }
+    if (any(m < 0)) stop("group.multiplier cannot be negative", call. = FALSE)
   }
-  structure(g, levels=lev, m=m)
+  structure(g, levels = lev, m = m)
 }
 subsetG <- function(g, nz) {
-  lev <- attr(g, 'levels')
-  m <- attr(g, 'm')
+  lev <- attr(g, "levels")
+  m <- attr(g, "m")
   new <- g[nz]
   dropped <- setdiff(g, new)
   if (length(dropped)) {
     lev <- lev[-dropped]
     m <- m[-dropped]
     gf <- factor(new)
-    new <- as.integer(gf) - 1*any(levels(gf)=='0')
+    new <- as.integer(gf) - 1 * any(levels(gf) == "0")
   }
-  structure(new, levels=lev, m=m)
+  structure(new, levels = lev, m = m)
 }
 reorderG <- function(g, m, bilevel) {
   og <- g
-  lev <- attr(g, 'levels')
-  m <- attr(g, 'm')
-  if (any(g==0)) {
-    g <- as.integer(relevel(factor(g), "0"))-1
+  lev <- attr(g, "levels")
+  m <- attr(g, "m")
+  if (any(g == 0)) {
+    g <- as.integer(relevel(factor(g), "0")) - 1
   }
   if (any(order(g) != 1:length(g))) {
     reorder <- TRUE
     gf <- factor(g)
-    if (any(levels(gf)=="0")) {
+    if (any(levels(gf) == "0")) {
       gf <- relevel(gf, "0")
       g <- as.integer(gf) - 1
     } else {
@@ -59,5 +68,5 @@ reorderG <- function(g, m, bilevel) {
     reorder <- FALSE
     ord <- ord.inv <- NULL
   }
-  structure(g, levels=lev, m=m, ord=ord, ord.inv=ord.inv, reorder=reorder)
+  structure(g, levels = lev, m = m, ord = ord, ord.inv = ord.inv, reorder = reorder)
 }

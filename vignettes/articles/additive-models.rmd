@@ -5,16 +5,16 @@ author: "Patrick Breheny"
   
 ```{r setup, include=FALSE}
 library(grpreg)
-knitr::opts_knit$set(aliases=c(h = 'fig.height', w = 'fig.width'))
-knitr::opts_knit$set(global.par=TRUE)
-knitr::opts_chunk$set(comment="#", collapse=TRUE, cache=FALSE, tidy=FALSE)
+knitr::opts_knit$set(aliases = c(h = "fig.height", w = "fig.width"))
+knitr::opts_knit$set(global.par = TRUE)
+knitr::opts_chunk$set(comment = "#", collapse = TRUE, cache = FALSE, tidy = FALSE)
 knitr::knit_hooks$set(small.mar = function(before, options, envir) {
   if (before) par(mar = c(4, 4, .1, .1))
 })
 set.seed(1)
 ```
 ```{r par0, echo=FALSE, results='hide'}
-par(mar=c(5,5,0.5,0.5))
+par(mar = c(5, 5, 0.5, 0.5))
 ```
 
 Starting in version 3.4, **grpreg** offers an interface for setting up, fitting, and visualizing additive models. Numeric features are automatically expanded using spline basis functions. The basic idea was first proposed by [Ravikumar et al. (2009)](https://doi.org/10.1111/j.1467-9868.2009.00718.x), who called it SPAM, for sparse additive models. The original proposal involved the group lasso penalty, but any of **grpreg**'s penalty functions can be used instead. The basic usage is illustrated below.
@@ -22,7 +22,7 @@ Starting in version 3.4, **grpreg** offers an interface for setting up, fitting,
 Let's start by generating some nonlinear data:
 
 ```{r gen_data}
-Data <- gen_nonlinear_data(n=1000)
+Data <- gen_nonlinear_data(n = 1000)
 Data$X[1:5, 1:5]
 dim(Data$X)
 ```
@@ -53,23 +53,23 @@ plot_spline(fit, "V02", lambda = 0.03)
 Partial residuals can be included in these plots as well:
 
 ```{r plot_partial, w=5, h=4}
-plot_spline(fit, "V02", lambda = 0.03, partial=TRUE)
+plot_spline(fit, "V02", lambda = 0.03, partial = TRUE)
 ```
 
 By default, these plots are centered such that at the mean of $x$ (where $x$ denotes the feature being plotted), the $y$ value is zero. Alternatively, if `type="conditional"` is specified, `plot_spline()` will construct a plot in which the vertical axis represents model predictions as $x$ varies and all other features are fixed at their mean value:
 
 ```{r plot_conditional, w=5, h=4}
-plot_spline(fit, "V02", lambda = 0.03, partial=TRUE, type='conditional')
+plot_spline(fit, "V02", lambda = 0.03, partial = TRUE, type = "conditional")
 ```
 
 In comparing these two plots, note that the general contours are the same; the only difference is the value of the vertical axis. Here are the plots for the first 9 coefficients:
 
 ```{r par1, echo=FALSE}
-op <- par(mfrow=c(3,3), mar=c(4.5, 4.5, 0.25, 0.25))
+op <- par(mfrow = c(3, 3), mar = c(4.5, 4.5, 0.25, 0.25))
 ```
 
 ```{r plot_all_6, w=5, h=5, out.width="90%"}
-for (i in 1:9) plot_spline(fit, sprintf("V%02d", i), lambda = 0.03, partial=TRUE, warn=FALSE)
+for (i in 1:9) plot_spline(fit, sprintf("V%02d", i), lambda = 0.03, partial = TRUE, warn = FALSE)
 ```
 
 ```{r par2, echo=FALSE}
@@ -82,7 +82,7 @@ These tools work with cross-validation as one would expect (by default plotting 
 
 ```{r cvfit, w=5, h=4}
 cvfit <- cv.grpreg(X, Data$y)
-plot_spline(cvfit, "V02", partial=TRUE)
+plot_spline(cvfit, "V02", partial = TRUE)
 ```
 
 Finally, these tools work with survival and glm models as well. Here, all plots are returned on the linear predictor scale, and the residuals are deviance residuals.

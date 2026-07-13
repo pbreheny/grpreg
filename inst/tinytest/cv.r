@@ -1,4 +1,6 @@
-if (interactive()) library(tinytest)
+if (interactive()) {
+  library(tinytest)
+}
 
 # Gaussian
 n <- 50
@@ -76,10 +78,7 @@ s <- summary(cvfit)
 expect_equivalent(s$ngroups[1], 0)
 
 # predict
-expect_equivalent(
-  predict(cvfit, X[1:3, ]),
-  predict(cvfit$fit, X[1:3, ], lambda = cvfit$lambda.min)
-)
+expect_equivalent(predict(cvfit, X[1:3, ]), predict(cvfit$fit, X[1:3, ], lambda = cvfit$lambda.min))
 
 
 # R squared ---------------------------------------------------------------
@@ -103,7 +102,4 @@ p <- length(group)
 X <- matrix(rnorm(n * p), ncol = p)
 y <- rnorm(n)
 cvfit <- cv.grpreg(X, y, group, returnY = TRUE)
-expect_equivalent(
-  cvfit$cve,
-  apply((cvfit$Y - y)^2, 2, mean)
-)
+expect_equivalent(cvfit$cve, apply((cvfit$Y - y)^2, 2, mean))

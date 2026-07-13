@@ -1,35 +1,61 @@
 #' Generate nonlinear example data
-#' 
-#' Mainly intended to demonstrate the use of basis expansion models for sparse additive modeling; intended for use with [expand_spline()].
-#' 
-#' @param n      Sample size (numeric; default = 100).
-#' @param p      Number of features (numeric; default = 16).
-#' @param seed   Set to get different random data sets, passed to [set.seed()]
-#' 
+#'
+#' Mainly intended to demonstrate the use of basis expansion models for sparse additive modeling;
+#' intended for use with [expand_spline()].
+#'
+#' @param n Sample size (numeric; default = 100).
+#' @param p Number of features (numeric; default = 16).
+#' @param seed Set to get different random data sets, passed to [set.seed()]
+#'
+#' @returns A list of three elements:
+#'
+#' \describe{
+#'   \item{X}{A matrix with `n` rows and `p` columns}
+#'   \item{y}{A vector of responses of length `n`}
+#'   \item{mu}{A vector of of length `n` recording the expected value of `y` (i.e., with no noise)}
+#' }
+#'
 #' @examples
-#' Data <- gen_nonlinear_data()
+#' dat <- gen_nonlinear_data()
+#'
 #' @export
-
-gen_nonlinear_data <- function(n=100, p=16, seed) {
+gen_nonlinear_data <- function(n = 100, p = 16, seed) {
   if (!missing(seed)) {
     original_seed <- .GlobalEnv$.Random.seed
     on.exit(.GlobalEnv$.Random.seed <- original_seed)
     set.seed(seed)
   }
-  if (!(is.numeric(p) && p >= 6)) stop('p must be at least 6', call.=FALSE)
-  X <- matrix(runif(n*p), nrow=n, ncol=p)
+  if (!(is.numeric(p) && p >= 6)) {
+    stop("p must be at least 6", call. = FALSE)
+  }
+  X <- matrix(runif(n * p), nrow = n, ncol = p)
   w <- floor(log10(p)) + 1
-  colnames(X) <- sprintf(paste0('V%0', w, 'd'), 1:p)
+  colnames(X) <- sprintf(paste0("V%0", w, "d"), 1:p)
   f <- list(
-    function(x){2*(exp(-10*x)-exp(-10))/(1-exp(-10)) - 1},
-    function(x){-2*(exp(-10*x)-exp(-10))/(1-exp(-10)) + 1},
-    function(x){2*x-1},
-    function(x){-2*x+1},
-    function(x){8*(x-0.5)^2 - 1},
-    function(x){-8*(x-0.5)^2 + 1})
-  eta <- matrix(NA, nrow=n, ncol=6)
-  for (j in 1:6) eta[,j] <- f[[j]](X[,j])
+    function(x) {
+      2 * (exp(-10 * x) - exp(-10)) / (1 - exp(-10)) - 1
+    },
+    function(x) {
+      -2 * (exp(-10 * x) - exp(-10)) / (1 - exp(-10)) + 1
+    },
+    function(x) {
+      2 * x - 1
+    },
+    function(x) {
+      -2 * x + 1
+    },
+    function(x) {
+      8 * (x - 0.5)^2 - 1
+    },
+    function(x) {
+      -8 * (x - 0.5)^2 + 1
+    }
+  )
+  eta <- matrix(NA, nrow = n, ncol = 6)
+  for (j in 1:6) {
+    eta[, j] <- f[[j]](X[, j])
+  }
   mu <- 5 + apply(eta, 1, sum)
-  y <- rnorm(n, mean=mu, sd=0.25)
-  list(X=X, y=y, mu=mu)
+  y <- rnorm(n, mean = mu, sd = 0.25)
+  list(X = X, y = y, mu = mu)
 }

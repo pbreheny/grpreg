@@ -1,4 +1,6 @@
-if (interactive()) library(tinytest)
+if (interactive()) {
+  library(tinytest)
+}
 suppressPackageStartupMessages(library(survival))
 
 # Test that grpsurv works when x has 1 column

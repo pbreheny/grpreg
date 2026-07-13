@@ -13,8 +13,8 @@ vignette: >
 ```{r setup, include=FALSE}
 library(grpreg)
 set.seed(4)
-knitr::opts_knit$set(aliases=c(h = 'fig.height', w = 'fig.width'))
-knitr::opts_chunk$set(comment="#", collapse=TRUE, cache=FALSE, tidy=FALSE)
+knitr::opts_knit$set(aliases = c(h = "fig.height", w = "fig.width"))
+knitr::opts_chunk$set(comment = "#", collapse = TRUE, cache = FALSE, tidy = FALSE)
 knitr::knit_hooks$set(small.mar = function(before, options, envir) {
   if (before) par(mar = c(4, 4, .1, .1))
 })
@@ -40,7 +40,7 @@ group
 Here, groups are given as a factor; unique integer codes (which are essentially unlabeled factors) and character vectors are also allowed (character vectors do have some limitations, however, as the order of the groups is left unspecified, which can lead to ambiguity if you also try to set the `group.multiplier` option).  To fit a group lasso model to this data:
 
 ```{r fit}
-fit <- grpreg(X, y, group, penalty="grLasso")
+fit <- grpreg(X, y, group, penalty = "grLasso")
 ```
 
 We can then plot the coefficient paths with
@@ -52,7 +52,7 @@ plot(fit)
 Notice that when a group enters the model (e.g., the green group), all of its coefficients become nonzero; this is what happens with group lasso models.  To see what the coefficients are, we could use the `coef` function:
 
 ```{r coef}
-coef(fit, lambda=0.05)
+coef(fit, lambda = 0.05)
 ```
 
 Note that the number of physician's visits (`ftv`) is not included in the model at $\lambda=0.05$.
@@ -60,7 +60,7 @@ Note that the number of physician's visits (`ftv`) is not included in the model 
 Typically, one would carry out cross-validation for the purposes of carrying out inference on the predictive accuracy of the model at various values of $\lambda$.
 
 ```{r cvplot, h=5, w=6}
-cvfit <- cv.grpreg(X, y, group, penalty="grLasso")
+cvfit <- cv.grpreg(X, y, group, penalty = "grLasso")
 plot(cvfit)
 ```
 The coefficients corresponding to the value of $\lambda$ that minimizes the cross-validation error can be obtained via `coef`:
@@ -72,11 +72,11 @@ coef(cvfit)
 Predicted values can be obtained via `predict`, which has a number of options:
 
 ```{r predict}
-predict(cvfit, X=head(X))                 # Predictions for new observations
-predict(fit, type="ngroups", lambda=0.1)  # Number of nonzero groups
-predict(fit, type="groups", lambda=0.1)   # Identity of nonzero groups
-predict(fit, type="nvars", lambda=0.1)    # Number of nonzero coefficients
-predict(fit, type="vars", lambda=0.1)     # Identity of nonzero coefficients
+predict(cvfit, X = head(X)) # Predictions for new observations
+predict(fit, type = "ngroups", lambda = 0.1) # Number of nonzero groups
+predict(fit, type = "groups", lambda = 0.1) # Identity of nonzero groups
+predict(fit, type = "nvars", lambda = 0.1) # Number of nonzero coefficients
+predict(fit, type = "vars", lambda = 0.1) # Identity of nonzero coefficients
 ```
 
 Note that the original fit (to the full data set) is returned as `cvfit$fit`; it is not necessary to call both `grpreg` and `cv.grpreg` to analyze a data set.  Several other penalties are available, as are methods for logistic regression and Cox proportional hazards regression.

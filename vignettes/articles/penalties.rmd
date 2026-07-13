@@ -5,8 +5,8 @@ author: "Patrick Breheny"
 
 ```{r setup, include=FALSE}
 library(grpreg)
-knitr::opts_knit$set(aliases=c(h = 'fig.height', w = 'fig.width'))
-knitr::opts_chunk$set(comment="#", collapse=TRUE, cache=FALSE, tidy=FALSE)
+knitr::opts_knit$set(aliases = c(h = "fig.height", w = "fig.width"))
+knitr::opts_chunk$set(comment = "#", collapse = TRUE, cache = FALSE, tidy = FALSE)
 knitr::knit_hooks$set(small.mar = function(before, options, envir) {
   if (before) par(mar = c(4, 4, .1, .1))
 })
@@ -35,7 +35,7 @@ These penalties are sparse at the group level -- the coefficients within a group
 
 If you use any of these penalties, please cite
 
-* Breheny P and Huang J (2015). Group descent algorithms for nonconvex penalized linear and logistic regression models with grouped predictors. *Statistics and Computing*, **25**: 173-187. [[pdf](https://myweb.uiowa.edu/pbreheny/pdf/group-computing.pdf)].
+* Breheny P and Huang J (2015). Group descent algorithms for nonconvex penalized linear and logistic regression models with grouped predictors. *Statistics and Computing*, **25**: 173-187. [[pdf](https://pbreheny.org/web/assets/group-computing.pdf)].
 
 The article goes into more mathematical details, discusses issues of standardization in the group sense, and provides references.
 
@@ -46,7 +46,7 @@ The group lasso was originally proposed in
 ### Group lasso
 
 ```{r, eval=FALSE}
-grpreg(X, y, group, penalty="grLasso")
+grpreg(X, y, group, penalty = "grLasso")
 ```
 
 $$ P(\beta) = \lam \sum_j \norm{\bb_j}_2 $$
@@ -54,7 +54,7 @@ $$ P(\beta) = \lam \sum_j \norm{\bb_j}_2 $$
 ### Group MCP
 
 ```{r, eval=FALSE}
-grpreg(X, y, group, penalty="grMCP")
+grpreg(X, y, group, penalty = "grMCP")
 ```
 
 $$ P(\bb) = \sum_j \textrm{MCP}_{\lam, \gamma}(\norm{\bb_j}_2) $$
@@ -64,7 +64,7 @@ where $\textrm{MCP}_{\lam, \gamma}(\cdot)$ denotes the MCP penalty with regulari
 ### Group SCAD
 
 ```{r, eval=FALSE}
-grpreg(X, y, group, penalty="grSCAD")
+grpreg(X, y, group, penalty = "grSCAD")
 ```
 
 $$ P(\bb) = \sum_j \textrm{SCAD}_{\lam, \gamma}(\norm{\bb_j}_2) $$
@@ -78,7 +78,7 @@ These penalties are sparse at both the group and individual levels.  In some gro
 ### Group exponential lasso (GEL)
 
 ```{r, eval=FALSE}
-grpreg(X, y, group, penalty="gel")
+grpreg(X, y, group, penalty = "gel")
 ```
 
 $$ P(\beta) = \sum_j f_{\lam, \tau}(\norm{\bb_j}_1) $$
@@ -94,7 +94,7 @@ If you use the GEL penalty, please cite
 ### Composite MCP
 
 ```{r, eval=FALSE}
-grpreg(X, y, group, penalty="cMCP")
+grpreg(X, y, group, penalty = "cMCP")
 ```
 
 $$ P(\bb) = \sum_j \textrm{MCP}_{\lam, \gam_1} \left( \sum_k \textrm{MCP}_{\lam, \gam_2} (\abs{\beta_{jk}}) \right) $$
@@ -103,8 +103,8 @@ where $\textrm{MCP}_{\lam, \gamma}(\cdot)$ denotes the MCP penalty with regulari
 
 If you use the composite MCP penalty, please cite either of the following papers:
 
-* Breheny P and Huang J (2009). Penalized methods for bi-level variable selection. *Statistics and Its Interface*, **2**: 369-380. [[pdf](https://myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf)]
-* Huang J, Breheny P and Ma S (2012). A selective review of group selection in high-dimensional models. *Statistical Science*, **27**: 481-499. [[pdf](https://myweb.uiowa.edu/pbreheny/pdf/Huang2012.pdf)]
+* Breheny P and Huang J (2009). Penalized methods for bi-level variable selection. *Statistics and Its Interface*, **2**: 369-380. [[pdf](https://pbreheny.org/web/assets/Breheny2009.pdf)]
+* Huang J, Breheny P and Ma S (2012). A selective review of group selection in high-dimensional models. *Statistical Science*, **27**: 481-499. [[pdf](https://pbreheny.org/web/assets/Huang2012.pdf)]
 
 Please note that there is some confusion around the name "group MCP".  In the first paper above (2009), the composite MCP penalty was referred to as the "group MCP" penalty; the second paper (2012), in reviewing the various kinds of group penalties that had been proposed, recommended changing the name to "composite MCP" to avoid confusion with the "group MCP" [defined above](#group-mcp).
 
@@ -136,7 +136,7 @@ $$ P(\bb) = P_1(\bb|\lam_1) + \frac{\lam_2}{2}\norm{\bb}_2^2, $$
 where $P_1$ is any of the penalties from the earlier sections.  So, for example
 
 ```{r, eval=FALSE}
-grpreg(X, y, group, penalty="grLasso", alpha=0.75)
+grpreg(X, y, group, penalty = "grLasso", alpha = 0.75)
 ```
 
 will fit a model with penalty
