@@ -45,7 +45,7 @@ To fit a penalized logistic regression model with `grpreg`:
 
 ``` r
 
-fit <- grpreg(X, y, group, family='binomial')
+fit <- grpreg(X, y, group, family = "binomial")
 ```
 
 ## Poisson
@@ -62,7 +62,7 @@ To fit a penalized Poisson regression model with `grpreg`:
 
 ``` r
 
-fit <- grpreg(X, y, group, family='poisson')
+fit <- grpreg(X, y, group, family = "poisson")
 ```
 
 ## Cox proportional hazards
@@ -102,7 +102,7 @@ As before, you can call `plot`, `coef`, `predict`, etc. on `fit`:
 
 ``` r
 
-coef(fit, lambda=0.1)
+coef(fit, lambda = 0.1)
 #        trt     karno1     karno2     karno3  diagtime1  diagtime2       age1 
 #  0.0000000 -4.6535992  0.4641241 -0.3283532  0.0000000  0.0000000  0.0000000 
 #       age2       age3      prior   squamous      small      adeno      large 
@@ -119,9 +119,9 @@ set.seed(1)
 ``` r
 
 cvfit <- cv.grpsurv(X, y, group)
-par(mfrow=c(1,2))
-plot(cvfit, type='cve')
-plot(cvfit, type='rsq')
+par(mfrow = c(1, 2))
+plot(cvfit, type = "cve")
+plot(cvfit, type = "rsq")
 ```
 
 ![](models_files/figure-html/models-cox-cv-1.png)
@@ -135,10 +135,10 @@ method to plot the resulting function is also available:
 
 ``` r
 
-S <- predict(fit, X[1,], type='survival', lambda=0.02)
-S(365)   # Estiamted survival at 1 year
+S <- predict(fit, X[1, ], type = "survival", lambda = 0.02)
+S(365) # Estiamted survival at 1 year
 # [1] 0.09995821
-plot(S, xlim=c(0,200))
+plot(S, xlim = c(0, 200))
 ```
 
 ![](models_files/figure-html/models-cox-surv-single-1.png)
@@ -147,12 +147,12 @@ When multiple subjects are involved in the prediction:
 
 ``` r
 
-S <- predict(fit, X, type='survival', lambda=0.02)
-S[[1]](365)  # Estimated survival at 1 year for subject 1
+S <- predict(fit, X, type = "survival", lambda = 0.02)
+S[[1]](365) # Estimated survival at 1 year for subject 1
 # [1] 0.09995821
-S[[2]](365)  # Estimated survival at 1 year for subject 2
+S[[2]](365) # Estimated survival at 1 year for subject 2
 # [1] 0.142846
-plot(S, xlim=c(0,200))
+plot(S, xlim = c(0, 200))
 ```
 
 ![](models_files/figure-html/models-cox-surv-multiple-1.png)

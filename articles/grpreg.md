@@ -63,7 +63,7 @@ this data:
 
 ``` r
 
-fit <- grpreg(X, y, group, penalty="grLasso")
+fit <- grpreg(X, y, group, penalty = "grLasso")
 ```
 
 We can then plot the coefficient paths with
@@ -82,7 +82,7 @@ function:
 
 ``` r
 
-coef(fit, lambda=0.05)
+coef(fit, lambda = 0.05)
 # (Intercept)        age1        age2        age3        lwt1        lwt2 
 #  3.02892181  0.14045229  0.62608119  0.37683684  0.74715315 -0.15825582 
 #        lwt3       white       black       smoke        ptl1       ptl2m 
@@ -100,7 +100,7 @@ various values of \lambda.
 
 ``` r
 
-cvfit <- cv.grpreg(X, y, group, penalty="grLasso")
+cvfit <- cv.grpreg(X, y, group, penalty = "grLasso")
 plot(cvfit)
 ```
 
@@ -124,16 +124,16 @@ options:
 
 ``` r
 
-predict(cvfit, X=head(X))                 # Predictions for new observations
+predict(cvfit, X = head(X)) # Predictions for new observations
 # [1] 2.547122 3.006659 3.042348 2.564257 2.577717 3.083550
-predict(fit, type="ngroups", lambda=0.1)  # Number of nonzero groups
+predict(fit, type = "ngroups", lambda = 0.1) # Number of nonzero groups
 # [1] 5
-predict(fit, type="groups", lambda=0.1)   # Identity of nonzero groups
+predict(fit, type = "groups", lambda = 0.1) # Identity of nonzero groups
 # [1] race  smoke ptl   ht    ui   
 # Levels: age lwt race smoke ptl ht ui ftv
-predict(fit, type="nvars", lambda=0.1)    # Number of nonzero coefficients
+predict(fit, type = "nvars", lambda = 0.1) # Number of nonzero coefficients
 # [1] 7
-predict(fit, type="vars", lambda=0.1)     # Identity of nonzero coefficients
+predict(fit, type = "vars", lambda = 0.1) # Identity of nonzero coefficients
 # white black smoke  ptl1 ptl2m    ht    ui 
 #     7     8     9    10    11    12    13
 ```

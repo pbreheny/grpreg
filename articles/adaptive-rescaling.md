@@ -11,4 +11,4 @@ and was originally proposed in the following manuscript:
 - [Breheny P and Huang J (2011). Coordinate descent algorithms for
   nonconvex penalized regression, with applications to biological
   feature selection. *Annals of Applied Statistics*, 5:
-  232–253](https://myweb.uiowa.edu/pbreheny/pdf/Breheny2011.pdf)
+  232–253](https://pbreheny.org/web/assets/Breheny2011.pdf)

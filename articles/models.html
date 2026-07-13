@@ -120,7 +120,7 @@ given by: <span class="math display">
 <p>To fit a penalized logistic regression model with
 <code>grpreg</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, family<span class="op">=</span><span class="st">'binomial'</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="poisson">Poisson<a class="anchor" aria-label="anchor" href="#poisson"></a>
@@ -137,7 +137,7 @@ rate parameter given by: <span class="math display">
 <p>To fit a penalized Poisson regression model with
 <code>grpreg</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, family<span class="op">=</span><span class="st">'poisson'</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, family <span class="op">=</span> <span class="st">"poisson"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="cox-proportional-hazards">Cox proportional hazards<a class="anchor" aria-label="anchor" href="#cox-proportional-hazards"></a>
@@ -170,7 +170,7 @@ regression. Loading this data set into R,</p>
 <p>As before, you can call <code>plot</code>, <code>coef</code>,
 <code>predict</code>, etc. on <code>fit</code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fit</span>, lambda<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fit</span>, lambda <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span><span class="co">#        trt     karno1     karno2     karno3  diagtime1  diagtime2       age1 </span></span>
 <span><span class="co">#  0.0000000 -4.6535992  0.4641241 -0.3283532  0.0000000  0.0000000  0.0000000 </span></span>
 <span><span class="co">#       age2       age3      prior   squamous      small      adeno      large </span></span>
@@ -180,9 +180,9 @@ regression. Loading this data set into R,</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cvfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cv.grpreg.html">cv.grpsurv</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cvfit</span>, type<span class="op">=</span><span class="st">'cve'</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cvfit</span>, type<span class="op">=</span><span class="st">'rsq'</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cvfit</span>, type <span class="op">=</span> <span class="st">"cve"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cvfit</span>, type <span class="op">=</span> <span class="st">"rsq"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="models_files/figure-html/models-cox-cv-1.png" class="r-plt" alt="" width="720" height="360"></p>
 <p>In addition to the quantities like coefficients and number of nonzero
 coefficients that <code>predict</code> returns for other types of
@@ -191,19 +191,19 @@ also estimate the baseline hazard (using the Kalbfleish-Prentice method)
 and therefore, the survival function. A method to plot the resulting
 function is also available:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">X</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>, type<span class="op">=</span><span class="st">'survival'</span>, lambda<span class="op">=</span><span class="fl">0.02</span><span class="op">)</span></span>
-<span><span class="fu">S</span><span class="op">(</span><span class="fl">365</span><span class="op">)</span>   <span class="co"># Estiamted survival at 1 year</span></span>
+<code class="sourceCode R"><span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">X</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span>, type <span class="op">=</span> <span class="st">"survival"</span>, lambda <span class="op">=</span> <span class="fl">0.02</span><span class="op">)</span></span>
+<span><span class="fu">S</span><span class="op">(</span><span class="fl">365</span><span class="op">)</span> <span class="co"># Estiamted survival at 1 year</span></span>
 <span><span class="co"># [1] 0.09995821</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">S</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">200</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">S</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">200</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="models_files/figure-html/models-cox-surv-single-1.png" class="r-plt" alt="" width="480"></p>
 <p>When multiple subjects are involved in the prediction:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">X</span>, type<span class="op">=</span><span class="st">'survival'</span>, lambda<span class="op">=</span><span class="fl">0.02</span><span class="op">)</span></span>
-<span><span class="va">S</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">(</span><span class="fl">365</span><span class="op">)</span>  <span class="co"># Estimated survival at 1 year for subject 1</span></span>
+<code class="sourceCode R"><span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">X</span>, type <span class="op">=</span> <span class="st">"survival"</span>, lambda <span class="op">=</span> <span class="fl">0.02</span><span class="op">)</span></span>
+<span><span class="va">S</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">(</span><span class="fl">365</span><span class="op">)</span> <span class="co"># Estimated survival at 1 year for subject 1</span></span>
 <span><span class="co"># [1] 0.09995821</span></span>
-<span><span class="va">S</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">(</span><span class="fl">365</span><span class="op">)</span>  <span class="co"># Estimated survival at 1 year for subject 2</span></span>
+<span><span class="va">S</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">(</span><span class="fl">365</span><span class="op">)</span> <span class="co"># Estimated survival at 1 year for subject 2</span></span>
 <span><span class="co"># [1] 0.142846</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">S</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">200</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">S</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">200</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="models_files/figure-html/models-cox-surv-multiple-1.png" class="r-plt" alt="" width="480"></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -217,7 +217,7 @@ function is also available:</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Last updated: June 24, 2026</p>
+  <p>Last updated: July 13, 2026</p>
 </div>
 
     </footer>

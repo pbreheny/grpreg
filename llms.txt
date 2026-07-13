@@ -40,7 +40,7 @@ For more on the mathematical foundations and algorithmic details, see:
 
 - [Breheny, P. and Huang, J. (2009) Penalized methods for bi-level
   variable selection. *Statistics and its interface*, **2**:
-  369-380.](https://myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf)
+  369-380.](https://pbreheny.org/web/assets/Breheny2009.pdf)
 - [Breheny, P. and Huang, J. (2015) Group descent algorithms for
   nonconvex penalized linear and logistic regression models with grouped
   predictors. *Statistics and Computing*, **25**:

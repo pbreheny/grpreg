@@ -40,7 +40,7 @@ If you use any of these penalties, please cite
 - Breheny P and Huang J (2015). Group descent algorithms for nonconvex
   penalized linear and logistic regression models with grouped
   predictors. *Statistics and Computing*, **25**: 173-187.
-  \[[pdf](https://myweb.uiowa.edu/pbreheny/pdf/group-computing.pdf)\].
+  \[[pdf](https://pbreheny.org/web/assets/group-computing.pdf)\].
 
 The article goes into more mathematical details, discusses issues of
 standardization in the group sense, and provides references.
@@ -55,7 +55,7 @@ The group lasso was originally proposed in
 
 ``` r
 
-grpreg(X, y, group, penalty="grLasso")
+grpreg(X, y, group, penalty = "grLasso")
 ```
 
 P(\beta) = \lambda\sum_j \lVert\boldsymbol{\beta}\_j\rVert_2
@@ -64,7 +64,7 @@ P(\beta) = \lambda\sum_j \lVert\boldsymbol{\beta}\_j\rVert_2
 
 ``` r
 
-grpreg(X, y, group, penalty="grMCP")
+grpreg(X, y, group, penalty = "grMCP")
 ```
 
 P(\boldsymbol{\beta}) = \sum_j \textrm{MCP}\_{\lambda,
@@ -77,7 +77,7 @@ with regularization parameter \lambda and tuning parameter \gamma.
 
 ``` r
 
-grpreg(X, y, group, penalty="grSCAD")
+grpreg(X, y, group, penalty = "grSCAD")
 ```
 
 P(\boldsymbol{\beta}) = \sum_j \textrm{SCAD}\_{\lambda,
@@ -97,7 +97,7 @@ zero.
 
 ``` r
 
-grpreg(X, y, group, penalty="gel")
+grpreg(X, y, group, penalty = "gel")
 ```
 
 P(\beta) = \sum_j f\_{\lambda,
@@ -119,7 +119,7 @@ If you use the GEL penalty, please cite
 
 ``` r
 
-grpreg(X, y, group, penalty="cMCP")
+grpreg(X, y, group, penalty = "cMCP")
 ```
 
 P(\boldsymbol{\beta}) = \sum_j \textrm{MCP}\_{\lambda, \gamma_1} \left(
@@ -134,10 +134,10 @@ following papers:
 
 - Breheny P and Huang J (2009). Penalized methods for bi-level variable
   selection. *Statistics and Its Interface*, **2**: 369-380.
-  \[[pdf](https://myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf)\]
+  \[[pdf](https://pbreheny.org/web/assets/Breheny2009.pdf)\]
 - Huang J, Breheny P and Ma S (2012). A selective review of group
   selection in high-dimensional models. *Statistical Science*, **27**:
-  481-499. \[[pdf](https://myweb.uiowa.edu/pbreheny/pdf/Huang2012.pdf)\]
+  481-499. \[[pdf](https://pbreheny.org/web/assets/Huang2012.pdf)\]
 
 Please note that there is some confusion around the name “group MCP”. In
 the first paper above (2009), the composite MCP penalty was referred to
@@ -193,7 +193,7 @@ example
 
 ``` r
 
-grpreg(X, y, group, penalty="grLasso", alpha=0.75)
+grpreg(X, y, group, penalty = "grLasso", alpha = 0.75)
 ```
 
 will fit a model with penalty

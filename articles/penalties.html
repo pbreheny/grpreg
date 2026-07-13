@@ -121,7 +121,7 @@ within a group will either all equal zero or none will equal zero.</p>
 <ul>
 <li>Breheny P and Huang J (2015). Group descent algorithms for nonconvex
 penalized linear and logistic regression models with grouped predictors.
-<em>Statistics and Computing</em>, <strong>25</strong>: 173-187. [<a href="https://myweb.uiowa.edu/pbreheny/pdf/group-computing.pdf" class="external-link">pdf</a>].</li>
+<em>Statistics and Computing</em>, <strong>25</strong>: 173-187. [<a href="https://pbreheny.org/web/assets/group-computing.pdf" class="external-link">pdf</a>].</li>
 </ul>
 <p>The article goes into more mathematical details, discusses issues of
 standardization in the group sense, and provides references.</p>
@@ -135,7 +135,7 @@ Society Series B</em>, <strong>68</strong>: 49-67.</li>
 <h3 id="group-lasso">Group lasso<a class="anchor" aria-label="anchor" href="#group-lasso"></a>
 </h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grLasso"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty <span class="op">=</span> <span class="st">"grLasso"</span><span class="op">)</span></span></code></pre></div>
 <p><span class="math display"> P(\beta) = \lambda\sum_j
 \lVert\boldsymbol{\beta}_j\rVert_2 </span></p>
 </div>
@@ -143,7 +143,7 @@ Society Series B</em>, <strong>68</strong>: 49-67.</li>
 <h3 id="group-mcp">Group MCP<a class="anchor" aria-label="anchor" href="#group-mcp"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grMCP"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty <span class="op">=</span> <span class="st">"grMCP"</span><span class="op">)</span></span></code></pre></div>
 <p><span class="math display"> P(\boldsymbol{\beta}) = \sum_j
 \textrm{MCP}_{\lambda, \gamma}(\lVert\boldsymbol{\beta}_j\rVert_2)
 </span></p>
@@ -156,7 +156,7 @@ parameter <span class="math inline">\lambda</span> and tuning parameter
 <h3 id="group-scad">Group SCAD<a class="anchor" aria-label="anchor" href="#group-scad"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grSCAD"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty <span class="op">=</span> <span class="st">"grSCAD"</span><span class="op">)</span></span></code></pre></div>
 <p><span class="math display"> P(\boldsymbol{\beta}) = \sum_j
 \textrm{SCAD}_{\lambda, \gamma}(\lVert\boldsymbol{\beta}_j\rVert_2)
 </span></p>
@@ -177,7 +177,7 @@ be zero.</p>
 <h3 id="group-exponential-lasso-gel">Group exponential lasso (GEL)<a class="anchor" aria-label="anchor" href="#group-exponential-lasso-gel"></a>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"gel"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty <span class="op">=</span> <span class="st">"gel"</span><span class="op">)</span></span></code></pre></div>
 <p><span class="math display"> P(\beta) = \sum_j f_{\lambda,
 \tau}(\lVert\boldsymbol{\beta}_j\rVert_1) </span></p>
 <p>where <span class="math inline">f(\cdot)</span> denotes the
@@ -195,7 +195,7 @@ selection. <em>Biometrics</em>, <strong>71</strong>: 731-740. [<a href="https://
 <h3 id="composite-mcp">Composite MCP<a class="anchor" aria-label="anchor" href="#composite-mcp"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"cMCP"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty <span class="op">=</span> <span class="st">"cMCP"</span><span class="op">)</span></span></code></pre></div>
 <p><span class="math display"> P(\boldsymbol{\beta}) = \sum_j
 \textrm{MCP}_{\lambda, \gamma_1} \left( \sum_k \textrm{MCP}_{\lambda,
 \gamma_2} (\left\lvert\beta_{jk}\right\rvert) \right) </span></p>
@@ -208,10 +208,10 @@ following papers:</p>
 <ul>
 <li>Breheny P and Huang J (2009). Penalized methods for bi-level
 variable selection. <em>Statistics and Its Interface</em>,
-<strong>2</strong>: 369-380. [<a href="https://myweb.uiowa.edu/pbreheny/pdf/Breheny2009.pdf" class="external-link">pdf</a>]</li>
+<strong>2</strong>: 369-380. [<a href="https://pbreheny.org/web/assets/Breheny2009.pdf" class="external-link">pdf</a>]</li>
 <li>Huang J, Breheny P and Ma S (2012). A selective review of group
 selection in high-dimensional models. <em>Statistical Science</em>,
-<strong>27</strong>: 481-499. [<a href="https://myweb.uiowa.edu/pbreheny/pdf/Huang2012.pdf" class="external-link">pdf</a>]</li>
+<strong>27</strong>: 481-499. [<a href="https://pbreheny.org/web/assets/Huang2012.pdf" class="external-link">pdf</a>]</li>
 </ul>
 <p>Please note that there is some confusion around the name “group MCP”.
 In the first paper above (2009), the composite MCP penalty was referred
@@ -263,7 +263,7 @@ P_1(\boldsymbol{\beta}|\lambda_1) +
 <p>where <span class="math inline">P_1</span> is any of the penalties
 from the earlier sections. So, for example</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty<span class="op">=</span><span class="st">"grLasso"</span>, alpha<span class="op">=</span><span class="fl">0.75</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/grpreg.html">grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">group</span>, penalty <span class="op">=</span> <span class="st">"grLasso"</span>, alpha <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span></span></code></pre></div>
 <p>will fit a model with penalty</p>
 <p><span class="math display"> P(\beta) = 0.75\lambda\sum_j
 \lVert\boldsymbol{\beta}_j\rVert_2 +
@@ -280,7 +280,7 @@ from the earlier sections. So, for example</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Last updated: June 24, 2026</p>
+  <p>Last updated: July 13, 2026</p>
 </div>
 
     </footer>

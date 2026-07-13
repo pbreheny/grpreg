@@ -13,7 +13,7 @@ Let’s start by generating some nonlinear data:
 
 ``` r
 
-Data <- gen_nonlinear_data(n=1000)
+Data <- gen_nonlinear_data(n = 1000)
 Data$X[1:5, 1:5]
 #            V01       V02       V03       V04        V05
 # [1,] 0.2655087 0.5308088 0.8718050 0.8023495 0.18776846
@@ -84,7 +84,7 @@ Partial residuals can be included in these plots as well:
 
 ``` r
 
-plot_spline(fit, "V02", lambda = 0.03, partial=TRUE)
+plot_spline(fit, "V02", lambda = 0.03, partial = TRUE)
 ```
 
 ![](additive-models_files/figure-html/plot_partial-1.png)
@@ -99,7 +99,7 @@ value:
 
 ``` r
 
-plot_spline(fit, "V02", lambda = 0.03, partial=TRUE, type='conditional')
+plot_spline(fit, "V02", lambda = 0.03, partial = TRUE, type = "conditional")
 ```
 
 ![](additive-models_files/figure-html/plot_conditional-1.png)
@@ -110,7 +110,7 @@ the plots for the first 9 coefficients:
 
 ``` r
 
-for (i in 1:9) plot_spline(fit, sprintf("V%02d", i), lambda = 0.03, partial=TRUE, warn=FALSE)
+for (i in 1:9) plot_spline(fit, sprintf("V%02d", i), lambda = 0.03, partial = TRUE, warn = FALSE)
 ```
 
 ![](additive-models_files/figure-html/plot_all_6-1.png)
@@ -126,7 +126,7 @@ plotting the fit that minimizes cross-validation error):
 ``` r
 
 cvfit <- cv.grpreg(X, Data$y)
-plot_spline(cvfit, "V02", partial=TRUE)
+plot_spline(cvfit, "V02", partial = TRUE)
 ```
 
 ![](additive-models_files/figure-html/cvfit-1.png)

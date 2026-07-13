@@ -85,7 +85,7 @@ original proposal involved the group lasso penalty, but any of
 basic usage is illustrated below.</p>
 <p>Let’s start by generating some nonlinear data:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">Data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gen_nonlinear_data.html">gen_nonlinear_data</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">1000</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">Data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gen_nonlinear_data.html">gen_nonlinear_data</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="va">Data</span><span class="op">$</span><span class="va">X</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
 <span><span class="co">#            V01       V02       V03       V04        V05</span></span>
 <span><span class="co"># [1,] 0.2655087 0.5308088 0.8718050 0.8023495 0.18776846</span></span>
@@ -134,7 +134,7 @@ etc., can be used, as well as <code><a href="../reference/plot.grpreg.html">plot
 <p><img src="additive-models_files/figure-html/plot-1.png" class="r-plt" alt="" width="480"></p>
 <p>Partial residuals can be included in these plots as well:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"V02"</span>, lambda <span class="op">=</span> <span class="fl">0.03</span>, partial<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"V02"</span>, lambda <span class="op">=</span> <span class="fl">0.03</span>, partial <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="additive-models_files/figure-html/plot_partial-1.png" class="r-plt" alt="" width="480"></p>
 <p>By default, these plots are centered such that at the mean of <span class="math inline">x</span> (where <span class="math inline">x</span>
 denotes the feature being plotted), the <span class="math inline">y</span> value is zero. Alternatively, if
@@ -143,13 +143,13 @@ will construct a plot in which the vertical axis represents model
 predictions as <span class="math inline">x</span> varies and all other
 features are fixed at their mean value:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"V02"</span>, lambda <span class="op">=</span> <span class="fl">0.03</span>, partial<span class="op">=</span><span class="cn">TRUE</span>, type<span class="op">=</span><span class="st">'conditional'</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"V02"</span>, lambda <span class="op">=</span> <span class="fl">0.03</span>, partial <span class="op">=</span> <span class="cn">TRUE</span>, type <span class="op">=</span> <span class="st">"conditional"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="additive-models_files/figure-html/plot_conditional-1.png" class="r-plt" alt="" width="480"></p>
 <p>In comparing these two plots, note that the general contours are the
 same; the only difference is the value of the vertical axis. Here are
 the plots for the first 9 coefficients:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span> <span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">fit</span>, <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"V%02d"</span>, <span class="va">i</span><span class="op">)</span>, lambda <span class="op">=</span> <span class="fl">0.03</span>, partial<span class="op">=</span><span class="cn">TRUE</span>, warn<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span> <span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">fit</span>, <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"V%02d"</span>, <span class="va">i</span><span class="op">)</span>, lambda <span class="op">=</span> <span class="fl">0.03</span>, partial <span class="op">=</span> <span class="cn">TRUE</span>, warn <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="additive-models_files/figure-html/plot_all_6-1.png" class="r-plt" alt="" width="90%"></p>
 <p>In the generating model, variables 3 and 4 had a linear relationship
 with the outcome, variables 1, 2, 5, and 6 had nonlinear relationships,
@@ -159,7 +159,7 @@ captured this nicely.</p>
 default plotting the fit that minimizes cross-validation error):</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cvfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cv.grpreg.html">cv.grpreg</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">Data</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">cvfit</span>, <span class="st">"V02"</span>, partial<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/plot_spline.html">plot_spline</a></span><span class="op">(</span><span class="va">cvfit</span>, <span class="st">"V02"</span>, partial <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="additive-models_files/figure-html/cvfit-1.png" class="r-plt" alt="" width="480"></p>
 <p>Finally, these tools work with survival and glm models as well. Here,
 all plots are returned on the linear predictor scale, and the residuals
@@ -174,7 +174,7 @@ are deviance residuals.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Last updated: June 24, 2026</p>
+  <p>Last updated: July 13, 2026</p>
 </div>
 
     </footer>
